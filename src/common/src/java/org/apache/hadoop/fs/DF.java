@@ -30,6 +30,11 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.CommonConfigurationKeys;
 import org.apache.hadoop.util.Shell;
 
+////////////////////////////////////////
+//
+// 表示磁盘空间使用状态的类
+// 继承自{org.apache.hadoop.util.Shell}，调用系统工具实现
+//
 /** Filesystem disk space usage statistics.
  * Uses the unix 'df' program to get mount points, and java.io.File for
  * space utilization. Tested on Linux, FreeBSD, Cygwin. */
@@ -142,13 +147,17 @@ public class DF extends Shell {
       mount;
   }
 
+
+  // 要支持Windows系统应修改以下两个方法
+
+  // 检测使用的Shell命令
   @Override
   protected String[] getExecString() {
     // ignoring the error since the exit code it enough
-    return new String[] {"bash","-c","exec 'df' '-k' '" + dirPath 
-                         + "' 2>/dev/null"};
+    return new String[] {"bash","-c","exec 'df' '-k' '" + dirPath + "' 2>/dev/null"};
   }
 
+  // 解析运行Shell命令输出
   @Override
   protected void parseExecResult(BufferedReader lines) throws IOException {
     lines.readLine();                         // skip headings
@@ -157,8 +166,7 @@ public class DF extends Shell {
     if (line == null) {
       throw new IOException( "Expecting a line not the end of stream" );
     }
-    StringTokenizer tokens =
-      new StringTokenizer(line, " \t\n\r\f%");
+    StringTokenizer tokens = new StringTokenizer(line, " \t\n\r\f%");
     
     this.filesystem = tokens.nextToken();
     if (!tokens.hasMoreTokens()) {            // for long filesystem name
