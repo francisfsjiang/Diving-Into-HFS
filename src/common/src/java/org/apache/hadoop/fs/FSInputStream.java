@@ -70,7 +70,6 @@ public abstract class FSInputStream extends InputStream
   public abstract boolean seekToNewSource(long targetPos) throws IOException;
 
   /**
-   *
    * 该方法包装了{@link java.io.InputStream#read(byte[], int, int)}，
    * 该方法可以从指定的文件偏移量处，往buffer指定的字节数组的offset位置读入length
    * 个字节，并且可以恢复文件偏移量到读取之前的状态。

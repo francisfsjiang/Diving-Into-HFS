@@ -30,8 +30,7 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 /**
- * This is a generic input stream for verifying checksums for
- * data before it is read by a user.
+ * FSInputChecker
  */
 @InterfaceAudience.LimitedPrivate({"HDFS"})
 @InterfaceStability.Unstable

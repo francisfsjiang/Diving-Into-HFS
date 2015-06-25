@@ -81,7 +81,16 @@ implements Seekable, PositionedReadable {
   }
 
   /**
-   * {@inheritDoc}
+   * 将输入源切换到一个新的输入源，并且将偏移量移动到<code>pos</code>。
+   * 此方法在FTP、S3、Local等文件系统上均无实现（直接返回false），现有
+   * 的唯一实现在
+   * {@link org.apache.hadoop.hdfs.DFSInputStream#seekToNewSource(long targetPos)}
+   * ，其功能是在当前读取的Block失效时，切换到新的Block，并且移动偏移量，操作成
+   * 功时返回true。
+   *
+   * @param targetPos 目标偏移量
+   * @return 成功true or 失败false
+   * @throws IOException
    */
   public boolean seekToNewSource(long targetPos) throws IOException {
     pos = 0;
