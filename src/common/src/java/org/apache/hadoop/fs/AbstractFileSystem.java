@@ -46,50 +46,52 @@ import org.apache.hadoop.security.AccessControlException;
 import org.apache.hadoop.util.Progressable;
 
 /**
- * This class provides an interface for implementors of a Hadoop file system
- * (analogous to the VFS of Unix). Applications do not access this class;
- * instead they access files across all file systems using {@link FileContext}.
- * 
- * Pathnames passed to AbstractFileSystem can be fully qualified URI that
- * matches the "this" file system (ie same scheme and authority) 
- * or a Slash-relative name that is assumed to be relative
- * to the root of the "this" file system .
+ * AbstractFileSystem(下简称AFS)是提供给Hadoop FS体系下的具体文件系统实现者的。
+ * AFS以抽象类的形式向Hadoop FS中的具体文件系统的实现者提供接口。
+ * Hadoop FS的架构与Unix下VFS类似，应用不直接访问AFS实例，
+ * 而是通过{@link FileContext}实例来访问文件系统中的文件。
+ * 传递给AFS的路径(pathnames)可以是符合具体文件系统规定的、完全限定的URI，
+ * 也可以是以给定文件系统的根目录为'/'目录的，以‘/’分隔的路径（同Unix体系）。
+ *
+ * AFS实例由工厂方法{@link AbstractFileSystem#get(URI, Configuration)}创建。
+ * AFS中封装了一批通用操作的抽象方法，这些方法由具体文件系统的实现者实现。
  */
 @InterfaceAudience.Public
 @InterfaceStability.Evolving /*Evolving for a release,to be changed to Stable */
 public abstract class AbstractFileSystem {
   static final Log LOG = LogFactory.getLog(AbstractFileSystem.class);
 
+  /** 所有的AFS实例共享同一个统计数据、构造方法缓存和URI配置。*/
   /** Recording statistics per a file system class. */
-  private static final Map<Class<? extends AbstractFileSystem>, Statistics> 
+  private static final Map<Class<? extends AbstractFileSystem>, Statistics>
   STATISTICS_TABLE =
       new IdentityHashMap<Class<? extends AbstractFileSystem>, Statistics>();
-  
+
   /** Cache of constructors for each file system class. */
-  private static final Map<Class<?>, Constructor<?>> CONSTRUCTOR_CACHE = 
+  private static final Map<Class<?>, Constructor<?>> CONSTRUCTOR_CACHE =
     new ConcurrentHashMap<Class<?>, Constructor<?>>();
-  
-  private static final Class<?>[] URI_CONFIG_ARGS = 
+
+  private static final Class<?>[] URI_CONFIG_ARGS =
     new Class[]{URI.class, Configuration.class};
-  
+
   /** The statistics for this file system. */
   protected Statistics statistics;
-  
+
   private final URI myUri;
-  
+
   protected Statistics getStatistics() {
     return statistics;
   }
-  
+
   /**
-   * Prohibits names which contain a ".", "..", ":" or "/" 
+   * Prohibits names which contain a ".", "..", ":" or "/"
    */
   private static boolean isValidName(String src) {
     // Check for ".." "." ":" "/"
     StringTokenizer tokens = new StringTokenizer(src, Path.SEPARATOR);
     while(tokens.hasMoreTokens()) {
       String element = tokens.nextToken();
-      if (element.equals("..") || 
+      if (element.equals("..") ||
           element.equals(".")  ||
           (element.indexOf(":") >= 0)) {
         return false;
@@ -97,8 +99,8 @@ public abstract class AbstractFileSystem {
     }
     return true;
   }
-  
-  /** 
+
+  /**
    * Create an object for the given class and initialize it from conf.
    * @param theClass class of which an object is created
    * @param conf Configuration
@@ -121,15 +123,17 @@ public abstract class AbstractFileSystem {
     }
     return result;
   }
-  
+
   /**
+   * 通URI和Configuration创建AFS实例，
+   * 该方法被直接用于{@link AbstractFileSystem#get(URI, Configuration)}
    * Create a file system instance for the specified uri using the conf. The
    * conf is used to find the class name that implements the file system. The
    * conf is also passed to the file system for its configuration.
    *
    * @param uri URI of the file system
    * @param conf Configuration for the file system
-   * 
+   *
    * @return Returns the file system for the given URI
    *
    * @throws UnsupportedFileSystemException file system for <code>uri</code> is
@@ -137,7 +141,8 @@ public abstract class AbstractFileSystem {
    */
   private static AbstractFileSystem createFileSystem(URI uri, Configuration conf)
       throws UnsupportedFileSystemException {
-    Class<?> clazz = conf.getClass("fs.AbstractFileSystem." + 
+    /** 这里的getClass是有独立机制的{@link Configuration#getClass(String, Class)} */
+    Class<?> clazz = conf.getClass("fs.AbstractFileSystem." +
                                 uri.getScheme() + ".impl", null);
     if (clazz == null) {
       throw new UnsupportedFileSystemException(
@@ -145,8 +150,8 @@ public abstract class AbstractFileSystem {
     }
     return (AbstractFileSystem) newInstance(clazz, uri, conf);
   }
-  
-  
+
+
   /**
    * Get the statistics for a particular file system.
    * @param cls the class to lookup
@@ -161,7 +166,7 @@ public abstract class AbstractFileSystem {
     }
     return result;
   }
-  
+
   protected static synchronized void clearStatistics() {
     for(Statistics stat: STATISTICS_TABLE.values()) {
       stat.reset();
@@ -169,9 +174,9 @@ public abstract class AbstractFileSystem {
   }
 
   protected static synchronized void printStatistics() {
-    for (Map.Entry<Class<? extends AbstractFileSystem>, Statistics> pair: 
+    for (Map.Entry<Class<? extends AbstractFileSystem>, Statistics> pair:
             STATISTICS_TABLE.entrySet()) {
-      System.out.println("  FileSystem " + pair.getKey().getName() + 
+      System.out.println("  FileSystem " + pair.getKey().getName() +
                          ": " + pair.getValue());
     }
   }
@@ -182,14 +187,14 @@ public abstract class AbstractFileSystem {
    * determines a configuration property name,
    * <tt>fs.AbstractFileSystem.<i>scheme</i>.impl</tt> whose value names the
    * AbstractFileSystem class.
-   * 
+   *
    * The entire URI and conf is passed to the AbstractFileSystem factory method.
-   * 
+   *
    * @param uri for the file system to be created.
    * @param conf which is passed to the file system impl.
-   * 
+   *
    * @return file system for the given URI.
-   * 
+   *
    * @throws UnsupportedFileSystemException if the file system for
    *           <code>uri</code> is not supported.
    */
@@ -200,7 +205,7 @@ public abstract class AbstractFileSystem {
 
   /**
    * Constructor to be called by subclasses.
-   * 
+   *
    * @param uri for this file system.
    * @param supportedScheme the scheme supported by the implementor
    * @param authorityNeeded if true then theURI must have authority, if false
@@ -212,9 +217,9 @@ public abstract class AbstractFileSystem {
       final boolean authorityNeeded, final int defaultPort)
       throws URISyntaxException {
     myUri = getUri(uri, supportedScheme, authorityNeeded, defaultPort);
-    statistics = getStatistics(supportedScheme, getClass()); 
+    statistics = getStatistics(supportedScheme, getClass());
   }
-  
+
   protected void checkScheme(URI uri, String supportedScheme) {
     String scheme = uri.getScheme();
     if (scheme == null) {
@@ -230,14 +235,14 @@ public abstract class AbstractFileSystem {
    * Get the URI for the file system based on the given URI. The path, query
    * part of the given URI is stripped out and default file system port is used
    * to form the URI.
-   * 
+   *
    * @param uri FileSystem URI.
    * @param authorityNeeded if true authority cannot be null in the URI. If
    *          false authority must be null.
    * @param defaultPort default port to use if port is not specified in the URI.
-   * 
+   *
    * @return URI of the file system
-   * 
+   *
    * @throws URISyntaxException <code>uri</code> has syntax error
    */
   private URI getUri(URI uri, String supportedScheme,
@@ -265,10 +270,10 @@ public abstract class AbstractFileSystem {
     port = port == -1 ? defaultPort : port;
     return new URI(supportedScheme + "://" + uri.getHost() + ":" + port);
   }
-  
+
   /**
    * The default port of this file system.
-   * 
+   *
    * @return default port of this file system's Uri scheme
    *         A uri with a port of -1 => default port;
    */
@@ -276,20 +281,20 @@ public abstract class AbstractFileSystem {
 
   /**
    * Returns a URI whose scheme and authority identify this FileSystem.
-   * 
+   *
    * @return the uri of this file system.
    */
   protected URI getUri() {
     return myUri;
   }
-  
+
   /**
    * Check that a Path belongs to this FileSystem.
-   * 
+   *
    * If the path is fully qualified URI, then its scheme and authority
-   * matches that of this file system. Otherwise the path must be 
+   * matches that of this file system. Otherwise the path must be
    * slash-relative name.
-   * 
+   *
    * @throws InvalidPathException if the path is invalid
    */
   protected void checkPath(Path path) {
@@ -301,7 +306,7 @@ public abstract class AbstractFileSystem {
         if (path.isUriPathAbsolute()) {
           return;
         }
-        throw new InvalidPathException("relative paths not allowed:" + 
+        throw new InvalidPathException("relative paths not allowed:" +
             path);
       } else {
         throw new InvalidPathException(
@@ -310,17 +315,17 @@ public abstract class AbstractFileSystem {
     }
     String thisScheme = this.getUri().getScheme();
     String thisAuthority = this.getUri().getAuthority();
-    
+
     // Schemes and authorities must match.
     // Allow for null Authority for file:///
     if (!thisScheme.equalsIgnoreCase(thatScheme) ||
-       (thisAuthority != null && 
+       (thisAuthority != null &&
             !thisAuthority.equalsIgnoreCase(thatAuthority)) ||
        (thisAuthority == null && thatAuthority != null)) {
       throw new InvalidPathException("Wrong FS: " + path + ", expected: "
           + this.getUri());
     }
-    
+
     int thisPort = this.getUri().getPort();
     int thatPort = path.toUri().getPort();
     if (thatPort == -1) { // -1 => defaultPort of Uri scheme
@@ -331,13 +336,13 @@ public abstract class AbstractFileSystem {
           + this.getUri());
     }
   }
-  
+
   /**
    * Get the path-part of a pathname. Checks that URI matches this file system
    * and that the path-part is a valid name.
-   * 
+   *
    * @param p path
-   * 
+   *
    * @return path-part of the Path p
    */
   protected String getUriPath(final Path p) {
@@ -349,38 +354,38 @@ public abstract class AbstractFileSystem {
     }
     return s;
   }
-  
+
   /**
    * Some file systems like LocalFileSystem have an initial workingDir
    * that is used as the starting workingDir. For other file systems
    * like HDFS there is no built in notion of an initial workingDir.
-   * 
+   *
    * @return the initial workingDir if the file system has such a notion
    *         otherwise return a null.
    */
   protected Path getInitialWorkingDirectory() {
     return null;
   }
-  
-  /** 
+
+  /**
    * Return the current user's home directory in this file system.
    * The default implementation returns "/user/$USER/".
-   * 
+   *
    * @return current user's home directory.
    */
   protected Path getHomeDirectory() {
     return new Path("/user/"+System.getProperty("user.name")).makeQualified(
                                                                 getUri(), null);
   }
-  
+
   /**
    * Return a set of server default configuration values.
-   * 
+   *
    * @return server default configuration values
-   * 
+   *
    * @throws IOException an I/O error occurred
    */
-  protected abstract FsServerDefaults getServerDefaults() throws IOException; 
+  protected abstract FsServerDefaults getServerDefaults() throws IOException;
 
   /**
    * The specification of this method matches that of
@@ -401,7 +406,7 @@ public abstract class AbstractFileSystem {
     FsPermission permission = null;
     Progressable progress = null;
     Boolean createParent = null;
- 
+
     for (CreateOpts iOpt : opts) {
       if (CreateOpts.BlockSize.class.isInstance(iOpt)) {
         if (blockSize != -1) {
@@ -457,10 +462,10 @@ public abstract class AbstractFileSystem {
 
     FsServerDefaults ssDef = getServerDefaults();
     if (ssDef.getBlockSize() % ssDef.getBytesPerChecksum() != 0) {
-      throw new IOException("Internal error: default blockSize is" + 
+      throw new IOException("Internal error: default blockSize is" +
           " not a multiple of default bytesPerChecksum ");
     }
-    
+
     if (blockSize == -1) {
       blockSize = ssDef.getBlockSize();
     }
@@ -502,7 +507,7 @@ public abstract class AbstractFileSystem {
   /**
    * The specification of this method matches that of
    * {@link FileContext#mkdir(Path, FsPermission, boolean)} except that the Path
-   * f must be fully qualified and the permission is absolute (i.e. 
+   * f must be fully qualified and the permission is absolute (i.e.
    * umask has been applied).
    */
   protected abstract void mkdir(final Path dir, final FsPermission permission,
@@ -566,12 +571,12 @@ public abstract class AbstractFileSystem {
     }
     renameInternal(src, dst, overwrite);
   }
-  
+
   /**
    * The specification of this method matches that of
    * {@link FileContext#rename(Path, Path, Options.Rename...)} except that Path
    * f must be for this file system and NO OVERWRITE is performed.
-   * 
+   *
    * File systems that do not have a built in overwrite need implement only this
    * method and can take advantage of the default impl of the other
    * {@link #renameInternal(Path, Path, boolean)}
@@ -580,7 +585,7 @@ public abstract class AbstractFileSystem {
       throws AccessControlException, FileAlreadyExistsException,
       FileNotFoundException, ParentNotDirectoryException,
       UnresolvedLinkException, IOException;
-  
+
   /**
    * The specification of this method matches that of
    * {@link FileContext#rename(Path, Path, Options.Rename...)} except that Path
@@ -636,25 +641,25 @@ public abstract class AbstractFileSystem {
     }
     renameInternal(src, dst);
   }
-  
+
   /**
    * Returns true if the file system supports symlinks, false otherwise.
    */
   protected boolean supportsSymlinks() {
     return false;
   }
-  
+
   /**
-   * The specification of this method matches that of  
+   * The specification of this method matches that of
    * {@link FileContext#createSymlink(Path, Path, boolean)};
    */
   protected void createSymlink(final Path target, final Path link,
       final boolean createParent) throws IOException, UnresolvedLinkException {
-    throw new IOException("File system does not support symlinks");    
+    throw new IOException("File system does not support symlinks");
   }
 
   /**
-   * The specification of this method matches that of  
+   * The specification of this method matches that of
    * {@link FileContext#getLinkTarget(Path)};
    */
   protected Path getLinkTarget(final Path f) throws IOException {
@@ -664,7 +669,7 @@ public abstract class AbstractFileSystem {
      */
     throw new AssertionError();
   }
-    
+
   /**
    * The specification of this method matches that of
    * {@link FileContext#setPermission(Path, FsPermission)} except that Path f
@@ -700,11 +705,11 @@ public abstract class AbstractFileSystem {
   protected abstract FileChecksum getFileChecksum(final Path f)
       throws AccessControlException, FileNotFoundException,
       UnresolvedLinkException, IOException;
-  
+
   /**
    * The specification of this method matches that of
-   * {@link FileContext#getFileStatus(Path)} 
-   * except that an UnresolvedLinkException may be thrown if a symlink is 
+   * {@link FileContext#getFileStatus(Path)}
+   * except that an UnresolvedLinkException may be thrown if a symlink is
    * encountered in the path.
    */
   protected abstract FileStatus getFileStatus(final Path f)
@@ -714,7 +719,7 @@ public abstract class AbstractFileSystem {
   /**
    * The specification of this method matches that of
    * {@link FileContext#getFileLinkStatus(Path)}
-   * except that an UnresolvedLinkException may be thrown if a symlink is  
+   * except that an UnresolvedLinkException may be thrown if a symlink is
    * encountered in the path leading up to the final path component.
    * If the file system does not support symlinks then the behavior is
    * equivalent to {@link AbstractFileSystem#getFileStatus(Path)}.
@@ -744,7 +749,7 @@ public abstract class AbstractFileSystem {
     // default impl gets FsStatus of root
     return getFsStatus();
   }
-  
+
   /**
    * The specification of this method matches that of
    * {@link FileContext#getFsStatus(Path)}.
@@ -763,12 +768,12 @@ public abstract class AbstractFileSystem {
     return new Iterator<FileStatus>() {
       private int i = 0;
       private FileStatus[] statusList = listStatus(f);
-      
+
       @Override
       public boolean hasNext() {
         return i < statusList.length;
       }
-      
+
       @Override
       public FileStatus next() {
         if (!hasNext()) {
@@ -776,7 +781,7 @@ public abstract class AbstractFileSystem {
         }
         return statusList[i++];
       }
-      
+
       @Override
       public void remove() {
         throw new UnsupportedOperationException("Remove is not supported");
@@ -786,7 +791,7 @@ public abstract class AbstractFileSystem {
 
   /**
    * The specification of this method matches that of
-   * {@link FileContext.Util#listStatus(Path)} except that Path f must be 
+   * {@link FileContext.Util#listStatus(Path)} except that Path f must be
    * for this file system.
    */
   protected abstract FileStatus[] listStatus(final Path f)
