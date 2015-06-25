@@ -26,6 +26,8 @@ import org.apache.hadoop.classification.InterfaceStability;
  * FSInputStream is a generic old InputStream with a little bit
  * of RAF-style seek ability.
  *
+ * FSInputStream 是一个抽象类，继承了基本的{@link java.io.InputStream}, 并且提供了
+ * 随机文件读写(RAF)的能力。
  *****************************************************************/
 @InterfaceAudience.LimitedPrivate({"HDFS"})
 @InterfaceStability.Unstable
@@ -35,17 +37,27 @@ public abstract class FSInputStream extends InputStream
    * Seek to the given offset from the start of the file.
    * The next read() will be from that location.  Can't
    * seek past the end of the file.
+   *
+   * Seek方法将当前偏移量移动到<code>pos</code>，偏移量都是相对
+   * 于文件的开头，下一次read()调用将会从<code>pos</code>处开始
+   * 读取。该方法不能将偏移量设置到超出文件长度的位置。
+   *
    */
   public abstract void seek(long pos) throws IOException;
 
   /**
    * Return the current offset from the start of the file
+   *
+   * 返回当前的偏移量，该偏移量相对于文件开始处。
    */
   public abstract long getPos() throws IOException;
 
   /**
-   * Seeks a different copy of the data.  Returns true if 
+   * Seeks a different copy of the data.  Returns true if
    * found a new source, false otherwise.
+   *
+   * 将输入源切换到一个新的输入源，并且将偏移量移动到<code>pos</code>。
+   * 此方法在FTP、S3、Local
    */
   public abstract boolean seekToNewSource(long targetPos) throws IOException;
 
@@ -63,7 +75,7 @@ public abstract class FSInputStream extends InputStream
       return nread;
     }
   }
-    
+
   public void readFully(long position, byte[] buffer, int offset, int length)
     throws IOException {
     int nread = 0;
@@ -75,7 +87,7 @@ public abstract class FSInputStream extends InputStream
       nread += nbytes;
     }
   }
-    
+
   public void readFully(long position, byte[] buffer)
     throws IOException {
     readFully(position, buffer, 0, buffer.length);
