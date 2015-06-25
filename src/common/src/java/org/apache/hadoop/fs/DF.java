@@ -157,7 +157,7 @@ public class DF extends Shell {
     return new String[] {"bash","-c","exec 'df' '-k' '" + dirPath + "' 2>/dev/null"};
   }
 
-  // 解析运行Shell命令输出
+  // 解析Shell命令的运行输出
   @Override
   protected void parseExecResult(BufferedReader lines) throws IOException {
     lines.readLine();                         // skip headings
