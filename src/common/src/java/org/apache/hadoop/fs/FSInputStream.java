@@ -73,10 +73,10 @@ public abstract class FSInputStream extends InputStream
    * 该方法可以从指定的文件位置处，往buffer指定的字节数组的offset位置读入length
    * 个字节，并且可以恢复文件读取位置到读取之前的状态，并且该方法是线程安全的。
    *
-   * @param position
-   * @param buffer
-   * @param offset
-   * @param length
+   * @param position 读取位置
+   * @param buffer 读取数据将要放入的字节数组
+   * @param offset 数据放入字节数组的偏移量
+   * @param length 要读取的字节数
    * @return  成功读取的字节数
    * @throws IOException
    */
@@ -100,10 +100,10 @@ public abstract class FSInputStream extends InputStream
    * 但是read方法允许读取到的字节数小于length，而readFully方法一定读取到length
    * 个字节，除非出现EOF或者{@link java.io.IOException}
    *
-   * @param position
-   * @param buffer
-   * @param offset
-   * @param length
+   * @param position 读取位置
+   * @param buffer 读取数据将要放入的字节数组
+   * @param offset 数据放入字节数组的偏移量
+   * @param length 要读取的字节数
    * @throws IOException
    */
 
@@ -122,8 +122,8 @@ public abstract class FSInputStream extends InputStream
   /**
    * {@link FSInputStream#readFully(long, byte[], int, int)}的另一个版本，
    * 即从buffer的开始处放入buffer长度个字节。
-   * @param position
-   * @param buffer
+   * @param position 读取位置
+   * @param buffer 读取数据将要放入的字节数组
    * @throws IOException
    */
   public void readFully(long position, byte[] buffer)

@@ -133,29 +133,34 @@ abstract public class FSInputChecker extends FSInputStream {
    * 因为len不是ChunkSize的整数倍而导致读取字节数小于len。
    *
    * @param pos chunk在文件中的位置
-   * @param buf
-   * @param offset offset in buf at which to store data
-   * @param len maximum number of bytes to read
-   * @param checksum the data buffer into which to write checksums
-   * @return number of bytes read
+   * @param buf  读取数据将要放入的字节数组
+   * @param offset 数据放入字节数组的偏移量
+   * @param len 要读取的字节数
+   * @param checksum 校验和将要放入的字节数组
+   * @return 实际读取的字节数
    */
   abstract protected int readChunk(long pos, byte[] buf, int offset, int len,
       byte[] checksum) throws IOException;
 
-  /** Return position of beginning of chunk containing pos.
-   *
-   * @param pos a postion in the file
-   * @return the starting position of the chunk which contains the byte
+  /**
+   * 返回pos位置所在的Chunk
+   * @param pos 文件中的位置
+   * @return pos位置所在的Chunk的起始位置
    */
   abstract protected long getChunkPosition(long pos);
 
-  /** Return true if there is a need for checksum verification */
+  /**
+   * 返回是否需要校验
+   * @return 需要true or 不需要false
+   */
   protected synchronized boolean needChecksum() {
     return verifyChecksum && sum != null;
   }
 
   /**
    * 从当前缓冲区读取一个字节
+   *
+   * @return   返回读取的字节，如果碰到EOF则返回-1
    */
 
   public synchronized int read() throws IOException {
@@ -169,34 +174,15 @@ abstract public class FSInputChecker extends FSInputStream {
   }
 
   /**
-   * Read checksum verified bytes from this byte-input stream into
-   * the specified byte array, starting at the given offset.
-   * 从缓冲区
-   * <p> This method implements the general contract of the corresponding
-   * <code>{@link InputStream#read(byte[], int, int) read}</code> method of
-   * the <code>{@link InputStream}</code> class.  As an additional
-   * convenience, it attempts to read as many bytes as possible by repeatedly
-   * invoking the <code>read</code> method of the underlying stream.  This
-   * iterated <code>read</code> continues until one of the following
-   * conditions becomes true: <ul>
+   * 读取len个字节到字节数组b的偏移量off处，读取的数据都经过校验。
+   * 此方法会尝试不断读取，知道读取到len个字节，直到EOF或者IOException
    *
-   *   <li> The specified number of bytes have been read,
-   *
-   *   <li> The <code>read</code> method of the underlying stream returns
-   *   <code>-1</code>, indicating end-of-file.
-   *
-   * </ul> If the first <code>read</code> on the underlying stream returns
-   * <code>-1</code> to indicate end-of-file then this method returns
-   * <code>-1</code>.  Otherwise this method returns the number of bytes
-   * actually read.
-   *
-   * @param      b     destination buffer.
-   * @param      off   offset at which to start storing bytes.
-   * @param      len   maximum number of bytes to read.
-   * @return     the number of bytes read, or <code>-1</code> if the end of
-   *             the stream has been reached.
-   * @exception  IOException  if an I/O error occurs.
-   *             ChecksumException if any checksum error occurs
+   * @param b 读取数据将要放入的字节数组
+   * @param off 数据放入字节数组的偏移量
+   * @param len 要读取的字节数
+   * @return   返回实际读取的字节数，如果碰到EOF则返回-1
+   * @exception  IOException  当有IO错误发生.
+   *             ChecksumException 当校验失败
    */
   public synchronized int read(byte[] b, int off, int len) throws IOException {
     // parameter check
@@ -218,12 +204,9 @@ abstract public class FSInputChecker extends FSInputStream {
   }
 
   /**
-   * Fills the buffer with a chunk data.
-   * No mark is supported.
-   * This method assumes that all data in the buffer has already been read in,
-   * hence pos > count.
+   * 向buf中填充一个经过校验的chunk
    */
-  private void fill(  ) throws IOException {
+  privates void fill(  ) throws IOException {
     assert(pos>=count);
     // fill internal buffer
     count = readChecksumChunk(buf, 0, maxChunkSize);
@@ -231,8 +214,14 @@ abstract public class FSInputChecker extends FSInputStream {
   }
 
   /**
-   * Read characters into a portion of an array, reading from the underlying
-   * stream at most once if necessary.
+   * 读取len个字节到字节数组b的偏移量off处，如果len超出了Chunk的大小
+   * 则会先向缓冲区中填入一个Chunk，再从buf复制到b中。
+   *
+   * @param b 读取数据将要放入的字节数组
+   * @param off 数据放入字节数组的偏移量
+   * @param len 要读取的字节数
+   * @return 成功读取的字节数
+   * @throws IOException
    */
   private int read1(byte b[], int off, int len)
   throws IOException {
@@ -260,15 +249,9 @@ abstract public class FSInputChecker extends FSInputStream {
     return cnt;
   }
 
-  /** Read up one or more checksum chunk to array <i>b</i> at pos <i>off</i>
-   * It requires at least one checksum chunk boundary
-   * in between <cur_pos, cur_pos+len>
-   * and it stops reading at the last boundary or at the end of the stream;
-   * Otherwise an IllegalArgumentException is thrown.
-   * This makes sure that all data read are checksum verified.
-   *
-   * 读取一个或多个经过校验和检查的Chunk到b指定的字节数组的偏移量offset处
-   *
+  /**
+   * 读取一个或多个经过校验和检查的Chunk到b指定的字节数组的偏移量offset处，
+   * 这个方法保证所有读取到的数据都是经过校验。
    *
    * @param b   读取数据将要放入的字节数组
    * @param off 数据放入字节数组的偏移量
@@ -319,6 +302,15 @@ abstract public class FSInputChecker extends FSInputStream {
     return read;
   }
 
+  /**
+   * 计算字节数组b中的要进行校验的数据的校验和，并与checksum中的，即当前读取的
+   * chunk的校验和进行比较
+   *
+   * @param b 要进行校验的字节数组
+   * @param off 要进行校验的数据在字节数组的偏移量
+   * @param read 要校验的字节数
+   * @throws ChecksumException
+   */
   private void verifySums(final byte b[], final int off, int read)
     throws ChecksumException
   {
