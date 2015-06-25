@@ -453,10 +453,11 @@ abstract public class FSInputChecker extends FSInputStream {
   /**
    * A utility function that tries to read up to <code>len</code> bytes from
    * <code>stm</code>
-   * 一个静态工具类
-   * @param stm    an input stream
-   * @param buf    destiniation buffer
-   * @param offset offset at which to store data
+   * 一个静态工具类，从<code>stm</code>中读取<code>len</code>个字节，放入buf
+   * 中的offset位置。
+   * @param stm    输入流
+   * @param buf    用来存放读取的数据的buf
+   * @param offset buf中位置的偏移量
    * @param len    number of bytes to read
    * @return actual number of bytes read
    * @throws IOException if there is any IO error

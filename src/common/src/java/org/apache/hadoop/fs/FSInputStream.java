@@ -38,9 +38,9 @@ public abstract class FSInputStream extends InputStream
    * The next read() will be from that location.  Can't
    * seek past the end of the file.
    *
-   * Seek方法将当前偏移量移动到<code>pos</code>，偏移量都是相对
+   * Seek方法将当前读取位置移动到<code>pos</code>，读取位置都是相对
    * 于文件的开头，下一次read()调用将会从<code>pos</code>处开始
-   * 读取。该方法不能将偏移量设置到超出文件长度的位置。
+   * 读取。该方法不能将读取位置设置到超出文件长度的位置。
    *
    */
   public abstract void seek(long pos) throws IOException;
@@ -48,7 +48,7 @@ public abstract class FSInputStream extends InputStream
   /**
    * Return the current offset from the start of the file
    *
-   * 返回当前的偏移量，该偏移量相对于文件开始处。
+   * 返回当前的读取位置，该读取位置相对于文件开始处。
    */
   public abstract long getPos() throws IOException;
 
@@ -56,14 +56,14 @@ public abstract class FSInputStream extends InputStream
    * Seeks a different copy of the data.  Returns true if
    * found a new source, false otherwise.
    *
-   * 将输入源切换到一个新的输入源，并且将偏移量移动到<code>pos</code>。
+   * 将输入源切换到一个新的输入源，并且将读取位置移动到<code>pos</code>。
    * 此方法在FTP、S3、Local等文件系统上均无实现（直接返回false），现有
    * 的唯一实现在
    * {@link org.apache.hadoop.hdfs.DFSInputStream#seekToNewSource(long targetPos)}
-   * ，其功能是在当前读取的Block失效时，切换到新的Block，并且移动偏移量，操作成
+   * ，其功能是在当前读取的Block失效时，切换到新的Block，并且移动读取位置，操作成
    * 功时返回true。
    *
-   * @param targetPos 目标偏移量
+   * @param targetPos 目标读取位置
    * @return 成功true or 失败false
    * @throws IOException
    */
