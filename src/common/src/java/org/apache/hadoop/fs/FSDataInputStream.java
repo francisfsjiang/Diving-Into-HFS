@@ -23,7 +23,13 @@ import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 
 /** Utility that wraps a {@link FSInputStream} in a {@link DataInputStream}
- * and buffers input through a {@link BufferedInputStream}. */
+ * and buffers input through a {@link BufferedInputStream}.
+ *
+ * 一个包装类，类似于{@link DataInputStream}， 里面包装了一个
+ * 实现了{@link Seekable}和{@link PositionReadbale}接口的
+ * {@link java.io.InputStream}（通常是传入{@link FSInputStream}）,
+ * 此类的方法都是通过调用被包装对象的对应方法来实现的。
+ */
 @InterfaceAudience.Public
 @InterfaceStability.Stable
 public class FSDataInputStream extends DataInputStream

@@ -70,15 +70,14 @@ public abstract class FSInputStream extends InputStream
   public abstract boolean seekToNewSource(long targetPos) throws IOException;
 
   /**
-   * 该方法包装了{@link java.io.InputStream#read(byte[], int, int)}，
    * 该方法可以从指定的文件偏移量处，往buffer指定的字节数组的offset位置读入length
-   * 个字节，并且可以恢复文件偏移量到读取之前的状态。
+   * 个字节，并且可以恢复文件偏移量到读取之前的状态，并且该方法是线程安全地。
    *
    * @param position
    * @param buffer
    * @param offset
    * @param length
-   * @return  成功写入的字节数
+   * @return  成功读取的字节数
    * @throws IOException
    */
   public int read(long position, byte[] buffer, int offset, int length)
@@ -98,7 +97,8 @@ public abstract class FSInputStream extends InputStream
 
   /**
    * 该方法与{@link FSInputStream#read(long, byte[], int, int)}类似，
-   * 但是该方法会不断地读取，直到读满或者抛出EOF或者出现{@link java.io.IOException}。
+   * 但是read方法允许读取到的字节数小于length，而readFully方法一定读取到length
+   * 个字节，除非出现EOF或者{@link java.io.IOException}
    *
    * @param position
    * @param buffer
@@ -121,7 +121,7 @@ public abstract class FSInputStream extends InputStream
 
   /**
    * {@link FSInputStream#readFully(long, byte[], int, int)}的另一个版本，
-   * 即从buffer的开始处读取buffer长度个字节。
+   * 即从buffer的开始处放入buffer长度个字节。
    * @param position
    * @param buffer
    * @throws IOException

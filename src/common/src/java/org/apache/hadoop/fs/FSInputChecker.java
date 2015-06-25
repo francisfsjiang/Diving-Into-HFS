@@ -30,7 +30,7 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 /**
- * FSInputChecker
+ * FSInputChecker是一个抽象类，继承了{@link FSInputStream}，
  */
 @InterfaceAudience.LimitedPrivate({"HDFS"})
 @InterfaceStability.Unstable
@@ -38,47 +38,84 @@ abstract public class FSInputChecker extends FSInputStream {
   public static final Log LOG 
   = LogFactory.getLog(FSInputChecker.class);
   
-  /** The file name from which data is read from */
+  /**
+   * 保存被读取对象的文件路径。
+   */
   protected Path file;
+  /**
+   * 提供校验和方法的类
+   */
   private Checksum sum;
+  /**
+   * 标志是否需要在读取文件时进行校验和
+   */
   private boolean verifyChecksum = true;
+  /**
+   * 每次读取的Chunk的字节数
+   */
   private int maxChunkSize; // data bytes for checksum (eg 512)
+  /**
+   * 缓存从文件中已经读取的内容
+   */
   private byte[] buf; // buffer for non-chunk-aligned reading
+  /**
+   * 缓存从文件中已经读取的校验和
+   */
   private byte[] checksum;
   private IntBuffer checksumInts; // wrapper on checksum buffer
+  /**
+   * buf中目前的读取位置
+   */
   private int pos; // the position of the reader inside buf
+  /**
+   * 目前在count中的字节数
+   */
   private int count; // the number of bytes currently in buf
-  
+  /**
+   * 校验和失败之后的重试次数
+   */
   private int numOfRetries;
-  
+
+  /**
+   * 保存了被读取文件的目前读取位置，应该是<code>maxChunkSize</code>
+   * 的整数倍
+   */
   // cached file position
   // this should always be a multiple of maxChunkSize
   private long chunkPos = 0;
 
+  /**
+   * 每次可以被读取到用户buffer的最大chunk数量，也就是说每次可以被读取到
+   * 用户buffer的字节数最大为<code>CHUNKS_PER_READ * maxChunkSize</code>。
+   * 此处值为实际测试所获取的值，更大的值也不会降低CPU使用量。
+   */
   // Number of checksum chunks that can be read at once into a user
   // buffer. Chosen by benchmarks - higher values do not reduce
   // CPU usage. The size of the data reads made to the underlying stream
   // will be CHUNKS_PER_READ * maxChunkSize.
   private static final int CHUNKS_PER_READ = 32;
+  /**
+   * 数据校验和默认为32bit
+   */
   protected static final int CHECKSUM_SIZE = 4; // 32-bit checksum
 
-  /** Constructor
-   * 
-   * @param file The name of the file to be read
-   * @param numOfRetries Number of read retries when ChecksumError occurs
+  /**
+   * 构造函数
+   * @param file 要读取的目标文件
+   * @param numOfRetries 当校验和失败是需要的重试次数
    */
-  protected FSInputChecker( Path file, int numOfRetries) {
+  protected FSInputChecker(Path file, int numOfRetries) {
     this.file = file;
     this.numOfRetries = numOfRetries;
   }
   
-  /** Constructor
-   * 
-   * @param file The name of the file to be read
-   * @param numOfRetries Number of read retries when ChecksumError occurs
-   * @param sum the type of Checksum engine
-   * @param chunkSize maximun chunk size
-   * @param checksumSize the number byte of each checksum
+  /**
+   * 构造函数
+   * @param file 要读取的目标文件
+   * @param numOfRetries 当校验和失败是需要的重试次数
+   * @param sum 提供校验和方法的类
+   * @param chunkSize 指定Chunk的字节数
+   * @param checksumSize 指定Checksum值的大小
    */
   protected FSInputChecker( Path file, int numOfRetries, 
       boolean verifyChecksum, Checksum sum, int chunkSize, int checksumSize ) {
@@ -108,6 +145,7 @@ abstract public class FSInputChecker extends FSInputStream {
    *
    * The method is used for implementing read, therefore, it should be optimized
    * for sequential reading.
+   *
    *
    * @param pos chunkPos
    * @param buf desitination buffer
@@ -241,7 +279,7 @@ abstract public class FSInputChecker extends FSInputStream {
     return cnt;    
   }
   
-  /* Read up one or more checksum chunk to array <i>b</i> at pos <i>off</i>
+  /** Read up one or more checksum chunk to array <i>b</i> at pos <i>off</i>
    * It requires at least one checksum chunk boundary
    * in between <cur_pos, cur_pos+len> 
    * and it stops reading at the last boundary or at the end of the stream;
@@ -415,7 +453,7 @@ abstract public class FSInputChecker extends FSInputStream {
   /**
    * A utility function that tries to read up to <code>len</code> bytes from
    * <code>stm</code>
-   * 
+   * 一个静态工具类
    * @param stm    an input stream
    * @param buf    destiniation buffer
    * @param offset offset at which to store data
@@ -437,11 +475,12 @@ abstract public class FSInputChecker extends FSInputStream {
   }
   
   /**
-   * Set the checksum related parameters
-   * @param verifyChecksum whether to verify checksum
-   * @param sum which type of checksum to use
-   * @param maxChunkSize maximun chunk size
-   * @param checksumSize checksum size
+   * 设置校验和相关参数
+   *
+   * @param verifyChecksum 是否需要进行校验和
+   * @param sum 提供校验和方法的类
+   * @param chunkSize 指定Chunk的字节数
+   * @param checksumSize 指定Checksum值的大小
    */
   final protected synchronized void set(boolean verifyChecksum,
       Checksum sum, int maxChunkSize, int checksumSize) {
