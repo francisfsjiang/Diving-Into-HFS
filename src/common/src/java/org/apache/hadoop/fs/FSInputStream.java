@@ -70,8 +70,8 @@ public abstract class FSInputStream extends InputStream
   public abstract boolean seekToNewSource(long targetPos) throws IOException;
 
   /**
-   * 该方法可以从指定的文件偏移量处，往buffer指定的字节数组的offset位置读入length
-   * 个字节，并且可以恢复文件偏移量到读取之前的状态，并且该方法是线程安全地。
+   * 该方法可以从指定的文件位置处，往buffer指定的字节数组的offset位置读入length
+   * 个字节，并且可以恢复文件读取位置到读取之前的状态，并且该方法是线程安全的。
    *
    * @param position
    * @param buffer
