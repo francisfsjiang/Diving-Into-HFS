@@ -27,6 +27,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicLong;
 
+////////////////////////////////////////
+//
+// 文件夹的磁盘使用状态
+// 继承自{org.apache.hadoop.util.Shell}，在Shell中调用系统工具
+// 使用{du -sk <path>}实现，该命令无法在Windows环境下使用
+// 在Windows环境下使用{dir <path>}能得到相关信息，但无关的输出过多
+// 内部使用一个线程定期执行命令刷新状态
+//
 /** Filesystem disk space usage statistics.  Uses the unix 'du' program*/
 @InterfaceAudience.LimitedPrivate({"HDFS", "MapReduce"})
 @InterfaceStability.Evolving
@@ -68,6 +76,10 @@ public class DU extends Shell {
     //10 minutes default refresh interval
   }
 
+  ////////////////////////////////
+  //
+  // 刷新线程
+  //
   /**
    * This thread refreshes the "used" variable.
    * 
@@ -150,9 +162,8 @@ public class DU extends Shell {
    */
   public void start() {
     //only start the thread if the interval is sane
-    if(refreshInterval > 0) {
-      refreshUsed = new Thread(new DURefreshThread(), 
-          "refreshUsed-"+dirPath);
+    if (refreshInterval > 0) {
+      refreshUsed = new Thread(new DURefreshThread(), "refreshUsed-" + dirPath);
       refreshUsed.setDaemon(true);
       refreshUsed.start();
     }
@@ -164,31 +175,31 @@ public class DU extends Shell {
   public void shutdown() {
     this.shouldRun = false;
     
-    if(this.refreshUsed != null) {
+    if (this.refreshUsed != null) {
       this.refreshUsed.interrupt();
     }
   }
   
   public String toString() {
-    return
-      "du -sk " + dirPath +"\n" +
-      used + "\t" + dirPath;
+    return "du -sk " + dirPath +"\n" + used + "\t" + dirPath;
   }
 
+  // 检测命令
   protected String[] getExecString() {
     return new String[] {"du", "-sk", dirPath};
   }
-  
+
+  // 解析输出
   protected void parseExecResult(BufferedReader lines) throws IOException {
     String line = lines.readLine();
     if (line == null) {
       throw new IOException("Expecting a line not the end of stream");
     }
     String[] tokens = line.split("\t");
-    if(tokens.length == 0) {
+    if (tokens.length == 0) {
       throw new IOException("Illegal du output");
     }
-    this.used.set(Long.parseLong(tokens[0])*1024);
+    this.used.set(Long.parseLong(tokens[0]) * 1024);
   }
 
   public static void main(String[] args) throws Exception {
