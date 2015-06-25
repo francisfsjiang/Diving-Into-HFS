@@ -27,7 +27,7 @@ import org.apache.hadoop.classification.InterfaceStability;
  * of RAF-style seek ability.
  *
  * FSInputStream 是一个抽象类，继承了基本的{@link java.io.InputStream}, 并且提供了
- * 随机文件读写(RAF)的能力。
+ * 随机文件读写(Random Access File)的能力。
  *****************************************************************/
 @InterfaceAudience.LimitedPrivate({"HDFS"})
 @InterfaceStability.Unstable
@@ -57,10 +57,31 @@ public abstract class FSInputStream extends InputStream
    * found a new source, false otherwise.
    *
    * 将输入源切换到一个新的输入源，并且将偏移量移动到<code>pos</code>。
-   * 此方法在FTP、S3、Local
+   * 此方法在FTP、S3、Local等文件系统上均无实现（直接返回false），现有
+   * 的唯一实现在
+   * {@link org.apache.hadoop.hdfs.DFSInputStream#seekToNewSource(long targetPos)}
+   * ，其功能是在当前读取的Block失效时，切换到新的Block，并且移动偏移量，操作成
+   * 功时返回true。
+   *
+   * @param targetPos 目标偏移量
+   * @return 成功true or 失败false
+   * @throws IOException
    */
   public abstract boolean seekToNewSource(long targetPos) throws IOException;
 
+  /**
+   *
+   * 该方法包装了{@link java.io.InputStream#read(byte[], int, int)}，
+   * 该方法可以从指定的文件偏移量处，往buffer指定的字节数组的offset位置读入length
+   * 个字节，并且可以恢复文件偏移量到读取之前的状态。
+   *
+   * @param position
+   * @param buffer
+   * @param offset
+   * @param length
+   * @return  成功写入的字节数
+   * @throws IOException
+   */
   public int read(long position, byte[] buffer, int offset, int length)
     throws IOException {
     synchronized (this) {
@@ -76,6 +97,17 @@ public abstract class FSInputStream extends InputStream
     }
   }
 
+  /**
+   * 该方法与{@link FSInputStream#read(long, byte[], int, int)}类似，
+   * 但是该方法会不断地读取，直到读满或者抛出EOF或者出现{@link java.io.IOException}。
+   *
+   * @param position
+   * @param buffer
+   * @param offset
+   * @param length
+   * @throws IOException
+   */
+
   public void readFully(long position, byte[] buffer, int offset, int length)
     throws IOException {
     int nread = 0;
@@ -88,6 +120,13 @@ public abstract class FSInputStream extends InputStream
     }
   }
 
+  /**
+   * {@link FSInputStream#readFully(long, byte[], int, int)}的另一个版本，
+   * 即从buffer的开始处读取buffer长度个字节。
+   * @param position
+   * @param buffer
+   * @throws IOException
+   */
   public void readFully(long position, byte[] buffer)
     throws IOException {
     readFully(position, buffer, 0, buffer.length);

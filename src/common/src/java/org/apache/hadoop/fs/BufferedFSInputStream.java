@@ -80,6 +80,9 @@ implements Seekable, PositionedReadable {
     ((FSInputStream)in).seek(pos);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   public boolean seekToNewSource(long targetPos) throws IOException {
     pos = 0;
     count = 0;
