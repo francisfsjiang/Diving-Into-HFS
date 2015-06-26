@@ -17,7 +17,7 @@
 ]{scrreprt}%
 
 % **************************************************
-% Debug LaTeX Information
+% LaTeX调试信息
 % **************************************************
 %\listfiles
 
@@ -50,10 +50,12 @@
 	colorize=full,%
 	colortheme=bluemagenta,%
 ]{xecleanthesis}
+\usepackage{ctex}
+\usepackage{listings}
 \usepackage{xetool}
 \usepackage{xedef}
 
-\hypersetup{%                   % setup the hyperref-package options
+\hypersetup{					% setup the hyperref-package options
 	pdftitle={\thesisTitle},	% 	- title (PDF meta)
 	pdfsubject={\thesisSubject},% 	- subject (PDF meta)
 	pdfauthor={\thesisName},	% 	- author (PDF meta)
@@ -63,6 +65,22 @@
 	breaklinks=true,			% 	- allow line break inside links
 	bookmarksnumbered=true,		%
 	bookmarksopen=true			%
+}
+\lstset{
+	numbers=left,          % 左侧显示行号
+	tabsize=4,             % tab = 4 space
+	frame=lines,           % 水平线分割代码区域
+	breaklines=true,       % 说来下面四个选项是干嘛来着
+	extendedchars=false,
+	showstringspaces=true,
+	texcl=true
+}
+\lstdefinestyle{javaSuck}{
+	language=Java,
+	basicstyle=\ttfamily,
+	lineskip=0pt,
+	aboveskip=0pt,
+	belowskip=0pt
 }
 
 % **************************************************
@@ -104,8 +122,7 @@
 \setcounter{page}{1}			% set page counter
 \pagestyle{maincontentstyle} 	% fancy header and footer
 
-\input{content/chapter-introduction}
-\input{content/chapter-hfs}
+\input{content/chapter-overview}
 \input{content/chapter-hfs-arch}
 \input{content/chapter-src-env}
 \cleardoublepage
@@ -122,15 +139,16 @@
 \printbibliography[nottype=online]
 \printbibliography[heading=subbibliography,title={Webseiten},type=online,prefixnumbers={@}]
 }
+\cleardoublepage
 
 \listoffigures
-\newpage
+\cleardoublepage
 
 \listoftables
-\newpage
+\cleardoublepage
 
 \input{content/colophon}
-\newpage
+\cleardoublepage
 
 \input{content/declaration}
 \clearpage
