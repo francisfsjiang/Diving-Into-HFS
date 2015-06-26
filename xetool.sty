@@ -1,0 +1,13 @@
+\ProvidesPackage{xetool}
+
+\newcommand{\SAAuthor}[3]{%
+	\begin{minipage}[t]{.27\textwidth}
+		\raggedleft
+		{\Large #1}
+	\end{minipage}
+	\hspace*{5pt}
+	\begin{minipage}[t]{.65\textwidth}
+		{\Large #2} {\Large #3} \\[-1mm]
+	\end{minipage}}
+\newenvironment{SAAuthors}{}{\\[1cm]}
+

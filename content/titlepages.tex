@@ -1,0 +1,57 @@
+% !TEX root = ../thesis-example.tex
+%
+% ------------------------------------  --> cover title page
+\begin{titlepage}
+	\pdfbookmark[0]{封面}{Cover}
+	\flushright
+	\hfill
+	\vfill
+	{\LARGE\thesisTitle} \par
+	\rule[5pt]{\textwidth}{.4pt} \par
+	{\Large\thesisTeam}
+	\vfill
+	\textit{\large\thesisDate} \\
+	版本: \thesisVersion
+\end{titlepage}
+
+
+% ------------------------------------  --> main title page
+\begin{titlepage}
+	\pdfbookmark[0]{标题页}{Titlepage}
+	\tgherosfont
+	\centering
+	
+	{\Large \thesisUniversity} \\[4mm]
+	\includegraphics[width=6cm]{gfx/Clean-Thesis-Logo} \\[2mm]
+	\textsf{\thesisUniversityInstitute} \\
+	\textsf{\thesisUniversityGroup} \\
+	
+	\vfill
+	{\large \thesisSubject} \\[5mm]
+	{\LARGE \color{ctcolormain}\textbf{\thesisTitle} \\[10mm]}
+	{\Large \thesisTeam} \\
+	
+	\vfill
+    \begin{SAAuthors}
+        \SAAuthor{$\dagger$}{金\hspace{1em}超}{13120018}
+        \SAAuthor{$\dagger$}{邹\hspace{1em}昌}{13120023}
+        \SAAuthor{$\dagger$}{王佳成}{13120026}
+        \SAAuthor{$\dagger$}{蒋方朔}{13120031}
+        \SAAuthor{$\dagger$}{刘宇飞}{13120032}
+        \SAAuthor{$\dagger$}{李志豪}{13121340}
+    \end{SAAuthors}
+    \thesisUniversityGroup \\
+	\thesisDate \\
+\end{titlepage}
+
+
+% ------------------------------------  --> lower title back for single page layout
+\hfill
+\vfill
+\small
+\textbf{\thesisTitle} \\
+\thesisSubject \\
+\textbf{\thesisUniversity} \\
+\thesisUniversityInstitute \\
+\textit{\thesisUniversityGroup} \\
+\thesisDate
