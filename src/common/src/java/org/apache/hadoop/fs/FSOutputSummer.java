@@ -26,35 +26,48 @@ import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 
 /**
- * This is a generic output stream for generating checksums for
- * data before it is written to the underlying stream
+ * 此类是一个抽象类，主要功能是在写入流之前进行校验
  */
 @InterfaceAudience.LimitedPrivate({"HDFS"})
 @InterfaceStability.Unstable
 abstract public class FSOutputSummer extends OutputStream {
   // data checksum
   private Checksum sum;
-  // internal buffer for storing data before it is checksumed
+  /**
+   * 数据缓冲区
+   */
   private byte buf[];
-  // internal buffer for storing checksum
+  /**
+   * 校验和缓冲区
+   */
   private byte checksum[];
-  // The number of valid bytes in the buffer.
+  /**
+   * 缓冲区内字节数量
+   */
   private int count;
-  
+
   protected FSOutputSummer(Checksum sum, int maxChunkSize, int checksumSize) {
     this.sum = sum;
     this.buf = new byte[maxChunkSize];
     this.checksum = new byte[checksumSize];
     this.count = 0;
   }
-  
-  /* write the data chunk in <code>b</code> staring at <code>offset</code> with
-   * a length of <code>len</code>, and its checksum
+
+  /**
+   * 向输出流写入Chunk和其校验和，数据长度为len，位于b字节数组中偏移量为offset的位置。
+   *
+   * @param b 输出数据所在的字节数组
+   * @param offset 数据在字节数组中的偏移量
+   * @param len 数据长度
+   * @param checksum 数据所对应的校验和
+   * @throws IOException
    */
   protected abstract void writeChunk(byte[] b, int offset, int len, byte[] checksum)
   throws IOException;
 
-  /** Write one byte */
+  /**
+   * 向buffer写入一个字节，在当前buffer满时，flush当前buffer
+   */
   public synchronized void write(int b) throws IOException {
     sum.update(b);
     buf[count++] = (byte)b;
@@ -64,17 +77,8 @@ abstract public class FSOutputSummer extends OutputStream {
   }
 
   /**
-   * Writes <code>len</code> bytes from the specified byte array 
-   * starting at offset <code>off</code> and generate a checksum for
-   * each data chunk.
-   *
-   * <p> This method stores bytes from the given array into this
-   * stream's buffer before it gets checksumed. The buffer gets checksumed 
-   * and flushed to the underlying output stream when all data 
-   * in a checksum chunk are in the buffer.  If the buffer is empty and
-   * requested length is at least as large as the size of next checksum chunk
-   * size, this method will checksum and write the chunk directly 
-   * to the underlying output stream.  Thus it avoids uneccessary data copy.
+   * 写入数据，数据长度为len，位于b字节数组中偏移量为offset的位置，该方法通过多次
+   * 写入，保证一定会写入len长度的数据，除非发生{@link IOException}。
    *
    * @param      b     the data.
    * @param      off   the start offset in the data.
@@ -90,10 +94,13 @@ abstract public class FSOutputSummer extends OutputStream {
     for (int n=0;n<len;n+=write1(b, off+n, len-n)) {
     }
   }
-  
+
   /**
-   * Write a portion of an array, flushing to the underlying
-   * stream at most once if necessary.
+   * 写入数据，数据长度为len，位于b字节数组中偏移量为offset的位置，如果len大于buf的
+   * 长度，即一个Chunk的大小，那么只写入一个Chunk。
+   * 如果写入的数据小于一个Chunk，那么写入buf，如果len大于buf的剩余容量，则将len
+   * 个字节拷贝到buf中，否则将buf写满，
+   * 如果buf写满，则flush。
    */
   private int write1(byte b[], int off, int len) throws IOException {
     if(count==0 && len>=buf.length) {
@@ -118,16 +125,16 @@ abstract public class FSOutputSummer extends OutputStream {
     return bytesToCopy;
   }
 
-  /* Forces any buffered output bytes to be checksumed and written out to
-   * the underlying output stream. 
+  /**
+   * flush当前的buf，计算并写入checksum，写完后清空buf
    */
   protected synchronized void flushBuffer() throws IOException {
     flushBuffer(false);
   }
 
-  /* Forces any buffered output bytes to be checksumed and written out to
-   * the underlying output stream.  If keep is true, then the state of 
-   * this object remains intact.
+  /**
+   * flush当前的buf，计算并写入checksum，如果keep为true，那么在flush任然保持
+   * 写入之前的状态，即不清空buf。
    */
   protected synchronized void flushBuffer(boolean keep) throws IOException {
     if (count != 0) {
@@ -140,9 +147,9 @@ abstract public class FSOutputSummer extends OutputStream {
     }
   }
   
-  /** Generate checksum for the data chunk and output data chunk & checksum
-   * to the underlying output stream. If keep is true then keep the
-   * current checksum intact, do not reset it.
+  /**
+   * 将buf里的数据Chunk和其对应的校验和写入输出，如果keep为true，则会保持原
+   * buf的checksum，而不清空。
    */
   private void writeChecksumChunk(byte b[], int off, int len, boolean keep)
   throws IOException {
@@ -155,7 +162,7 @@ abstract public class FSOutputSummer extends OutputStream {
   }
 
   /**
-   * Converts a checksum integer value to a byte stream
+   * 计算buf中的数据的checksum，返回存放sum的字节数组。
    */
   static public byte[] convertToByteStream(Checksum sum, int checksumSize) {
     return int2byte((int)sum.getValue(), new byte[checksumSize]);
@@ -170,7 +177,7 @@ abstract public class FSOutputSummer extends OutputStream {
   }
 
   /**
-   * Resets existing buffer with a new one of the specified size.
+   * 重设buf的大小，新的大小为size。
    */
   protected synchronized void resetChecksumChunk(int size) {
     sum.reset();
