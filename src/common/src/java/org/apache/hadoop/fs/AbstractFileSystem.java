@@ -46,22 +46,27 @@ import org.apache.hadoop.security.AccessControlException;
 import org.apache.hadoop.util.Progressable;
 
 /**
- * AbstractFileSystem(下简称AFS)是提供给Hadoop FS体系下的具体文件系统实现者的。
- * AFS以抽象类的形式向Hadoop FS中的具体文件系统的实现者提供接口。
- * Hadoop FS的架构与Unix下VFS类似，应用不直接访问AFS实例，
- * 而是通过{@link FileContext}实例来访问文件系统中的文件。
- * 传递给AFS的路径(pathnames)可以是符合具体文件系统规定的、完全限定的URI，
- * 也可以是以给定文件系统的根目录为'/'目录的，以‘/’分隔的路径（同Unix体系）。
+ * AbstractFileSystem(下简称AFS)是提供给Hadoop FS体系下的具体文件系统实现者的接口.
+ * AFS以抽象类的形式向Hadoop FS中的具体文件系统的实现者提供接口.
+ * Hadoop FS的架构与Unix下VFS类似, 应用不直接访问AFS实例,
+ * 而是通过{@link FileContext}实例来访问文件系统中的文件.
+ * 传递给AFS的路径(pathnames)可以是符合具体文件系统规定的、完全限定的URI,
+ * 也可以是以给定文件系统的根目录为'/'目录的, 以‘/’分隔的路径（同Unix体系）.
  *
- * AFS实例由工厂方法{@link AbstractFileSystem#get(URI, Configuration)}创建。
- * AFS中封装了一批通用操作的抽象方法，这些方法由具体文件系统的实现者实现。
+ * 由于AbstractFileSystem本身是提供给文件系统实现者的接口,
+ * 且Hadoop FS中对文件的访问全部由{@link FileContext}控制, 所以,
+ * 这个类里没有public方法, 而是提供了三类protected方法:
+ * 
+ *
+ * AFS实例由工厂方法{@link AbstractFileSystem#get(URI, Configuration)}创建.
+ * AFS中封装了一批通用操作的抽象方法, 这些方法由具体文件系统的实现者实现.
  */
 @InterfaceAudience.Public
 @InterfaceStability.Evolving /*Evolving for a release,to be changed to Stable */
 public abstract class AbstractFileSystem {
   static final Log LOG = LogFactory.getLog(AbstractFileSystem.class);
 
-  /** 所有的AFS实例共享同一个统计数据、构造方法缓存和URI配置。*/
+  /** 所有的AFS实例共享同一个统计数据、构造方法缓存和URI配置. */
   /** Recording statistics per a file system class. */
   private static final Map<Class<? extends AbstractFileSystem>, Statistics>
   STATISTICS_TABLE =
@@ -101,6 +106,7 @@ public abstract class AbstractFileSystem {
   }
 
   /**
+   * 反射机制实现的初始化, URI和Configuration会被传递给实际的构造方法
    * Create an object for the given class and initialize it from conf.
    * @param theClass class of which an object is created
    * @param conf Configuration
@@ -125,8 +131,8 @@ public abstract class AbstractFileSystem {
   }
 
   /**
-   * 通URI和Configuration创建AFS实例，
-   * 该方法被直接用于{@link AbstractFileSystem#get(URI, Configuration)}
+   * 通URI和Configuration创建AFS实例,
+   * 该方法被直接用于工厂方法{@link AbstractFileSystem#get(URI, Configuration)}
    * Create a file system instance for the specified uri using the conf. The
    * conf is used to find the class name that implements the file system. The
    * conf is also passed to the file system for its configuration.
@@ -182,13 +188,12 @@ public abstract class AbstractFileSystem {
   }
 
   /**
-   * The main factory method for creating a file system. Get a file system for
-   * the URI's scheme and authority. The scheme of the <code>uri</code>
-   * determines a configuration property name,
-   * <tt>fs.AbstractFileSystem.<i>scheme</i>.impl</tt> whose value names the
-   * AbstractFileSystem class.
-   *
-   * The entire URI and conf is passed to the AbstractFileSystem factory method.
+   * 创建AbstractFileSystem实例的主要工厂方法, 通过URI的体系（scheme）和权限获取文件系统.
+   * URI中描述的体系确定配置中一个名为
+   * <tt>fs.AbstractFileSystem.<i>scheme</i>.impl</tt>
+   * 的属性, 这个属性的值就是该scheme对应的AbstractFileSystem类的具体实现.
+   * 完整的URI和配置信息会被传递给AbstractFileSystem的工厂方法, 即
+   * {@link AbstractFileSystem#createFileSystem(URI, Configuration)}
    *
    * @param uri for the file system to be created.
    * @param conf which is passed to the file system impl.
@@ -204,7 +209,7 @@ public abstract class AbstractFileSystem {
   }
 
   /**
-   * Constructor to be called by subclasses.
+   * 子类需用的构造方法, 该方法配置实例的URI和统计信息.
    *
    * @param uri for this file system.
    * @param supportedScheme the scheme supported by the implementor
@@ -232,9 +237,7 @@ public abstract class AbstractFileSystem {
   }
 
   /**
-   * Get the URI for the file system based on the given URI. The path, query
-   * part of the given URI is stripped out and default file system port is used
-   * to form the URI.
+   * 由给定的URI中截取文件系统根目录的URI.
    *
    * @param uri FileSystem URI.
    * @param authorityNeeded if true authority cannot be null in the URI. If
