@@ -27,6 +27,8 @@ import org.apache.hadoop.classification.InterfaceStability;
 
 /**
  * 此类是一个抽象类，主要功能是在写入流之前进行校验
+ *
+ * @author neveralso
  */
 @InterfaceAudience.LimitedPrivate({"HDFS"})
 @InterfaceStability.Unstable

@@ -22,13 +22,15 @@ import java.io.*;
 import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 
-/****************************************************************
+/**
  * FSInputStream is a generic old InputStream with a little bit
  * of RAF-style seek ability.
  *
  * FSInputStream 是一个抽象类，继承了基本的{@link java.io.InputStream}, 并且提供了
  * 随机文件读写(Random Access File)的能力。
- *****************************************************************/
+ *
+ * @author neveralso
+ */
 @InterfaceAudience.LimitedPrivate({"HDFS"})
 @InterfaceStability.Unstable
 public abstract class FSInputStream extends InputStream

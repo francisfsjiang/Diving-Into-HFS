@@ -28,6 +28,8 @@ import org.apache.hadoop.classification.InterfaceStability;
  * BufferedFSInputStream继承了{@link BufferedInputStream}，
  * 通过缓存来优化其内包装的对象{@ling FSInputStream}的读取
  * class optimizes reading from FSInputStream by bufferring
+ *
+ * @author neveralso
  */
 
 @InterfaceAudience.Private

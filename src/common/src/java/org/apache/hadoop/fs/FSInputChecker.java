@@ -33,6 +33,8 @@ import java.nio.IntBuffer;
  * FSInputChecker是一个抽象类，继承了{@link FSInputStream}，
  * 当<code>verifyChecksum</code>设置为true时，所用从该类读取
  * 的字节都是经过校验和校验的。
+ *
+ * @author neveralso
  */
 @InterfaceAudience.LimitedPrivate({"HDFS"})
 @InterfaceStability.Unstable
@@ -206,7 +208,7 @@ abstract public class FSInputChecker extends FSInputStream {
   /**
    * 向buf中填充一个经过校验的chunk
    */
-  privates void fill(  ) throws IOException {
+  private void fill(  ) throws IOException {
     assert(pos>=count);
     // fill internal buffer
     count = readChecksumChunk(buf, 0, maxChunkSize);

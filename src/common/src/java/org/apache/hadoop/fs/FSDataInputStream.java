@@ -29,6 +29,8 @@ import org.apache.hadoop.classification.InterfaceStability;
  * 实现了{@link Seekable}和{@link PositionReadbale}接口的
  * {@link java.io.InputStream}（通常是传入{@link FSInputStream}）,
  * 此类的方法都是通过调用被包装对象的对应方法来实现的。
+ *
+ * @author neveralso
  */
 @InterfaceAudience.Public
 @InterfaceStability.Stable
