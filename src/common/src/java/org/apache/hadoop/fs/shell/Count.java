@@ -25,7 +25,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
 /**
- * Count the number of directories, files, bytes, quota, and remaining quota.
+ * 对目录、文件、字节、磁盘配额和保留磁盘配额进行统计的CLI命令（count）
  */
 public class Count extends Command {
   public static final String NAME = "count";
@@ -39,10 +39,11 @@ public class Count extends Command {
   
   private boolean qOption;
 
-  /** Constructor
-   * 
-   * @param cmd the count command
-   * @param pos the starting index of the arguments 
+  /**
+   * 构造函数
+   *
+   * @param cmd 命令参数
+   * @param pos 参数起始位置
    */
   public Count(String[] cmd, int pos, Configuration conf) {
     super(conf);
@@ -55,10 +56,11 @@ public class Count extends Command {
     this.qOption = c.getOpt("q") ? true: false;
   }
   
-  /** Check if a command is the count command
+  /**
+   * 检查命令是否正确（匹配count命令）
    * 
-   * @param cmd A string representation of a command starting with "-"
-   * @return true if this is a count command; false otherwise
+   * @param cmd 以'-'开头表示命令的字符串
+   * @return true 表示匹配，false 表示失配
    */
   public static boolean matches(String cmd) {
     return ("-" + NAME).equals(cmd); 

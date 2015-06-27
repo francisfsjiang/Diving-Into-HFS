@@ -23,14 +23,21 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Parse the args of a command and check the format of args.
+ * 用于解析CLI命令参数并检查参数格式的工具类
  */
 public class CommandFormat {
   final String name;
   final int minPar, maxPar;
   final Map<String, Boolean> options = new HashMap<String, Boolean>();
 
-  /** constructor */
+  /**
+   * 构造函数
+   *
+   * @param n 命令名
+   * @param min 最小参数数
+   * @param max 最大参数数
+   * @param possibleOpt 选项（形如 -xxx 的开关性参数，不计入参数数）
+   */
   public CommandFormat(String n, int min, int max, String ... possibleOpt) {
     name = n;
     minPar = min;
@@ -39,11 +46,12 @@ public class CommandFormat {
       options.put(opt, Boolean.FALSE);
   }
 
-  /** Parse parameters starting from the given position
+  /**
+   * 从给定位置开始解析命令参数
    * 
-   * @param args an array of input arguments
-   * @param pos the position at which starts to parse
-   * @return a list of parameters
+   * @param args 存储参数的数组
+   * @param pos 参数起始位置
+   * @return 参数列表
    */
   public List<String> parse(String[] args, int pos) {
     List<String> parameters = new ArrayList<String>();
@@ -64,10 +72,11 @@ public class CommandFormat {
     return parameters;
   }
   
-  /** Return if the option is set or not
+  /**
+   * 检查选项是否开启
    * 
-   * @param option String representation of an option
-   * @return true is the option is set; false otherwise
+   * @param option 选项
+   * @return 开关状态
    */
   public boolean getOpt(String option) {
     return options.get(option);

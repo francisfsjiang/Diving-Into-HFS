@@ -17,6 +17,9 @@
  */
 package org.apache.hadoop.fs.shell;
 
+/**
+ * CLI命令相关的实用工具
+ */
 final class CommandUtils {
   static String formatDescription(String usage, String... desciptions) {
     StringBuilder b = new StringBuilder(usage + ": " + desciptions[0]);
