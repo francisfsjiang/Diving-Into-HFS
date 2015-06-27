@@ -27,7 +27,8 @@ import org.apache.hadoop.classification.InterfaceStability;
 
 /****************************************************************
  * Implement the FileSystem API for the checksumed local filesystem.
- *
+ * 本地文件系统，是对校验和文件系统的具体实现
+ * 主要方法包括寻找文件、复制文件、报告检验和错误等。
  *****************************************************************/
 @InterfaceAudience.Public
 @InterfaceStability.Stable

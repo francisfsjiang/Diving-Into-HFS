@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/src/common/src/common.iml" filepath="$PROJECT_DIR$/src/common/src/common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/common/src/contrib/failmon/src/failmon.iml" filepath="$PROJECT_DIR$/src/common/src/contrib/failmon/src/failmon.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/hdfs/src/contrib/fuse-dfs/src/fuse-dfs.iml" filepath="$PROJECT_DIR$/src/hdfs/src/contrib/fuse-dfs/src/fuse-dfs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/hdfs/src/hdfs.iml" filepath="$PROJECT_DIR$/src/hdfs/src/hdfs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/hdfs/src/contrib/hdfsproxy/src/hdfsproxy.iml" filepath="$PROJECT_DIR$/src/hdfs/src/contrib/hdfsproxy/src/hdfsproxy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/common/src/test/system/system.iml" filepath="$PROJECT_DIR$/src/common/src/test/system/system.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/hdfs/src/test/system/system1.iml" filepath="$PROJECT_DIR$/src/hdfs/src/test/system/system1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/common/src/test/test.iml" filepath="$PROJECT_DIR$/src/common/src/test/test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/hdfs/src/test/test1.iml" filepath="$PROJECT_DIR$/src/hdfs/src/test/test1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/hdfs/src/contrib/thriftfs/src/thriftfs.iml" filepath="$PROJECT_DIR$/src/hdfs/src/contrib/thriftfs/src/thriftfs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/hdfs/src/contrib/thriftfs/thriftfs1.iml" filepath="$PROJECT_DIR$/src/hdfs/src/contrib/thriftfs/thriftfs1.iml" />
+    </modules>
+  </component>
+</project>

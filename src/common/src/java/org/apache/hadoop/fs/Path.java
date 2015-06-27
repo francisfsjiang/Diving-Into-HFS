@@ -33,6 +33,14 @@ import org.apache.hadoop.conf.Configuration;
 @Stringable
 @InterfaceAudience.Public
 @InterfaceStability.Stable
+
+/**
+ * Hadoop中路径分为两类：
+ * 1.绝对路径：
+ * （1）完全限定的URI ：scheme://authority/path
+ * （2）以斜杠开头的路径：/path 表示相对于默认的文件系统，即相当于default-scheme://default-authority/path
+ * 2.相对路径：path 相对于工作目录
+ */
 public class Path implements Comparable {
 
   /** The directory separator, a slash. */
@@ -78,6 +86,10 @@ public class Path implements Comparable {
                normalizePath(resolved.getPath()), resolved.getFragment());
   }
 
+  /**
+   * 检查路径参数
+   * @param path
+   */
   private void checkPathArg( String path ) {
     // disallow construction of a Path from an empty string
     if ( path == null ) {
@@ -299,7 +311,7 @@ public class Path implements Comparable {
   
   /**
    *  Returns a qualified path object.
-   *  
+   *  返回一个限定路径对象
    *  Deprecated - use {@link #makeQualified(URI, Path)}
    */
  
