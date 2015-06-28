@@ -28,6 +28,9 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 
 /** Interface that represents the client side information for a file.
+ * 该类抽象提供了文件信息的抽象，屏蔽了具体文件系统的具体实现。
+ *
+ * @author neveralso
  */
 @InterfaceAudience.Public
 @InterfaceStability.Stable
@@ -46,8 +49,10 @@ public class FileStatus implements Writable, Comparable {
   private Path symlink;
   
   public FileStatus() { this(0, false, 0, 0, 0, 0, null, null, null, null); }
-  
-  //We should deprecate this soon?
+
+  /**
+   * 构造函数的另一个版本，包装了主要的构造函数来实现，即将被抛弃
+   */
   public FileStatus(long length, boolean isdir, int block_replication,
                     long blocksize, long modification_time, Path path) {
 
@@ -56,7 +61,7 @@ public class FileStatus implements Writable, Comparable {
   }
 
   /**
-   * Constructor for file systems on which symbolic links are not supported
+   * 构造函数的另一个版本，包装了主要的构造函数来实现
    */
   public FileStatus(long length, boolean isdir,
                     int block_replication,
@@ -67,6 +72,20 @@ public class FileStatus implements Writable, Comparable {
          access_time, permission, owner, group, null, path);
   }
 
+  /**
+   * 构造函数，设置了此文件的基本参数
+   * @param length
+   * @param isdir
+   * @param block_replication
+   * @param blocksize
+   * @param modification_time
+   * @param access_time
+   * @param permission
+   * @param owner
+   * @param group
+   * @param symlink
+   * @param path
+   */
   public FileStatus(long length, boolean isdir,
                     int block_replication,
                     long blocksize, long modification_time, long access_time,
@@ -88,15 +107,15 @@ public class FileStatus implements Writable, Comparable {
   }
 
   /**
-   * Get the length of this file, in bytes.
-   * @return the length of this file, in bytes.
+   * 返回文件的字节长度
+   * @return 文件的字节长度
    */
   public long getLen() {
     return length;
   }
 
   /**
-   * Is this a file?
+   * 判断此文件是否为文件，以区别文件目录和文件链接
    * @return true if this is a file
    */
   public boolean isFile() {
@@ -104,7 +123,7 @@ public class FileStatus implements Writable, Comparable {
   }
 
   /**
-   * Is this a directory?
+   * 判断是否为文件目录
    * @return true if this is a directory
    */
   public boolean isDirectory() {
@@ -112,12 +131,7 @@ public class FileStatus implements Writable, Comparable {
   }
   
   /**
-   * Old interface, instead use the explicit {@link FileStatus#isFile()}, 
-   * {@link FileStatus#isDirectory()}, and {@link FileStatus#isSymlink()} 
-   * @return true if this is a directory.
-   * @deprecated Use {@link FileStatus#isFile()},  
-   * {@link FileStatus#isDirectory()}, and {@link FileStatus#isSymlink()} 
-   * instead.
+   * 判断是否为文件目录，此类将被{@link FileStatus#isDirectory()}代替。
    */
   @Deprecated
   public boolean isDir() {
@@ -125,79 +139,73 @@ public class FileStatus implements Writable, Comparable {
   }
   
   /**
-   * Is this a symbolic link?
-   * @return true if this is a symbolic link
+   * 判断是否为文件链接
    */
   public boolean isSymlink() {
     return symlink != null;
   }
 
   /**
-   * Get the block size of the file.
-   * @return the number of bytes
+   * 返回文件的块大小
    */
   public long getBlockSize() {
     return blocksize;
   }
 
   /**
-   * Get the replication factor of a file.
-   * @return the replication factor of a file.
+   * 返回文件的副本数量
    */
   public short getReplication() {
     return block_replication;
   }
 
   /**
-   * Get the modification time of the file.
-   * @return the modification time of file in milliseconds since January 1, 1970 UTC.
+   * 返回文件的修改日期
    */
   public long getModificationTime() {
     return modification_time;
   }
 
   /**
-   * Get the access time of the file.
-   * @return the access time of file in milliseconds since January 1, 1970 UTC.
+   * 返回文件的创建时间
    */
   public long getAccessTime() {
     return access_time;
   }
 
   /**
-   * Get FsPermission associated with the file.
-   * @return permssion. If a filesystem does not have a notion of permissions
-   *         or if permissions could not be determined, then default 
-   *         permissions equivalent of "rwxrwxrwx" is returned.
+   * 取得文件的权限，如果文件系统不支持权限，则返回 777(rwxrwxrwx)
    */
   public FsPermission getPermission() {
     return permission;
   }
   
   /**
-   * Get the owner of the file.
-   * @return owner of the file. The string could be empty if there is no
-   *         notion of owner of a file in a filesystem or if it could not 
-   *         be determined (rare).
+   * 返回文件的所有者，如果文件系统不支持所有者，则返回null
    */
   public String getOwner() {
     return owner;
   }
   
   /**
-   * Get the group associated with the file.
-   * @return group for the file. The string could be empty if there is no
-   *         notion of group of a file in a filesystem or if it could not 
-   *         be determined (rare).
+   * 返回文件所在的工作组，如果文件系统不支持工作组，则是未定义行为
    */
   public String getGroup() {
     return group;
   }
-  
+
+  /**
+   * 返回文件的路径
+   * @return
+   */
   public Path getPath() {
     return path;
   }
-  
+
+  /**
+   * 设置文件的路径
+   * @param p
+   */
   public void setPath(final Path p) {
     path = p;
   }
@@ -207,8 +215,7 @@ public class FileStatus implements Writable, Comparable {
    */
   
   /**
-   * Sets permission.
-   * @param permission if permission is null, default value is set
+   * 设置文件权限
    */
   protected void setPermission(FsPermission permission) {
     this.permission = (permission == null) ? 
@@ -216,22 +223,21 @@ public class FileStatus implements Writable, Comparable {
   }
   
   /**
-   * Sets owner.
-   * @param owner if it is null, default value is set
+   * 设置文件所有者，默认为""
    */  
   protected void setOwner(String owner) {
     this.owner = (owner == null) ? "" : owner;
   }
   
   /**
-   * Sets group.
-   * @param group if it is null, default value is set
+   * 设置文件所在工作组
    */  
   protected void setGroup(String group) {
     this.group = (group == null) ? "" :  group;
   }
 
   /**
+   * 如果此文件是链接，则获取该链接
    * @return The contents of the symbolic link.
    */
   public Path getSymlink() throws IOException {
@@ -241,13 +247,21 @@ public class FileStatus implements Writable, Comparable {
     return symlink;
   }
 
+  /**
+   * 设置文件链接
+   * @param p
+   */
   public void setSymlink(final Path p) {
     symlink = p;
   }
   
   //////////////////////////////////////////////////
   // Writable
-  //////////////////////////////////////////////////
+  /////////////////////////////////////////////////
+
+  /**
+   * 向指定的流输出文件的基本信息
+   */
   public void write(DataOutput out) throws IOException {
     Text.writeString(out, getPath().toString());
     out.writeLong(length);
@@ -264,7 +278,9 @@ public class FileStatus implements Writable, Comparable {
       Text.writeString(out, symlink.toString());
     }
   }
-
+  /**
+   * 从给定的流读取并设置该文件的属性
+   */
   public void readFields(DataInput in) throws IOException {
     String strPath = Text.readString(in);
     this.path = new Path(strPath);
@@ -285,23 +301,19 @@ public class FileStatus implements Writable, Comparable {
   }
 
   /**
-   * Compare this object to another object
-   * 
-   * @param   o the object to be compared.
-   * @return  a negative integer, zero, or a positive integer as this object
-   *   is less than, equal to, or greater than the specified object.
-   * 
-   * @throws ClassCastException if the specified object's is not of 
-   *         type FileStatus
+   * 比较函数，通过比较路径{@link org.apache.hadoop.fs.Path#compareTo{Object}，
+   * 比较该文件和给定的文件
+   * 如果此文件比给定的文件小，则返回一个负数
+   * 相等则返回0
+   * 如果此文件比给定的文件大，则返回一个正数
    */
   public int compareTo(Object o) {
     FileStatus other = (FileStatus)o;
     return this.getPath().compareTo(other.getPath());
   }
   
-  /** Compare if this object is equal to another object
-   * @param   o the object to be compared.
-   * @return  true if two file status has the same path name; false if not.
+  /**
+   * 通过判断路径是否相等来判断此文件和给定的文件是否相同
    */
   public boolean equals(Object o) {
     if (o == null) {
@@ -318,10 +330,8 @@ public class FileStatus implements Writable, Comparable {
   }
   
   /**
-   * Returns a hash code value for the object, which is defined as
-   * the hash code of the path name.
+   * 返回此文件的hash码，即文件的路径的hash码
    *
-   * @return  a hash code value for the path name.
    */
   public int hashCode() {
     return getPath().hashCode();

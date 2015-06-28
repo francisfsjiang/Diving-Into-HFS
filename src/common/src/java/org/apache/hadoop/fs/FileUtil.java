@@ -36,6 +36,8 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * A collection of file-processing util methods
+ *
+ * 该类通过静态方法提供了大量的文件处理函数
  */
 @InterfaceAudience.Public
 @InterfaceStability.Evolving
@@ -45,7 +47,7 @@ public class FileUtil {
 
   /**
    * convert an array of FileStatus to an array of Path
-   * 
+   * 将
    * @param stats
    *          an array of FileStatus objects
    * @return an array of paths corresponding to the input
