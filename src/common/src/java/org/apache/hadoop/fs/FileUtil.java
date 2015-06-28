@@ -38,6 +38,8 @@ import org.apache.commons.logging.LogFactory;
  * A collection of file-processing util methods
  *
  * 该类通过静态方法提供了大量的文件处理函数
+ *
+ * @author neveralso
  */
 @InterfaceAudience.Public
 @InterfaceStability.Evolving
@@ -47,10 +49,9 @@ public class FileUtil {
 
   /**
    * convert an array of FileStatus to an array of Path
-   * 将
-   * @param stats
-   *          an array of FileStatus objects
-   * @return an array of paths corresponding to the input
+   * 将一个FileStatus数组转化为Path数组，通过调用每个FileStatus
+   * 的getPath()方法实现
+   *
    */
   public static Path[] stat2Paths(FileStatus[] stats) {
     if (stats == null)
@@ -63,13 +64,8 @@ public class FileUtil {
   }
 
   /**
-   * convert an array of FileStatus to an array of Path.
-   * If stats if null, return path
-   * @param stats
-   *          an array of FileStatus objects
-   * @param path
-   *          default path to return in stats is null
-   * @return an array of paths corresponding to the input
+   * 将一个FileStatus数组转化为Path数组，如果stats为null，则返回
+   * path
    */
   public static Path[] stat2Paths(FileStatus[] stats, Path path) {
     if (stats == null)
@@ -79,8 +75,7 @@ public class FileUtil {
   }
   
   /**
-   * Delete a directory and all its contents.  If
-   * we return false, the directory may be partially-deleted.
+   * 删除dir指定的目录下所有内容，如果返回false，则可能造成部分删除
    */
   public static boolean fullyDelete(File dir) throws IOException {
     if (!fullyDeleteContents(dir)) {
@@ -90,8 +85,7 @@ public class FileUtil {
   }
 
   /**
-   * Delete the contents of a directory, not the directory itself.  If
-   * we return false, the directory may be partially-deleted.
+   * 删除dir指定的目录下所有内容，而不删除目录本身如果返回false，则可能造成部分删除
    */
   public static boolean fullyDeleteContents(File dir) throws IOException {
     boolean deletionSucceeded = true;
@@ -125,12 +119,8 @@ public class FileUtil {
   }
 
   /**
-   * Recursively delete a directory.
-   * 
-   * @param fs {@link FileSystem} on which the path is present
-   * @param dir directory to recursively delete 
-   * @throws IOException
-   * @deprecated Use {@link FileSystem#delete(Path, boolean)}
+   * 递归地删除fs中的一个目录，通过调用fs的delete方法，此方法
+   * 将被放弃
    */
   @Deprecated
   public static void fullyDelete(FileSystem fs, Path dir) 
@@ -161,14 +151,18 @@ public class FileUtil {
     }
   }
 
-  /** Copy files between FileSystems. */
+  /**
+   * 在文件系统间拷贝文件
+   */
   public static boolean copy(FileSystem srcFS, Path src, 
                              FileSystem dstFS, Path dst, 
                              boolean deleteSource,
                              Configuration conf) throws IOException {
     return copy(srcFS, src, dstFS, dst, deleteSource, true, conf);
   }
-
+  /**
+   * 在文件系统间拷贝文件，可以指定是否删除源文件，是否复写已存在的文件
+   */
   public static boolean copy(FileSystem srcFS, Path[] srcs, 
                              FileSystem dstFS, Path dst,
                              boolean deleteSource, 
@@ -208,7 +202,9 @@ public class FileUtil {
     return returnVal;
   }
 
-  /** Copy files between FileSystems. */
+  /**
+   * 在文件系统间拷贝文件，可以指定是否删除源文件，是否复写已存在的文件
+   */
   public static boolean copy(FileSystem srcFS, Path src, 
                              FileSystem dstFS, Path dst, 
                              boolean deleteSource,
@@ -218,7 +214,9 @@ public class FileUtil {
     return copy(srcFS, fileStatus, dstFS, dst, deleteSource, overwrite, conf);
   }
 
-  /** Copy files between FileSystems. */
+  /**
+   * 在文件系统间拷贝文件，可以指定是否删除源文件，是否复写已存在的文件
+   */
   private static boolean copy(FileSystem srcFS, FileStatus srcStatus,
                               FileSystem dstFS, Path dst,
                               boolean deleteSource,
@@ -258,7 +256,10 @@ public class FileUtil {
   
   }
 
-  /** Copy all files in a directory to one output file (merge). */
+  /**
+   * 拷贝指定目录下的所有文件，合并到同一个文件中，可以指定是否删除源文
+   * 件，是否复写已存在的文件
+   */
   public static boolean copyMerge(FileSystem srcFS, Path srcDir, 
                                   FileSystem dstFS, Path dstFile, 
                                   boolean deleteSource,
@@ -297,7 +298,9 @@ public class FileUtil {
     }
   }  
   
-  /** Copy local files to a FileSystem. */
+  /**
+   * 把本地文件拷贝到指定文件系统中
+   */
   public static boolean copy(File src,
                              FileSystem dstFS, Path dst,
                              boolean deleteSource,
@@ -336,7 +339,9 @@ public class FileUtil {
     }
   }
 
-  /** Copy FileSystem files to local files. */
+  /**
+   * 将文件系统中的文件拷贝到本地
+   */
   public static boolean copy(FileSystem srcFS, Path src, 
                              File dst, boolean deleteSource,
                              Configuration conf) throws IOException {
@@ -344,7 +349,9 @@ public class FileUtil {
     return copy(srcFS, filestatus, dst, deleteSource, conf);
   }
 
-  /** Copy FileSystem files to local files. */
+  /**
+   * 将文件系统中的文件拷贝到本地
+   */
   private static boolean copy(FileSystem srcFS, FileStatus srcStatus,
                               File dst, boolean deleteSource,
                               Configuration conf) throws IOException {
