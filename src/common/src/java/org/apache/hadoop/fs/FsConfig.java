@@ -27,6 +27,10 @@ import org.apache.hadoop.conf.Configuration;
  * It provides convenience static method to set and get the keys from a 
  * a configuration.
  *
+ * 这个类保存了文件相关的一些Key，并且对外提供简单的借口，
+ * 来实现设置或者获取Configuration对象的内容
+ *
+ * @author neveralso
  */
 
 final class FsConfig {
@@ -52,31 +56,45 @@ final class FsConfig {
   static final short FS_DEFAULT_REPLICATION_FACTOR = 3;
   static final long FS_DEFAULT_BLOCK_SIZE = 32 * 1024 * 1024;
   static final int IO_BUFFER_SIZE =4096;
-  
-  
-  
+
+  /**
+   * 获取默认的文件系统路径
+   */
   public static String getDefaultFsURI(final Configuration conf) {
     return conf.get(FS_DEFAULT_NAME_KEY, FS_DEFAULT_NAME);
   }
-  
+
+  /**
+   * 获取文件系统的home文件目录
+   */
   public static String getHomeDir(final Configuration conf) {
     return conf.get(FS_HOME_DIR_ROOT_KEY, FS_HOME_DIR_ROOT);
   }
-  
+  /**
+   * 获取默认的文件副本数量
+   */
   public static short getDefaultReplicationFactor(final Configuration conf) {
     return (short) 
         conf.getInt(FS_REPLICATION_FACTOR_KEY, FS_DEFAULT_REPLICATION_FACTOR);
   }
-  
+
+  /**
+   * 获取默认的文件块的大小
+   */
   public static long getDefaultBlockSize(final Configuration conf) {
     return conf.getLong(FS_BLOCK_SIZE_KEY, FS_DEFAULT_BLOCK_SIZE);
   }
 
-  
+  /**
+   * 获取默认的Buffer的大小
+   */
   public static int getDefaultIOBuffersize(final Configuration conf) {
     return conf.getInt(IO_BUFFER_SIZE_KEY, IO_BUFFER_SIZE);
   }
-  
+
+  /**
+   * 获取文件Scheme对应的类
+   */
   public static Class<?> getImplClass(URI uri, Configuration conf) {
     String scheme = uri.getScheme();
     if (scheme == null) {
@@ -87,7 +105,7 @@ final class FsConfig {
 
   
   /**
-   * The Setters: see the note on the javdoc for the class above.
+   * Setters: 功能都对应上面的Getters
    */
 
   public static void setDefaultFS(final Configuration conf, String uri) {

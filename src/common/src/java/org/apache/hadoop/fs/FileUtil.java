@@ -376,7 +376,9 @@ public class FileUtil {
       return true;
     }
   }
-
+  /**
+   * 用于检查目标路径是否为目录或者是已经存在，返回目标路径
+   */
   private static Path checkDest(String srcName, FileSystem dstFS, Path dst,
       boolean overwrite) throws IOException {
     if (dstFS.exists(dst)) {
@@ -395,6 +397,7 @@ public class FileUtil {
 
   /**
    * This class is only used on windows to invoke the cygpath command.
+   * 这个类只用来在windows下调用cygpath命令
    */
   private static class CygPathCommand extends Shell {
     String[] command;
