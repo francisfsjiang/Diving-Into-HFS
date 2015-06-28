@@ -33,11 +33,11 @@ import org.apache.hadoop.util.PureJavaCrc32;
 import org.apache.hadoop.util.StringUtils;
 
 /****************************************************************
- * Abstract Checksumed FileSystem.
- * It provide a basice implementation of a Checksumed FileSystem,
- * which creates a checksum file for each raw file.
- * It generates & verifies checksums at the client side.
- *
+ * 抽象检验文件系统 从文件系统过滤器类继承
+ * 提供一个基本的文件校验系统的实现
+ * 在客户端生成并且检验检验和，检验数据的完整性
+ * 每个512byte的数据，生成一个4byte的检验和
+ * 冗余备份的情况下，多个节点储存，以防止校验和本身损坏
  *****************************************************************/
 @InterfaceAudience.Public
 @InterfaceStability.Stable
@@ -63,36 +63,35 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
   }
   
   /**
-   * Set whether to verify checksum.
+   * 布尔值 设置是否检验了校验和
    */
   public void setVerifyChecksum(boolean verifyChecksum) {
     this.verifyChecksum = verifyChecksum;
   }
 
-  /** get the raw file system */
+  /** 获取初始的文件系统 */
   public FileSystem getRawFileSystem() {
     return fs;
   }
 
-  /** Return the name of the checksum file associated with a file.*/
+  /** 返回检验和文件关联文件的文件名*/
   public Path getChecksumFile(Path file) {
     return new Path(file.getParent(), "." + file.getName() + ".crc");
   }
 
-  /** Return true iff file is a checksum file name.*/
+  /** 当文件名是校验和文件名时，返回真值*/
   public static boolean isChecksumFile(Path file) {
     String name = file.getName();
     return name.startsWith(".") && name.endsWith(".crc");
   }
 
-  /** Return the length of the checksum file given the size of the 
-   * actual file.
+  /** 返回校验和文件的长度和源文件的大小
    **/
   public long getChecksumFileLength(Path file, long fileSize) {
     return getChecksumLength(fileSize, getBytesPerSum());
   }
 
-  /** Return the bytes Per Checksum */
+  /** 返回每个校验和的byte数*/
   public int getBytesPerSum() {
     return bytesPerChecksum;
   }
@@ -107,8 +106,8 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
   }
 
   /*******************************************************
-   * For open()'s FSInputStream
-   * It verifies that data matches checksums.
+   * open()方法的FS输入流
+   * 确认数据和检验和是否匹配
    *******************************************************/
   private static class ChecksumFSInputChecker extends FSInputChecker {
     public static final Log LOG 
@@ -146,9 +145,9 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
           throw new IOException("Not a checksum file: "+sumFile);
         this.bytesPerSum = sums.readInt();
         set(fs.verifyChecksum, new PureJavaCrc32(), bytesPerSum, 4);
-      } catch (FileNotFoundException e) {         // quietly ignore
+      } catch (FileNotFoundException e) {         // 无提示忽略
         set(fs.verifyChecksum, null, 1, 0);
-      } catch (IOException e) {                   // loudly ignore
+      } catch (IOException e) {                   // 有提示忽略
         LOG.warn("Problem opening checksum file: "+ file + 
                  ".  Ignoring exception: " + 
                  StringUtils.stringifyException(e));
@@ -170,7 +169,7 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
     
     public int read(long position, byte[] b, int off, int len)
       throws IOException {
-      // parameter check
+      // 参数校验
       if ((off | len | (off + len) | (b.length - (off + len))) < 0) {
         throw new IndexOutOfBoundsException();
       } else if (len == 0) {
@@ -248,7 +247,7 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
       return nread;
     }
     
-    /* Return the file length */
+    /* 返回文件长度*/
     private long getFileLength() throws IOException {
       if( fileLen==-1L ) {
         fileLen = fs.getContentSummary(file).getLength();

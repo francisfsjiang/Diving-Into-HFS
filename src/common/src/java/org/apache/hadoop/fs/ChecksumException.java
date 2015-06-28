@@ -23,7 +23,9 @@ import java.io.IOException;
 import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 
-/** Thrown for checksum errors. */
+/** 抛出Checksum的错误，ChecksumException继承自IOException，
+*	记录一个字符串和常数，并作为参数传入父类的方法，
+*/
 @InterfaceAudience.Public
 @InterfaceStability.Stable
 public class ChecksumException extends IOException {
