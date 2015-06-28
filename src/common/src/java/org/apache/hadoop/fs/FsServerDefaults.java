@@ -29,7 +29,9 @@ import org.apache.hadoop.io.WritableFactory;
 
 /****************************************************
  * Provides server default configuration values to clients.
- * 
+ * 向客户端提供服务器的相关设置参数，包括数据块的大小，
+ * 校验和的位数，Packet的大小，文件的副本的数量，
+ * 文件缓冲区的大小
  ****************************************************/
 @InterfaceAudience.Public
 @InterfaceStability.Evolving

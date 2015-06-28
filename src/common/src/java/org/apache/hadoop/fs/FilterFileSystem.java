@@ -42,6 +42,13 @@ import org.apache.hadoop.util.Progressable;
  * and may also provide additional methods
  * and fields.
  *
+ * FilterFileSystem 包装了一个FileSystem对象，所有提供的方法都是与
+ * FileSystem中相同的方法，通过调用FileSystem对象对应的函数来实现。
+ * <p/>
+ * 此类的目的是通过继承此类来重写其中的方法，来添加更多地功能
+ *
+ * @author neveralso
+ *
  *****************************************************************/
 @InterfaceAudience.Public
 @InterfaceStability.Stable
