@@ -32,10 +32,10 @@ import org.apache.hadoop.util.Shell;
 
 ////////////////////////////////////////
 //
-// ´ÅÅÌ¿Õ¼ä×´Ì¬
-// ¼Ì³Ğ×Ô{org.apache.hadoop.util.Shell}£¬ÔÚShellÖĞµ÷ÓÃÏµÍ³¹¤¾ß
-// {df -k <path>}ÊµÏÖ£¬¸ÃÃüÁîÎŞ·¨ÔÚWindows»·¾³ÏÂÊ¹ÓÃ
-// Ò»ÖÖÑ¡ÔñÊÇÔÚWindows»·¾³ÏÂÊ¹ÓÃ{fsutil volume diskfree <path>}Ìæ»»
+// ç£ç›˜ç©ºé—´çŠ¶æ€
+// ç»§æ‰¿è‡ª{org.apache.hadoop.util.Shell}ï¼Œåœ¨Shellä¸­è°ƒç”¨ç³»ç»Ÿå·¥å…·
+// {df -k <path>}å®ç°ï¼Œè¯¥å‘½ä»¤æ— æ³•åœ¨Windowsç¯å¢ƒä¸‹ä½¿ç”¨
+// ä¸€ç§é€‰æ‹©æ˜¯åœ¨Windowsç¯å¢ƒä¸‹ä½¿ç”¨{fsutil volume diskfree <path>}æ›¿æ¢
 //
 /** Filesystem disk space usage statistics.
  * Uses the unix 'df' program to get mount points, and java.io.File for
@@ -54,8 +54,8 @@ public class DF extends Shell {
 
   ////////////////////////////////
   //
-  // ²Ù×÷ÏµÍ³ÀàĞÍ
-  // ËÆºõ·ÅÕâ²»ºÏÊÊ
+  // æ“ä½œç³»ç»Ÿç±»å‹
+  // ä¼¼ä¹æ”¾è¿™ä¸åˆé€‚
   //
   enum OSType {
     OS_TYPE_UNIX("UNIX"),
@@ -154,14 +154,14 @@ public class DF extends Shell {
       mount;
   }
 
-  // ¼ì²âÃüÁî
+  // æ£€æµ‹å‘½ä»¤
   @Override
   protected String[] getExecString() {
     // ignoring the error since the exit code it enough
     return new String[] {"bash","-c","exec 'df' '-k' '" + dirPath + "' 2>/dev/null"};
   }
 
-  // ½âÎöÊä³ö
+  // è§£æè¾“å‡º
   @Override
   protected void parseExecResult(BufferedReader lines) throws IOException {
     lines.readLine();                         // skip headings
