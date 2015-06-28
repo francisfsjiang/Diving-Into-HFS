@@ -424,9 +424,9 @@ public class FileUtil {
 
   /**
    * Convert a os-native filename to a path that works for the shell.
-   * @param filename The filename to convert
-   * @return The unix pathname
-   * @throws IOException on windows, there can be problems with the subprocess
+   * 转换一个系统相关的文件命名到可以再shell下工作的路径
+   * @param filename 要转换的文件名
+   * @return 返回uxix文件路径
    */
   public static String makeShellPath(String filename) throws IOException {
     if (Path.WINDOWS) {
@@ -435,24 +435,22 @@ public class FileUtil {
       return filename;
     }    
   }
-  
+
   /**
-   * Convert a os-native filename to a path that works for the shell.
-   * @param file The filename to convert
-   * @return The unix pathname
-   * @throws IOException on windows, there can be problems with the subprocess
+   * 转换一个系统相关的文件命名到可以再shell下工作的路径
+   * @param file 要转换的文件名
+   * @return 返回uxix文件路径
    */
   public static String makeShellPath(File file) throws IOException {
     return makeShellPath(file, false);
   }
 
   /**
-   * Convert a os-native filename to a path that works for the shell.
-   * @param file The filename to convert
+   * 转换一个系统相关的文件命名到可以再shell下工作的路径
+   * @param file 要转换的文件名
    * @param makeCanonicalPath 
-   *          Whether to make canonical path for the file passed
-   * @return The unix pathname
-   * @throws IOException on windows, there can be problems with the subprocess
+   *          是否要转换为规范路径，操作系统相关
+   * @return 返回uxix文件路径
    */
   public static String makeShellPath(File file, boolean makeCanonicalPath) 
   throws IOException {
@@ -464,12 +462,10 @@ public class FileUtil {
   }
 
   /**
-   * Takes an input dir and returns the du on that local directory. Very basic
-   * implementation.
+   * 获取指定目录在磁盘上的大小
    * 
-   * @param dir
-   *          The input dir to get the disk space of this local dir
-   * @return The total disk space of the input local directory
+   * @param dir 要获取的目录
+   * @return 输入的目录在磁盘大小
    */
   public static long getDU(File dir) {
     long size = 0;
@@ -490,8 +486,9 @@ public class FileUtil {
   /**
    * Given a File input it will unzip the file in a the unzip directory
    * passed as the second parameter
-   * @param inFile The zip file as input
-   * @param unzipDir The unzip directory where to unzip the zip file.
+   * 解压一个ZIP压缩文件，到第二个参数指定的位置
+   * @param inFile 指定的压缩文件
+   * @param unzipDir 要解压到的位置
    * @throws IOException
    */
   public static void unZip(File inFile, File unzipDir) throws IOException {
@@ -533,13 +530,9 @@ public class FileUtil {
   }
 
   /**
-   * Given a Tar File as input it will untar the file in a the untar directory
-   * passed as the second parameter
-   * 
-   * This utility will untar ".tar" files and ".tar.gz","tgz" files.
-   *  
-   * @param inFile The tar file as input. 
-   * @param untarDir The untar directory where to untar the tar file.
+   * 解压一个Tar压缩文件，到第二个参数指定的位置
+   * @param inFile 指定的压缩文件
+   * @param unzipDir 要解压到的位置
    * @throws IOException
    */
   public static void unTar(File inFile, File untarDir) throws IOException {
@@ -577,8 +570,8 @@ public class FileUtil {
   }
 
   /**
-   * Class for creating hardlinks.
-   * Supports Unix, Cygwin, WindXP.
+   * 该类抽象了硬链接
+   * 支持unix，cygwin，windxp
    *  
    */
   public static class HardLink { 
@@ -615,6 +608,10 @@ public class FileUtil {
       }
     }
 
+    /**
+     * 获取系统类型
+     * @return
+     */
     static private OSType getOSType() {
       String osName = System.getProperty("os.name");
       if (osName.indexOf("Windows") >= 0 && 
@@ -629,7 +626,7 @@ public class FileUtil {
     }
     
     /**
-     * Creates a hardlink 
+     * 创建一个硬链接
      */
     public static void createHardLink(File target, 
                                       File linkName) throws IOException {
@@ -661,7 +658,7 @@ public class FileUtil {
     }
 
     /**
-     * Retrieves the number of links to the specified file.
+     * 获取指定文件的链接数量
      */
     public static int getLinkCount(File fileName) throws IOException {
       if (!fileName.exists()) {
@@ -711,7 +708,9 @@ public class FileUtil {
     }
   }
 
-  /** Create an IOException for failing to get link count. */
+  /**
+   * 计算链接数量失败时抛出的错误
+   */
   static private IOException createIOException(File f, String message,
       String error, int exitvalue, Exception cause) {
     final String s = "Failed to get link count on file " + f
@@ -722,11 +721,11 @@ public class FileUtil {
   }
 
   /**
-   * Create a soft link between a src and destination
-   * only on a local disk. HDFS does not support this
-   * @param target the target for symlink 
-   * @param linkname the symlink
-   * @return value returned by the command
+   * 创建一个软连接
+   * 只在local磁盘上工作，HDFS不支持此操作
+   * @param target 软连接目标
+   * @param linkname 要连接到的位置
+   * @return 返回执行命令的返回值
    */
   public static int symLink(String target, String linkname) throws IOException{
     String cmd = "ln -s " + target + " " + linkname;
@@ -741,9 +740,9 @@ public class FileUtil {
   }
   
   /**
-   * Change the permissions on a filename.
-   * @param filename the name of the file to change
-   * @param perm the permission string
+   * 更改文件的权限
+   * @param 要更改权限的文件名
+   * @param perm 权限字符串
    * @return the exit code from the command
    * @throws IOException
    * @throws InterruptedException
@@ -754,12 +753,11 @@ public class FileUtil {
   }
 
   /**
-   * Change the permissions on a file / directory, recursively, if
-   * needed.
-   * @param filename name of the file whose permissions are to change
-   * @param perm permission string
-   * @param recursive true, if permissions should be changed recursively
-   * @return the exit code from the command.
+   * 更改文件的权限，可以设置是否递归更改
+   * @param filename 要更改权限的文件名
+   * @param perm 权限字符串
+   * @param recursive 如果需要递归执行，则设置为true
+   * @return 返回执行命令的返回值
    * @throws IOException
    * @throws InterruptedException
    */
@@ -786,11 +784,11 @@ public class FileUtil {
   }
   
   /**
-   * Create a tmp file for a base file.
-   * @param basefile the base file of the tmp
-   * @param prefix file name prefix of tmp
-   * @param isDeleteOnExit if true, the tmp will be deleted when the VM exits
-   * @return a newly created tmp file
+   * 创建一个文件的临时文件
+   * @param basefile 目标文件
+   * @param prefix 临时文件的前缀
+   * @param isDeleteOnExit 是否在虚拟机退出时删除此临时文件
+   * @return 返回一个新创建的文件
    * @exception IOException If a tmp file cannot created
    * @see java.io.File#createTempFile(String, String, File)
    * @see java.io.File#deleteOnExit()
@@ -808,10 +806,10 @@ public class FileUtil {
   }
 
   /**
-   * Move the src file to the name specified by target.
-   * @param src the source file
-   * @param target the target file
-   * @exception IOException If this operation fails
+   * 移动文件
+   * @param src 源文件
+   * @param target 目标文件
+   * @exception IOException 操作失败
    */
   public static void replaceFile(File src, File target) throws IOException {
     /* renameTo() has two limitations on Windows platform.
