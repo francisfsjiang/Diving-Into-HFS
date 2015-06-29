@@ -1,24 +1,2 @@
-\chapter{\HadoopFS 综述}
-\label{sec:hfs}
-
-\Hadoop 文件系统(\HadoopFS, \HFS)是为\Hadoop 云计算平台提供文件服务的一个抽象层.
-按照Wikipedia的解释, 文件系统是
-\begin{quote}
-The structure and logic rules used to manage the groups of information and their names is called a "file system".
-\end{quote}
-
-\emph{AbstractFileSystem}类的文档明确指出了\HFS 是一个与\UNIX 下的\VFS 十分类似的系统,
-而\VFS 本身是
-\begin{quote}
-...an abstraction layer on top of a more concrete file system
-\end{quote}
-
-类似地, \HFS 是用于向\Hadoop 提供文件服务的, 横断于各个具体文件系统之上的抽象层.
-
-HAL屏蔽底层硬件之间的差异,
-向上提驱动磁盘的接口,
-具体文件系统屏蔽不同体系(如NTFS, ext, xfs, btfs, etc.)下信息在物理磁盘上的组织方式的差异,
-向上提供操纵文件的接口,
-而抽象文件系统,
-负责屏蔽不同的具体文件系统之间的差异(如命名管理, 权限控制等),
-向上提供完全统一的文件操纵接口. 这个最高的抽象层, 就是HFS和VFS所处的位置.
+\chapter{\HFS 总体架构}
+\label{ch:hfs}

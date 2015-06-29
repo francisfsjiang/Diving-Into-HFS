@@ -3,11 +3,11 @@
 % **************************************************
 \documentclass[%
 	paper=A4,					% paper size --> A4 is default in Germany
-	twoside=true,				% onesite or twoside printing
+	twoside=false,				% onesite or twoside printing
 	openright,					% doublepage cleaning ends up right side
 	parskip=full,				% spacing value / method for paragraphs
 	chapterprefix=true,			% prefix for chapter marks
-	11pt,						% font size
+	14pt,						% font size
 	headings=normal,			% size of headings
 	bibliography=totoc,			% include bib in toc
 	listof=totoc,				% include listof entries in toc
@@ -105,9 +105,10 @@
 \pagestyle{maincontentstyle} 	% fancy header and footer
 
 \input{content/chapter-introduction}
+\input{content/chapter-hfs-intro}
 \input{content/chapter-hfs}
-\input{content/chapter-hfs-arch}
 \input{content/chapter-src-env}
+\input{content/chapter-transplant}
 \cleardoublepage
 
 % --------------------------
