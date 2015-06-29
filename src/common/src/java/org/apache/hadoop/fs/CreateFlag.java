@@ -44,8 +44,7 @@ import org.apache.hadoop.classification.InterfaceStability;
 public enum CreateFlag {
 
   /**
-   * create the file if it does not exist, and throw an IOException if it
-   * already exists
+   * 未创建时创建文件，已创建时抛出IOException
    */
   CREATE((short) 0x01),
 

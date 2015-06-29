@@ -25,8 +25,7 @@ import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 
 /**
- * Used when target file already exists for any operation and 
- * is not configured to be overwritten.  
+ * 文件存在，并且可以被操作而不是被配置为覆盖时使用
  */
 @InterfaceAudience.Public
 @InterfaceStability.Stable

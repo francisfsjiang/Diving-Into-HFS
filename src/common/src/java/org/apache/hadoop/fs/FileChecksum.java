@@ -23,20 +23,20 @@ import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 import org.apache.hadoop.io.Writable;
 
-/** An abstract class representing file checksums for files. */
+/** 代表文件校验和的抽象类*/
 @InterfaceAudience.Public
 @InterfaceStability.Stable
 public abstract class FileChecksum implements Writable {
-  /** The checksum algorithm name */ 
+  /** 校验算法名 */ 
   public abstract String getAlgorithmName();
 
-  /** The length of the checksum in bytes */ 
+  /** 校验和的byte长度 */ 
   public abstract int getLength();
 
-  /** The value of the checksum in bytes */ 
+  /** 校验和的byte值*/ 
   public abstract byte[] getBytes();
 
-  /** Return true if both the algorithms and the values are the same. */
+  /** 如果算法和byte值都相同，返回真值*/
   public boolean equals(Object other) {
     if (other == this) {
       return true;

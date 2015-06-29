@@ -465,14 +465,13 @@ public abstract class ChecksumFs extends FilterFs {
   }
 
   /**
-   * Report a checksum error to the file system.
-   * @param f the file name containing the error
-   * @param in the stream open on the file
-   * @param inPos the position of the beginning of the bad data in the file
-   * @param sums the stream open on the checksum file
-   * @param sumsPos the position of the beginning of the bad data in the
-   *         checksum file
-   * @return if retry is neccessary
+   * 给文件系统报告一个校验和的错误
+   * @param f 包含错误的文件名
+   * @param in 打开的文件的流
+   * @param inPos 文件中坏数据的起始位置
+   * @param sums 打开的校验文件流
+   * @param sumsPos 校验和文件中坏数据开始的位置
+   * @return 是否有必要重试 bool类型判断
    */
   public boolean reportChecksumFailure(Path f, FSDataInputStream in,
     long inPos, FSDataInputStream sums, long sumsPos) {

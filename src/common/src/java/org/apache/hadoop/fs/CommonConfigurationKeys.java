@@ -22,8 +22,7 @@ import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 
 /** 
- * This class contains constants for configuration keys used
- * in the common code.
+ * 此类包含常用代码中的常用配置键值
  *
  */
 @InterfaceAudience.Private
@@ -61,7 +60,7 @@ public class CommonConfigurationKeys {
                                          "fs.client.buffer.dir";
 
   //TBD: Code is not updated to use following keys.
-  //These keys will be used in later versions
+  //这些键值将在后续版本中使用
   //
   public static final long    FS_LOCAL_BLOCK_SIZE_DEFAULT = 32*1024*1024;
   public static final String  FS_AUTOMATIC_CLOSE_KEY = "fs.automatic.close";

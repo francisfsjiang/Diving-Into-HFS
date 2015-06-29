@@ -25,7 +25,7 @@ import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 import org.apache.hadoop.io.Writable;
 
-/** Store the summary of a content (a directory or a file). */
+/** 储存内容的摘要(a directory or a file). */
 @InterfaceAudience.Public
 @InterfaceStability.Evolving
 public class ContentSummary implements Writable{
@@ -66,13 +66,13 @@ public class ContentSummary implements Writable{
   /** @return the file count */
   public long getFileCount() {return fileCount;}
   
-  /** Return the directory quota */
+  /** 返回限定的目录a */
   public long getQuota() {return quota;}
   
-  /** Retuns (disk) space consumed */ 
+  /** 返回消耗的空间 */ 
   public long getSpaceConsumed() {return spaceConsumed;}
 
-  /** Returns (disk) space quota */
+  /** 返回存储空间的限额 */
   public long getSpaceQuota() {return spaceQuota;}
   
   /** {@inheritDoc} */
@@ -98,20 +98,20 @@ public class ContentSummary implements Writable{
   }
   
   /** 
-   * Output format:
+   * 输出格式:
    * <----12----> <----12----> <-------18------->
    *    DIR_COUNT   FILE_COUNT       CONTENT_SIZE FILE_NAME    
    */
   private static final String STRING_FORMAT = "%12d %12d %18d ";
   /** 
-   * Output format:
+   * 输出格式:
    * <----12----> <----15----> <----15----> <----15----> <----12----> <----12----> <-------18------->
    *    QUOTA   REMAINING_QUATA SPACE_QUOTA SPACE_QUOTA_REM DIR_COUNT   FILE_COUNT   CONTENT_SIZE     FILE_NAME    
    */
   private static final String QUOTA_STRING_FORMAT = "%12s %15s ";
   private static final String SPACE_QUOTA_STRING_FORMAT = "%15s %15s ";
   
-  /** The header string */
+  /** 数据头字符串*/
   private static final String HEADER = String.format(
       STRING_FORMAT.replace('d', 's'), "directories", "files", "bytes");
 
@@ -120,12 +120,12 @@ public class ContentSummary implements Writable{
       "quota", "remaining quota", "space quota", "reamaining quota") +
       HEADER;
   
-  /** Return the header of the output.
-   * if qOption is false, output directory count, file count, and content size;
-   * if qOption is true, output quota and remaining quota as well.
+  /** 返回输出的数据头
+   * 如果 qOption 为false, 输出目录数，,文件数,内容大小. 
+   * 如果 qOption 为true, 输出空间限额以及剩余的空间.
    * 
-   * @param qOption a flag indicating if quota needs to be printed or not
-   * @return the header of the output
+   * @param qOption 用来监听是否需要输出限额的哨兵
+   * @return 输出的数据头
    */
   public static String getHeader(boolean qOption) {
     return qOption ? QUOTA_HEADER : HEADER;
@@ -136,12 +136,11 @@ public class ContentSummary implements Writable{
     return toString(true);
   }
 
-  /** Return the string representation of the object in the output format.
-   * if qOption is false, output directory count, file count, and content size;
-   * if qOption is true, output quota and remaining quota as well.
-   * 
-   * @param qOption a flag indicating if quota needs to be printed or not
-   * @return the string representation of the object
+  /** 按格式返回对象的字符串表示
+   * 如果 qOption 为false, 输出目录数，,文件数,内容大小. 
+   * 如果 qOption 为true, 输出空间限额以及剩余的空间.
+   * @param qOption 用来监听是否需要输出限额的哨兵
+   * @return 对象的字符串表示
    */
   public String toString(boolean qOption) {
     String prefix = "";

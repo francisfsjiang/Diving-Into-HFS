@@ -473,9 +473,8 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
       return false;
     }
     if (fstatus.isDirectory()) {
-      //this works since the crcs are in the same
-      //directories and the files. so we just delete
-      //everything in the underlying filesystem
+      //进行此工作是因为CRC检验码在同一文件或目录下
+      //所以我们直接删掉底层系统里的所有文件
       return fs.delete(f, recursive);
     } else {
       Path checkFile = getChecksumFile(f);
@@ -518,8 +517,8 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
   }
 
   /**
-   * The src file is under FS, and the dst is on the local disk.
-   * Copy it from FS control to the local dst name.
+   * src文件文件系统下,dst在本地硬盘上
+   * 从文件系统中复制到本地的dst名
    */
   @Override
   public void copyToLocalFile(boolean delSrc, Path src, Path dst)
@@ -529,10 +528,9 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
   }
 
   /**
-   * The src file is under FS, and the dst is on the local disk.
-   * Copy it from FS control to the local dst name.
-   * If src and dst are directories, the copyCrc parameter
-   * determines whether to copy CRC files.
+   * src文件文件系统下,dst在本地硬盘上
+   * 从文件系统中复制到本地的dst名
+   * 如果src和dst指向的路径, 参数copyCrc决定是否复制CRC文件
    */
   public void copyToLocalFile(Path src, Path dst, boolean copyCrc)
     throws IOException {
