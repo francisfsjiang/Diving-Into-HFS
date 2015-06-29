@@ -493,8 +493,7 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
   };
 
   /**
-   * List the statuses of the files/directories in the given path if the path is
-   * a directory.
+   * 如果路劲是个目录，列出给出路径下的文件和路径的状态
    * 
    * @param f
    *          given path
@@ -577,8 +576,8 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
    * @param f 包含错误的文件名
    * @param in 打开的文件的流
    * @param inPos 文件中坏数据的起始位置
-   * @param sums 打开的校验文件流the stream open on the checksum file
-   * @param sumsPos the position of the beginning of the bad data in the checksum file
+   * @param sums 打开的校验文件流
+   * @param sumsPos 校验和文件中坏数据开始的位置
    * @return 是否有必要重试 bool类型判断
    */
   public boolean reportChecksumFailure(Path f, FSDataInputStream in,
