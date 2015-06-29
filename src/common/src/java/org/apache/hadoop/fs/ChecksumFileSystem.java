@@ -32,6 +32,24 @@ import org.apache.hadoop.util.Progressable;
 import org.apache.hadoop.util.PureJavaCrc32;
 import org.apache.hadoop.util.StringUtils;
 
+/****************************************************************************** 
+  * HDFS 会对写入的所有数据计算校验和(checksum)，并在读取数据时验证校验和。
+  * 针对指定字节的数目计算校验和。字节数默认是512 字节，可以通过io.bytes.per.checksum属性设置。
+  * 通过CRC-32编码后为4字节。   
+  * Datanode 在保存数据前负责验证checksum。
+  * client 会把数据和校验和一起发送到一个由多个datanode 组成的队列中，
+  * 最后一个Datanode 负责验证checksum。
+  * 如果验证失败，会抛出一个ChecksumException。客户端需要处理这种异常。   
+  * 客户端从datanode读取数据时，也会验证checksum。
+  * 每个Datanode 都保存了一个验证checksum的日志。
+  * 每次客户端成功验证一个数据块后，都会告知datanode，datanode会更新日志。
+  * 每个datanode 也会在一个后台线程中运行一个DataBlockScanner，
+  * 定期验证这个 datanode 上的所有数据块。   
+  * 在用Hadoop fs get命令读取文件时，可以用-ignoreCrc忽略验证。
+  * 如果是通过FileSystem API 读取时，可以通过setVerifyChecksum(false)，忽略验证。 
+  **********************************************************************************/
+
+
 /****************************************************************
  * 抽象检验文件系统 从文件系统过滤器类继承
  * 提供一个基本的文件校验系统的实现
@@ -233,7 +251,7 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
         if (sumLenRead <= 0) { // we're at the end of the file
           eof = true;
         } else {
-          // Adjust amount of data to read based on how many checksum chunks we read
+          // 根据读入的校验和块的数量调整读入数据的大小
           len = Math.min(len, bytesPerSum * (sumLenRead / CHECKSUM_SIZE));
         }
       }
@@ -256,18 +274,14 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
     }
     
     /**
-     * Skips over and discards <code>n</code> bytes of data from the
-     * input stream.
+     * 忽略或者弃用输入流中n byte的数据
+     * 在总计忽略或者弃用n byte的数据前，用Skip方法忽略一些小的bytes
+     * 实际忽略的byte数会被返回。如果n是负数，则不忽略任何byte。
      *
-     *The <code>skip</code> method skips over some smaller number of bytes
-     * when reaching end of file before <code>n</code> bytes have been skipped.
-     * The actual number of bytes skipped is returned.  If <code>n</code> is
-     * negative, no bytes are skipped.
-     *
-     * @param      n   the number of bytes to be skipped.
-     * @return     the actual number of bytes skipped.
-     * @exception  IOException  if an I/O error occurs.
-     *             ChecksumException if the chunk to skip to is corrupted
+     * @param      n   忽略的byte数
+     * @return     实际忽略的byte数
+     * @exception  发生返回错误时抛出IOException
+     *             当跳过的数据块损坏时，抛出ChecksumException 
      */
     public synchronized long skip(long n) throws IOException {
       long curPos = getPos();
@@ -279,15 +293,14 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
     }
     
     /**
-     * Seek to the given position in the stream.
-     * The next read() will be from that position.
+     * 在流中查找给定的位置
+     * 下一次read()从此位置开始
      * 
-     * <p>This method does not allow seek past the end of the file.
-     * This produces IOException.
+     * <p>此方法不允许搜索超过文件末，会抛出IOException
      *
-     * @param      pos   the postion to seek to.
-     * @exception  IOException  if an I/O error occurs or seeks after EOF
-     *             ChecksumException if the chunk to seek to is corrupted
+     * @param      pos   查找的位置
+     * @exception  发生IO错误或查找超过文件末尾时抛出IOException  
+     *             查找的数据块损坏时抛出ChecksumException 
      */
 
     public synchronized void seek(long pos) throws IOException {
@@ -300,9 +313,9 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
   }
 
   /**
-   * Opens an FSDataInputStream at the indicated Path.
-   * @param f the file name to open
-   * @param bufferSize the size of the buffer to be used.
+   * 在指定的路径下开启一个FSData的输入流
+   * @param f 需要打开的文件名
+   * @param bufferSize buffer需要的空间大小
    */
   @Override
   public FSDataInputStream open(Path f, int bufferSize) throws IOException {
@@ -317,20 +330,22 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
   }
 
   /**
-   * Calculated the length of the checksum file in bytes.
-   * @param size the length of the data file in bytes
-   * @param bytesPerSum the number of bytes in a checksum block
-   * @return the number of bytes in the checksum file
+   * 按byte计算校验和文件的长度
+   * @param size 按byte计算的数据文件的大小
+   * @param bytesPerSum 一个检验和块的byte数
+   * @return 检验和文件的byte数t
    */
   public static long getChecksumLength(long size, int bytesPerSum) {
-    //the checksum length is equal to size passed divided by bytesPerSum +
-    //bytes written in the beginning of the checksum file.  
+    /**
+    *校验和的长度等于the checksum length is equal to size passed divided by bytesPerSum +
+    *bytes written in the beginning of the checksum file.  
+    */
     return ((size + bytesPerSum - 1) / bytesPerSum) * 4 +
              CHECKSUM_VERSION.length + 4;  
   }
 
-  /** This class provides an output stream for a checksummed file.
-   * It generates checksums for data. */
+  /** 给校验过的文件提供一个输出流
+   * 为数据生成检验和. */
   private static class ChecksumFSOutputSummer extends FSOutputSummer {
     private FSDataOutputStream datas;    
     private FSDataOutputStream sums;
@@ -423,7 +438,7 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
   }
 
   /**
-   * Rename files/dirs
+   * 重命名 files/dirs
    */
   public boolean rename(Path src, Path dst) throws IOException {
     if (fs.isDirectory(src)) {
@@ -448,8 +463,7 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
   }
 
   /**
-   * Implement the delete(Path, boolean) in checksum
-   * file system.
+   * 在校验和文件系统中执行delete(Path, boolean)
    */
   public boolean delete(Path f, boolean recursive) throws IOException{
     FileStatus fstatus = null;
@@ -559,13 +573,13 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
   }
 
   /**
-   * Report a checksum error to the file system.
-   * @param f the file name containing the error
-   * @param in the stream open on the file
-   * @param inPos the position of the beginning of the bad data in the file
-   * @param sums the stream open on the checksum file
+   * 给文件系统报告一个校验和的错误
+   * @param f 包含错误的文件名
+   * @param in 打开的文件的流
+   * @param inPos 文件中坏数据的起始位置
+   * @param sums 打开的校验文件流the stream open on the checksum file
    * @param sumsPos the position of the beginning of the bad data in the checksum file
-   * @return if retry is neccessary
+   * @return 是否有必要重试 bool类型判断
    */
   public boolean reportChecksumFailure(Path f, FSDataInputStream in,
                                        long inPos, FSDataInputStream sums, long sumsPos) {
