@@ -54,12 +54,11 @@ HAL屏蔽底层硬件之间的差异,
 \HadoopFS 是~\ref{ch:hfs-intro:hfs}节中描述的一个宏观的抽象文件系统,
 而\HadoopDFS 只是该抽象文件系统管理下的一种具体文件系统的实现.
 
-在\HFS 中, 处于继承树顶端且有着相当高的抽象程度的基类\emph{FileSystem}的文档中记录到:
+在\HFS 中, 处于继承树顶端且有着相当高的抽象程度的基类\FS 的文档中记录到:
 \begin{quote}
-(FileSystem is) an abstract base class for a fairly generic filesystem.  It
+(\FS is) an abstract base class for a fairly generic filesystem. It
 may be implemented as a distributed filesystem, or as a "local"
 one that reflects the locally-connected disk.
 \end{quote}
-即
-\begin{quote}
-\end{quote}
+其中所指的分布式文件系统的实例之一, 就是\HDFS.
+
