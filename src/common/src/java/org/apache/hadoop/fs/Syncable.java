@@ -39,7 +39,7 @@ public interface Syncable {
    */
   public void hflush() throws IOException;
   
-  /** Similar to posix fsync, flush out the data in client's user buffer 
+ /** Similar to posix fsync, flush out the data in client's user buffer 
    * all the way to the disk device (but the disk may have it in its cache).
    * @throws IOException if error occurs
    */

@@ -28,6 +28,10 @@ import org.apache.hadoop.conf.Configuration;
 /**
  * URLStream handler relying on FileSystem and on a given Configuration to
  * handle URL protocols.
+ * FsUrlStreamHandler类继承自URLStreamHandler,URLStreamHandler依赖于FileSystem类
+ * 并且传入Configuration对象conf到其构造函数FsUrlStreamHandler(Configuration conf)
+ * FsUrlStreamHandler拥有一个私有的实例对象 Configuration对象conf
+ * FsUrlStreamHandler类的另一个构造函数是将其conf属性指向一个新的Configuration对象
  */
 @InterfaceAudience.Private
 @InterfaceStability.Unstable
@@ -42,7 +46,12 @@ class FsUrlStreamHandler extends URLStreamHandler {
   FsUrlStreamHandler() {
     this.conf = new Configuration();
   }
-
+/**
+  * @param URL对象 url 统一资源标识符
+  * @return FsUrlConnection对象
+  * @throw IOException
+  * 通过调用FsUrlConnection(conf, url)构造函数生成一个FsUrlConnection对象
+  */
   @Override
   protected FsUrlConnection openConnection(URL url) throws IOException {
     return new FsUrlConnection(conf, url);
