@@ -24,9 +24,8 @@ import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 
 /**
- * Base class for parsing either chmod permissions or umask permissions.
- * Includes common code needed by either operation as implemented in
- * UmaskParser and ChmodParser classes.
+ * 用于解析chmod或者umask的权限模式的基类.
+ * 包含用于实现UmaskParser和ChmodParser的通用代码.
  */
 @InterfaceAudience.Private
 @InterfaceStability.Unstable
@@ -40,15 +39,15 @@ class PermissionParser {
   protected char groupType = '+';
   protected char othersType = '+';
   protected char stickyBitType = '+';
-  
+
   /**
-   * Begin parsing permission stored in modeStr
-   * 
+   * 在构造时解析modeStr中的权限模式.
+   *
    * @param modeStr Permission mode, either octal or symbolic
    * @param symbolic Use-case specific symbolic pattern to match against
    * @throws IllegalArgumentException if unable to parse modeStr
    */
-  public PermissionParser(String modeStr, Pattern symbolic, Pattern octal) 
+  public PermissionParser(String modeStr, Pattern symbolic, Pattern octal)
        throws IllegalArgumentException {
     Matcher matcher = null;
 
@@ -166,7 +165,7 @@ class PermissionParser {
   }
 
   protected int combineModes(int existing, boolean exeOk) {
-    return   combineModeSegments(stickyBitType, stickyMode, 
+    return   combineModeSegments(stickyBitType, stickyMode,
                 (existing>>>9), false) << 9 |
              combineModeSegments(userType, userMode,
                 (existing>>>6)&7, exeOk) << 6 |
@@ -174,8 +173,8 @@ class PermissionParser {
                 (existing>>>3)&7, exeOk) << 3 |
              combineModeSegments(othersType, othersMode, existing&7, exeOk);
   }
-  
-  protected int combineModeSegments(char type, int mode, 
+
+  protected int combineModeSegments(char type, int mode,
                                     int existing, boolean exeOk) {
     boolean capX = false;
 
@@ -189,7 +188,7 @@ class PermissionParser {
     case '+' : mode = mode | existing; break;
     case '-' : mode = (~mode) & existing; break;
     case '=' : break;
-    default  : throw new RuntimeException("Unexpected");      
+    default  : throw new RuntimeException("Unexpected");
     }
 
     // if X is specified add 'x' only if exeOk or x was already set.

@@ -23,9 +23,8 @@ import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 
 /**
- * An exception class for access control related issues.
- * @deprecated Use {@link org.apache.hadoop.security.AccessControlException} 
- *             instead.
+ * 与访问控制有关的异常.
+ * @deprecated 改用{@link org.apache.hadoop.security.AccessControlException}
  */
 @Deprecated
 @InterfaceAudience.Public
@@ -35,7 +34,7 @@ public class AccessControlException extends IOException {
   private static final long serialVersionUID = 1L;
 
   /**
-   * Default constructor is needed for unwrapping from 
+   * Default constructor is needed for unwrapping from
    * {@link org.apache.hadoop.ipc.RemoteException}.
    */
   public AccessControlException() {
@@ -50,7 +49,7 @@ public class AccessControlException extends IOException {
   public AccessControlException(String s) {
     super(s);
   }
-  
+
   /**
    * Constructs a new exception with the specified cause and a detail
    * message of <tt>(cause==null ? null : cause.toString())</tt> (which

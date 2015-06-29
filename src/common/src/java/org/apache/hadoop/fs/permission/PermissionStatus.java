@@ -26,7 +26,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 /**
- * Store permission related information.
+ * 存储与全县有关的状态信息.
  */
 @InterfaceAudience.LimitedPrivate({"HDFS", "MapReduce"})
 @InterfaceStability.Unstable
@@ -38,7 +38,7 @@ public class PermissionStatus implements Writable {
     WritableFactories.setFactory(PermissionStatus.class, FACTORY);
   }
 
-  /** Create an immutable {@link PermissionStatus} object. */
+  /** 创建不可变的PermissionStatus实例 */
   public static PermissionStatus createImmutable(
       String user, String group, FsPermission permission) {
     return new PermissionStatus(user, group, permission) {
@@ -107,7 +107,7 @@ public class PermissionStatus implements Writable {
    * Serialize a {@link PermissionStatus} from its base components.
    */
   public static void write(DataOutput out,
-                           String username, 
+                           String username,
                            String groupname,
                            FsPermission permission) throws IOException {
     Text.writeString(out, username);

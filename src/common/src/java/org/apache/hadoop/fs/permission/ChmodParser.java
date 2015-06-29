@@ -24,8 +24,7 @@ import org.apache.hadoop.classification.InterfaceStability;
 import org.apache.hadoop.fs.FileStatus;
 
 /**
- * Parse a permission mode passed in from a chmod command and apply that
- * mode against an existing file.
+ * 解析来自chmod命令的权限格式, 并将之应用到文件系统.
  */
 @InterfaceAudience.Private
 @InterfaceStability.Unstable
@@ -34,14 +33,13 @@ public class ChmodParser extends PermissionParser {
     Pattern.compile("^\\s*[+]?([01]?)([0-7]{3})\\s*$");
   private static Pattern chmodNormalPattern =
     Pattern.compile("\\G\\s*([ugoa]*)([+=-]+)([rwxXt]+)([,\\s]*)\\s*");
-  
+
   public ChmodParser(String modeStr) throws IllegalArgumentException {
     super(modeStr, chmodNormalPattern, chmodOctalPattern);
   }
 
   /**
-   * Apply permission against specified file and determine what the
-   * new mode would be
+   * 为特定文件应用权限, 并判断应用后该文件的新的权限模式.
    * @param file File against which to apply mode
    * @return File's new mode if applied.
    */
@@ -49,7 +47,7 @@ public class ChmodParser extends PermissionParser {
     FsPermission perms = file.getPermission();
     int existing = perms.toShort();
     boolean exeOk = file.isDirectory() || (existing & 0111) != 0;
-    
+
     return (short)combineModes(existing, exeOk);
   }
 }

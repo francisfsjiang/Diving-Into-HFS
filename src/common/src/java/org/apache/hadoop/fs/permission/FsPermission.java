@@ -32,7 +32,8 @@ import org.apache.hadoop.io.WritableFactories;
 import org.apache.hadoop.io.WritableFactory;
 
 /**
- * A class for file/directory permissions.
+ * 虽然前缀是Fs, 但与文件系统并没有太多关联.
+ * 组合3个{@link FsAction}对象以表示完整的权限模式.
  */
 @InterfaceAudience.Public
 @InterfaceStability.Stable
@@ -89,7 +90,7 @@ public class FsPermission implements Writable {
 
   /**
    * Copy constructor
-   * 
+   *
    * @param other other permission
    */
   public FsPermission(FsPermission other) {
@@ -97,7 +98,7 @@ public class FsPermission implements Writable {
     this.groupaction = other.groupaction;
     this.otheraction = other.otheraction;
   }
-  
+
   /**
    * Construct by given mode, either in octal or symbolic format.
    * @param mode mode as a string, either in octal or symbolic format
@@ -197,29 +198,29 @@ public class FsPermission implements Writable {
 
   /** umask property label deprecated key and code in getUMask method
    *  to accommodate it may be removed in version .23 */
-  public static final String DEPRECATED_UMASK_LABEL = "dfs.umask"; 
-  public static final String UMASK_LABEL = 
+  public static final String DEPRECATED_UMASK_LABEL = "dfs.umask";
+  public static final String UMASK_LABEL =
                   CommonConfigurationKeys.FS_PERMISSIONS_UMASK_KEY;
-  public static final int DEFAULT_UMASK = 
+  public static final int DEFAULT_UMASK =
                   CommonConfigurationKeys.FS_PERMISSIONS_UMASK_DEFAULT;
 
-  /** 
+  /**
    * Get the user file creation mask (umask)
-   * 
-   * {@code UMASK_LABEL} config param has umask value that is either symbolic 
+   *
+   * {@code UMASK_LABEL} config param has umask value that is either symbolic
    * or octal.
-   * 
-   * Symbolic umask is applied relative to file mode creation mask; 
-   * the permission op characters '+' clears the corresponding bit in the mask, 
+   *
+   * Symbolic umask is applied relative to file mode creation mask;
+   * the permission op characters '+' clears the corresponding bit in the mask,
    * '-' sets bits in the mask.
-   * 
+   *
    * Octal umask, the specified bits are set in the file mode creation mask.
-   * 
+   *
    * {@code DEPRECATED_UMASK_LABEL} config param has umask value set to decimal.
    */
   public static FsPermission getUMask(Configuration conf) {
     int umask = DEFAULT_UMASK;
-    
+
     // To ensure backward compatibility first use the deprecated key.
     // If the deprecated key is not present then check for the new key
     if(conf != null) {
@@ -236,13 +237,13 @@ public class FsPermission implements Writable {
         String error = "Unable to parse configuration " + UMASK_LABEL
             + " with value " + confUmask + " as " + type + " umask.";
         LOG.warn(error);
-        
+
         // If oldUmask is not set, then throw the exception
         if (oldUmask == Integer.MIN_VALUE) {
           throw new IllegalArgumentException(error);
         }
       }
-        
+
       if(oldUmask != Integer.MIN_VALUE) { // Property was set with old key
         if (umask != oldUmask) {
           LOG.warn(DEPRECATED_UMASK_LABEL
@@ -254,7 +255,7 @@ public class FsPermission implements Writable {
         }
       }
     }
-    
+
     return new FsPermission((short)umask);
   }
 
