@@ -9,7 +9,22 @@
 	\begin{minipage}[t]{.65\textwidth}
 		{\Large #2} {\Large #3} \\[-1mm]
 	\end{minipage}}
+
 \newenvironment{SAAuthors}{}{\\[1cm]}
+
+\newenvironment{XeEnum}[1][-1em]{%
+    \begin{enumerate}
+        \setlength{\itemsep}{#1}
+}{%
+    \end{enumerate}
+}
+
+\newenvironment{XeItem}[1][-1em]{%
+    \begin{itemize}
+        \setlength{\itemsep}{#1}
+}{%
+    \end{itemize}
+}
 
 \newcommand{\XeRfChapter}[1]{第\ref{#1}章}
 \newcommand{\XeStructure}[2]{\textbf{\XeRfChapter{#1}} #2 \\[0.2em]}
