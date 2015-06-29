@@ -25,24 +25,24 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
 /**
- * Count the number of directories, files, bytes, quota, and remaining quota.
+ * 计数目录, 文件, 字节, 限额以及限额的余量.
  */
 public class Count extends Command {
   public static final String NAME = "count";
   public static final String USAGE = "-" + NAME + "[-q] <path>";
-  public static final String DESCRIPTION = CommandUtils.formatDescription(USAGE, 
+  public static final String DESCRIPTION = CommandUtils.formatDescription(USAGE,
       "Count the number of directories, files and bytes under the paths",
       "that match the specified file pattern.  The output columns are:",
       "DIR_COUNT FILE_COUNT CONTENT_SIZE FILE_NAME or",
       "QUOTA REMAINING_QUATA SPACE_QUOTA REMAINING_SPACE_QUOTA ",
       "      DIR_COUNT FILE_COUNT CONTENT_SIZE FILE_NAME");
-  
+
   private boolean qOption;
 
   /** Constructor
-   * 
+   *
    * @param cmd the count command
-   * @param pos the starting index of the arguments 
+   * @param pos the starting index of the arguments
    */
   public Count(String[] cmd, int pos, Configuration conf) {
     super(conf);
@@ -54,14 +54,14 @@ public class Count extends Command {
     }
     this.qOption = c.getOpt("q") ? true: false;
   }
-  
-  /** Check if a command is the count command
-   * 
+
+  /** 检查一个命令是否是计数命令.
+   *
    * @param cmd A string representation of a command starting with "-"
    * @return true if this is a count command; false otherwise
    */
   public static boolean matches(String cmd) {
-    return ("-" + NAME).equals(cmd); 
+    return ("-" + NAME).equals(cmd);
   }
 
   @Override
