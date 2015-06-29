@@ -27,20 +27,20 @@ import org.apache.hadoop.classification.InterfaceStability;
 @InterfaceStability.Evolving
 public interface Seekable {
   /**
-   * Seek to the given offset from the start of the file.
-   * The next read() will be from that location.  Can't
-   * seek past the end of the file.
+   * 从文件的开始位置按给出的偏移量开始查找
+   * 下一次read()会从偏移位置开始查找
+   * 不能查找超过文件尾
    */
   void seek(long pos) throws IOException;
   
   /**
-   * Return the current offset from the start of the file
+   * 返回当前距离文件开始位置的偏移量
    */
   long getPos() throws IOException;
 
   /**
-   * Seeks a different copy of the data.  Returns true if 
-   * found a new source, false otherwise.
+   * 查找数据的不同备份
+   * 查找到新的文件返回true，否者返回false
    */
   @InterfaceAudience.Private
   boolean seekToNewSource(long targetPos) throws IOException;
