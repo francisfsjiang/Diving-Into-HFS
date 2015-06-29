@@ -28,19 +28,27 @@ The structure and logic rules used to manage the groups of information and their
 
 \subsection{作为服务提供者的\HFS}
 
-服务提供者是的\HFS, 其主要职责是向上层的\Hadoop 应用程序提供可靠的文件访问服务.
+服务提供者是\HFS 在\Hadoop 中的角色,
+其主要职责是向上层的\Hadoop 应用提供可靠的文件访问服务.
 
-\subsection{作为基础抽象层\HFS}
+\subsection{作为抽象层的\HFS}
 
+根据\HadoopFS 中的\emph{AbstractFileSystem}类的文档
+\begin{quote}
+This class provides an interface for implementors of a \HadoopFS
+(analogous to the \VFS\space of \Unix). Applications do not access this class;
+instead they access files across all file systems using \emph{FileContext}.
+\end{quote}
+指出的``\emph{AbstractFileSystem}以抽象类的形式向\HFS 中的具体文件系统的实现者提供接口,
+与\Unix 下\VFS 的类似''.
 
-\HadoopFS{}中的\emph{AbstractFileSystem}类的文档明确指出了\HFS
-是一个与\UNIX 下的\VFS 十分类似的系统,
+明确指出了\HFS 是一个与\Unix 下的\VFS 十分类似的系统,
 而\VFS 本身是
 \begin{quote}
-    ...an abstraction layer on top of a more concrete file system
+    \ldots an abstraction layer on top of a more concrete file system
 \end{quote}
 
-类似地, \HFS 是用于向\Hadoop 提供文件服务的, 横断于各个具体文件系统之上的抽象层, 它
+类似地, \HFS 是用于向\Hadoop 提供文件服务的, 横断于各个具体文件系统之上的抽象层. 它
 HAL屏蔽底层硬件之间的差异,
 向上提驱动磁盘的接口,
 具体文件系统屏蔽不同体系(如NTFS, ext, xfs, btfs, etc.)下信息在物理磁盘上的组织方式的差异,
@@ -49,7 +57,7 @@ HAL屏蔽底层硬件之间的差异,
 负责屏蔽不同的具体文件系统之间的差异(如命名管理, 权限控制等),
 向上提供完全统一的文件操纵接口. 这个最高的抽象层, 就是HFS和VFS所处的位置.
 
-\section{\HadoopFS 与 \HadoopDFS}
+\section{\HFS 与\HDFS}
 
 \HadoopFS 是~\ref{ch:hfs-intro:hfs}节中描述的一个宏观的抽象文件系统,
 而\HadoopDFS 只是该抽象文件系统管理下的一种具体文件系统的实现.
