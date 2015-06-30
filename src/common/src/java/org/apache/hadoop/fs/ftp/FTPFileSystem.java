@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -209,8 +209,6 @@ public class FTPFileSystem extends FileSystem {
   }
 
   /**
-   * A stream obtained via this call must be closed before using other APIs of
-   * this class or else the invocation will block.
    * @param file Path对象,file的URI路径
    * @param permission FsPermission对象, FsPermission实现Writeable接口,强调文件系统的写入许可
    * @param overwrite 布尔类型判断文件路径是否被覆盖
@@ -323,9 +321,6 @@ public class FTPFileSystem extends FileSystem {
   }
 
   /**
-   * Convenience method, so that we don't open a new connection when using this
-   * method from within another method. Otherwise every API invocation incurs
-   * the overhead of opening/closing a TCP connection.
    * @param FTPClient对象 client
    * @param Path对象 file
    * @param boolean recursive
