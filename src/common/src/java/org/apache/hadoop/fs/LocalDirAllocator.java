@@ -62,6 +62,11 @@ import org.apache.hadoop.conf.Configuration;
  * actually points to the configured directory on the Disk which will be the
  * parent for all file write/read allocations.
  */
+
+/**
+ * 该类是创建文件时磁盘分配round-robin模式的一种实现。
+ * 它实现的方式就是持续跟踪磁盘最后是被一个文件写在什么位置的。
+ */
 @InterfaceAudience.LimitedPrivate({"HDFS", "MapReduce"})
 @InterfaceStability.Unstable
 public class LocalDirAllocator {
@@ -110,6 +115,13 @@ public class LocalDirAllocator {
    *  @return the complete path to the file on a local disk
    *  @throws IOException
    */
+  /**
+   * 为了写入获得本地文件系统的一个路径
+   * @param pathStr
+   * @param conf
+   * @return
+   * @throws IOException
+   */
   public Path getLocalPathForWrite(String pathStr, 
       Configuration conf) throws IOException {
     return getLocalPathForWrite(pathStr, SIZE_UNKNOWN, conf);
@@ -140,6 +152,13 @@ public class LocalDirAllocator {
    *  @return the complete path to the file on a local disk
    *  @throws IOException
    */
+  /**
+   * 为了读入获得本地文件系统的一个路径
+   * @param pathStr
+   * @param conf
+   * @return
+   * @throws IOException
+   */
   public Path getLocalPathToRead(String pathStr, 
       Configuration conf) throws IOException {
     AllocatorPerContext context = obtainContext(contextCfgItemName);
@@ -157,6 +176,14 @@ public class LocalDirAllocator {
    *  @return a unique temporary file
    *  @throws IOException
    */
+  /**
+   * 为了写入创建一个临时文件
+   * @param pathStr
+   * @param size
+   * @param conf
+   * @return
+   * @throws IOException
+   */
   public File createTmpFileForWrite(String pathStr, long size, 
       Configuration conf) throws IOException {
     AllocatorPerContext context = obtainContext(contextCfgItemName);
@@ -166,6 +193,11 @@ public class LocalDirAllocator {
   /** Method to check whether a context is valid
    * @param contextCfgItemName
    * @return true/false
+   */
+  /**
+   * 判断内容是否有效
+   * @param contextCfgItemName
+   * @return
    */
   public static boolean isContextValid(String contextCfgItemName) {
     synchronized (contexts) {
@@ -180,6 +212,12 @@ public class LocalDirAllocator {
    *  @return true if files exist. false otherwise
    *  @throws IOException
    */
+  /**
+   * 判断路径是否存在
+   * @param pathStr
+   * @param conf
+   * @return
+   */
   public boolean ifExists(String pathStr,Configuration conf) {
     AllocatorPerContext context = obtainContext(contextCfgItemName);
     return context.ifExists(pathStr, conf);
@@ -188,6 +226,10 @@ public class LocalDirAllocator {
   /**
    * Get the current directory index for the given configuration item.
    * @return the current directory index for the given configuration item.
+   */
+  /**
+   * 获得当前目录的索引号
+   * @return
    */
   int getCurrentDirectoryIndex() {
     AllocatorPerContext context = obtainContext(contextCfgItemName);
@@ -213,6 +255,11 @@ public class LocalDirAllocator {
 
     /** This method gets called everytime before any read/write to make sure
      * that any change to localDirs is reflected immediately.
+     */
+    /**
+     * 改变配置信息
+     * @param conf
+     * @throws IOException
      */
     private void confChanged(Configuration conf) throws IOException {
       String newLocalDirs = conf.get(contextCfgItemName);
@@ -252,6 +299,12 @@ public class LocalDirAllocator {
       }
     }
 
+    /**
+     * 创建路径
+     * @param path
+     * @return
+     * @throws IOException
+     */
     private Path createPath(String path) throws IOException {
       Path file = new Path(new Path(localDirs[dirNumLastAccessed]),
                                     path);
@@ -291,6 +344,14 @@ public class LocalDirAllocator {
      *  
      *  If size is not known, use roulette selection -- pick directories
      *  with probability proportional to their available space.
+     */
+    /**
+     * 采用round-robin模式从本地文件系统中获取一个路径
+     * @param pathStr
+     * @param size
+     * @param conf
+     * @return
+     * @throws IOException
      */
     public synchronized Path getLocalPathForWrite(String pathStr, long size, 
         Configuration conf) throws IOException {
@@ -358,6 +419,14 @@ public class LocalDirAllocator {
      *  a file on the first path which has enough space. The file is guaranteed
      *  to go away when the JVM exits.
      */
+    /**
+     * 创建一个可供写入的临时文件
+     * @param pathStr
+     * @param size
+     * @param conf
+     * @return
+     * @throws IOException
+     */
     public File createTmpFileForWrite(String pathStr, long size, 
         Configuration conf) throws IOException {
 
@@ -375,6 +444,13 @@ public class LocalDirAllocator {
     /** Get a path from the local FS for reading. We search through all the
      *  configured dirs for the file's existence and return the complete
      *  path to the file when we find one 
+     */
+    /**
+     * 搜索所有的配置目录，返回一个我们找到的完全路径
+     * @param pathStr
+     * @param conf
+     * @return
+     * @throws IOException
      */
     public synchronized Path getLocalPathToRead(String pathStr, 
         Configuration conf) throws IOException {
@@ -401,6 +477,12 @@ public class LocalDirAllocator {
 
     /** We search through all the configured dirs for the file's existence
      *  and return true when we find one 
+     */
+    /**
+     * 搜索所有的配置目录看所要找的文件是否存在。
+     * @param pathStr
+     * @param conf
+     * @return
      */
     public synchronized boolean ifExists(String pathStr,Configuration conf) {
       try {
