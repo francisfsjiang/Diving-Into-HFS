@@ -7,7 +7,22 @@ for reliable, scalable, distributed computing.}{hadoop.apache.org}{引自项目�
 \section{什么是\Hadoop}
 \label{ch:hfs-intro:hadoop}
 
-\Hadoop 是一个时下流行的云计算平台. 
+\Hadoop 是目前最流行的分布式计算平台之一.
+所谓``分布式计算平台'', 其中的关键词有二:
+其一是``分布式计算''. ``分布式''意味着\Hadoop 通常将运行在规模不定的网络上,
+通过网络中各个节点的协作来处理大规模的计算; 而要在这样的环境下实现``计算'',
+首先要解决的几个问题是
+\begin{XeEnum}
+    \item\label{it:hi:p1} 如何将计算任分解成子问题并务分散到规模不定的集群上
+    \item\label{it:hi:p2} 如何合并来自不同计算节点之间的计算结果并求解最终结
+    \item\label{it:hi:p3} 如何在分布式环境为上层应用提供相应的文件服务, 用以支持\Hadoop 系统的运行.
+\end{XeEnum}
+其中, 为了解决问题~\ref{it:hi:p1}和问题~\ref{it:hi:p2},
+\Hadoop 使用了\MapReduce 的策略;
+为了解决问题~\ref{it:hi:p3}, \Hadoop 实现了强大的\Hadoop 分布式文件系统(\HadoopDFS, \HDFS).
+\MapReduce 和\HDFS 是\Hadoop 平台的核心设计.
+
+其二是``平台''. 平台意味着\Hadoop 系统本身提供的是通用机制, 而不局限于具体策略.
 
 \section{什么是\HadoopFS}
 \label{ch:hfs-intro:hfs}
@@ -20,7 +35,7 @@ The structure and logic rules used to manage the groups of information and their
 即一组用于
 \begin{XeEnum}
     \item 管理信息
-    \item 为信息提供明命名索引
+    \item 为信息提供命名索引
 \end{XeEnum}
 的结构和逻辑规则.
 
@@ -40,33 +55,42 @@ This class provides an interface for implementors of a \HadoopFS
 instead they access files across all file systems using \emph{FileContext}.
 \end{quote}
 指出的``\emph{AbstractFileSystem}以抽象类的形式向\HFS 中的具体文件系统的实现者提供接口,
-与\Unix 下\VFS 的类似''.
+与\Unix 下\VFS 的机制类似''.
 
-明确指出了\HFS 是一个与\Unix 下的\VFS 十分类似的系统,
 而\VFS 本身是
 \begin{quote}
     \ldots an abstraction layer on top of a more concrete file system
 \end{quote}
 
-类似地, \HFS 是用于向\Hadoop 提供文件服务的, 横断于各个具体文件系统之上的抽象层. 它
-HAL屏蔽底层硬件之间的差异,
-向上提驱动磁盘的接口,
+类似地, 我们也可以这样描述\HFS
+\begin{quote}
+    \HFS 是建立在不同的具体文件系统智商的抽象层.
+\end{quote}
+
+\blankfigure{}
+
+如~\ref{ch:hfs-intro:hfs}节所述, \HFS 是用于向\Hadoop 提供文件服务的,
+横断于各个具体文件系统之上的抽象层.
+HAL屏蔽底层硬件之间的差异, 向上提驱动磁盘的接口;
 具体文件系统屏蔽不同体系(如NTFS, ext, xfs, btfs, etc.)下信息在物理磁盘上的组织方式的差异,
-向上提供操纵文件的接口,
-而抽象文件系统,
-负责屏蔽不同的具体文件系统之间的差异(如命名管理, 权限控制等),
-向上提供完全统一的文件操纵接口. 这个最高的抽象层, 就是HFS和VFS所处的位置.
+向上提供操纵文件的接口;
+而抽象文件系统, 负责屏蔽不同的具体文件系统之间的差异(如命名管理, 权限控制等),
+向上提供完全统一的文件操纵接口. 这个最高的抽象层, 就是HFS所处的位置.
 
 \section{\HFS 与\HDFS}
+
+\HDFS 的知名度远要比\HFS 高的多.
 
 \HadoopFS 是~\ref{ch:hfs-intro:hfs}节中描述的一个宏观的抽象文件系统,
 而\HadoopDFS 只是该抽象文件系统管理下的一种具体文件系统的实现.
 
 在\HFS 中, 处于继承树顶端且有着相当高的抽象程度的基类\FS 的文档中记录到:
+
 \begin{quote}
-(\FS is) an abstract base class for a fairly generic filesystem. It
+(\FS\space is) an abstract base class for a fairly generic filesystem. It
 may be implemented as a distributed filesystem, or as a "local"
 one that reflects the locally-connected disk.
 \end{quote}
+
 其中所指的分布式文件系统的实例之一, 就是\HDFS.
 
