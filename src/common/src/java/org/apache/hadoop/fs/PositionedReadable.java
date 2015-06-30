@@ -23,30 +23,27 @@ import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 import org.apache.hadoop.fs.*;
 
-/** Stream that permits positional reading. */
+/** 允许从某个位置开始读的流 */
 @InterfaceAudience.Public
 @InterfaceStability.Evolving
 public interface PositionedReadable {
   /**
-   * Read upto the specified number of bytes, from a given
-   * position within a file, and return the number of bytes read. This does not
-   * change the current offset of a file, and is thread-safe.
+   * 从文件给定的位置读入指定数量的byte数, 并返回读入的byte数
+   *  这不会改变当前文件的偏移量，并且是线程安全的.
    */
   public int read(long position, byte[] buffer, int offset, int length)
     throws IOException;
   
   /**
-   * Read the specified number of bytes, from a given
-   * position within a file. This does not
-   * change the current offset of a file, and is thread-safe.
+   * 从文件给定的位置读入指定数量的byte数
+   * 这不会改变当前文件的偏移量，并且是线程安全的.
    */
   public void readFully(long position, byte[] buffer, int offset, int length)
     throws IOException;
   
   /**
-   * Read number of bytes equalt to the length of the buffer, from a given
-   * position within a file. This does not
-   * change the current offset of a file, and is thread-safe.
+   * 从给定的位置读入与缓存区长度相同的byte数.
+   * 这不会改变当前文件的偏移量，并且是线程安全的.
    */
   public void readFully(long position, byte[] buffer) throws IOException;
 }
