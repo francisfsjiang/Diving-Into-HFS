@@ -41,19 +41,32 @@ import org.apache.hadoop.util.StringUtils;
 
 /****************************************************************
  * Implement the FileSystem API for the raw local filesystem.
- *
+ * 该类实现了一个原生本地文件系统。可以作为一个具有最基本功能的文件系统。
  *****************************************************************/
 @InterfaceAudience.Public
 @InterfaceStability.Stable
 public class RawLocalFileSystem extends FileSystem {
+  /**
+   * 本地文件名的URI
+   * file://来标识该文件系统为本地文件系统
+   */
   static final URI NAME = URI.create("file:///");
+  /**
+   * 用户的当前工作目录
+   */
   private Path workingDir;
-  
+
+  /**
+   * 在构造方法中完成对用户的当前工作目录的初始化
+   */
   public RawLocalFileSystem() {
     workingDir = getInitialWorkingDirectory();
   }
   
-  /** Convert a path to a File. */
+  /**
+   * Convert a path to a File.
+   * 用于将一个路径转化为以用户工作目录为父目录的绝对路径
+   */
   public File pathToFile(Path path) {
     checkPath(path);
     if (!path.isAbsolute()) {
@@ -62,13 +75,27 @@ public class RawLocalFileSystem extends FileSystem {
     return new File(path.toUri().getPath());
   }
 
+  /**
+   * 获取本地文件名的URI
+   * @return
+   */
   public URI getUri() { return NAME; }
-  
+
+  /**
+   * 初始化
+   * @param uri
+   * @param conf the configuration
+   * @throws IOException
+   */
   public void initialize(URI uri, Configuration conf) throws IOException {
     super.initialize(uri, conf);
     setConf(conf);
   }
-  
+
+  /**
+   * 本地文件系统的读取操作
+   * 会将读到的字节数添加到统计信息中
+   */
   class TrackingFileInputStream extends FileInputStream {
     public TrackingFileInputStream(File f) throws IOException {
       super(f);
@@ -102,6 +129,10 @@ public class RawLocalFileSystem extends FileSystem {
   /*******************************************************
    * For open()'s FSInputStream.
    *******************************************************/
+  /**
+   * 依靠包装的FileInputStream的实例进行读取操作
+   * 通过 TrackingFileInputStream来初始化
+   */
   class LocalFSFileInputStream extends FSInputStream {
     private FileInputStream fis;
     private long position;
@@ -183,6 +214,7 @@ public class RawLocalFileSystem extends FileSystem {
   
   /*********************************************************
    * For create()'s FSOutputStream.
+   * 同输入流，依靠包装的FileOutputStream的实例进行写入操作
    *********************************************************/
   class LocalFSFileOutputStream extends OutputStream {
     private FileOutputStream fos;

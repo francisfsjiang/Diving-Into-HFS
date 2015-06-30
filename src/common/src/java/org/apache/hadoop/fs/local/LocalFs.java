@@ -32,6 +32,11 @@ import org.apache.hadoop.fs.ChecksumFs;
  */
 @InterfaceAudience.Private
 @InterfaceStability.Evolving /*Evolving for a release,to be changed to Stable */
+
+/**
+ * 该类继承于AbstractFileSystem分之下，是一个演进，
+ * 但有待变得更稳定。
+ */
 public class LocalFs extends ChecksumFs {
   LocalFs(final Configuration conf) throws IOException, URISyntaxException {
     super(new RawLocalFs(conf));

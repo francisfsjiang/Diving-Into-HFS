@@ -9,8 +9,8 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="test1" />
     <orderEntry type="module" module-name="hdfs" />
-    <orderEntry type="module" module-name="system1" />
     <orderEntry type="module" module-name="common" />
+    <orderEntry type="module" module-name="system1" />
     <orderEntry type="module" module-name="test" />
   </component>
 </module>

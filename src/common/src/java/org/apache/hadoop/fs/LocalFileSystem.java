@@ -70,6 +70,7 @@ public class LocalFileSystem extends ChecksumFileSystem {
   /**
    * Moves files to a bad file directory on the same device, so that their
    * storage will not be reused.
+   *
    */
   public boolean reportChecksumFailure(Path p, FSDataInputStream in,
                                        long inPos,
