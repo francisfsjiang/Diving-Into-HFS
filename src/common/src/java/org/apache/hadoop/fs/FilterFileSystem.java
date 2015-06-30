@@ -42,6 +42,9 @@ import org.apache.hadoop.util.Progressable;
  * and may also provide additional methods
  * and fields.
  *
+ * FilterFileSystem继承了FileSystem类，重写了父类的所有方法。
+ * FilterFileSystem类中包含一个FileSystem实例，用来作为基础的文件系统，在其中给
+ * 它转换数据或者增加方法，加以封装，相当于起到了过滤文件系统的作用。
  *****************************************************************/
 @InterfaceAudience.Public
 @InterfaceStability.Stable

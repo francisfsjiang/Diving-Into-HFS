@@ -25,7 +25,9 @@ import org.apache.hadoop.classification.InterfaceStability;
 import org.apache.hadoop.fs.CommonConfigurationKeys;
 import org.apache.hadoop.fs.FsServerDefaults;
 
-/** 
+/**
+ * 该类包含一些用在LocalFileSystem、RawLocalFs、CheckSumFs的
+ * 配置关键字的常量
  * This class contains constants for configuration keys used
  * in the local file system, raw local fs and checksum fs.
  */
@@ -33,15 +35,31 @@ import org.apache.hadoop.fs.FsServerDefaults;
 @InterfaceStability.Unstable
 public class LocalConfigKeys extends CommonConfigurationKeys {
   public static final String BLOCK_SIZE_KEY = "file.blocksize";
+    /**
+     * 默认块大小
+     */
   public static final long BLOCK_SIZE_DEFAULT = 64*1024*1024;
   public static final String  REPLICATION_KEY = "file.replication";
+    /**
+     * 默认复制数
+     */
   public static final short REPLICATION_DEFAULT = 1;
   public static final String STREAM_BUFFER_SIZE_KEY = "file.stream-buffer-size";
+    /**
+     * 默认流缓存大小
+     */
   public static final int STREAM_BUFFER_SIZE_DEFAULT = 4096;
   public static final String BYTES_PER_CHECKSUM_KEY = "file.bytes-per-checksum";
+
+    /**
+     * 默认每个校验和的字节数
+     */
   public static final int BYTES_PER_CHECKSUM_DEFAULT = 512;
   public static final String CLIENT_WRITE_PACKET_SIZE_KEY =
                                                 "file.client-write-packet-size";
+    /**
+     * 默认客户端写入包的大小
+     */
   public static final int CLIENT_WRITE_PACKET_SIZE_DEFAULT = 64*1024;
 
   protected static FsServerDefaults getServerDefaults() throws IOException {

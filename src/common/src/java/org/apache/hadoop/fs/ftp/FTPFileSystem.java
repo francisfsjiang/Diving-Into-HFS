@@ -45,6 +45,7 @@ import org.apache.hadoop.util.Progressable;
  * A {@link FileSystem} backed by an FTP client provided by <a
  * href="http://commons.apache.org/net/">Apache Commons Net</a>.
  * </p>
+ * 该类为Apache Commons Net 的FTPClient 提供了访问Hadoop文件系统的接口。
  */
 @InterfaceAudience.Public
 @InterfaceStability.Stable
@@ -52,13 +53,25 @@ public class FTPFileSystem extends FileSystem {
 
   public static final Log LOG = LogFactory
       .getLog(FTPFileSystem.class);
-
+  /**
+   *FTPClient访问文件系统所使用的缓存区大小
+   */
   public static final int DEFAULT_BUFFER_SIZE = 1024 * 1024;
 
+  /**
+   *  FTPClient访问文件系统所使用的数据块大小
+   */
   public static final int DEFAULT_BLOCK_SIZE = 4 * 1024;
 
   private URI uri;
 
+  /**
+   * 初始化方法，使用URI指定的host、port和userAndPassword信息，
+   * 来覆盖掉FTP默认的配置项
+   * @param uri
+   * @param conf the configuration
+   * @throws IOException
+   */
   @Override
   public void initialize(URI uri, Configuration conf) throws IOException { // get
     super.initialize(uri, conf);
@@ -97,7 +110,10 @@ public class FTPFileSystem extends FileSystem {
 
   /**
    * Connect to the FTP server using configuration parameters *
-   * 
+   * 首先创建一个FTPClient对象，然后获取配置信息
+   * 进而连接FTP服务器，如果登陆成功，则需进一步设置
+   * 文件传输方式、文件类型和缓存区大小
+   * 如果登陆失败，抛出IO异常
    * @return An FTPClient instance
    * @throws IOException
    */
@@ -128,7 +144,9 @@ public class FTPFileSystem extends FileSystem {
 
   /**
    * Logout and disconnect the given FTPClient. *
-   * 
+   * 断开连接：
+   * 先判断FTPClient是否处于连接状态。
+   * 若是，则先退出登陆，再断开连接。
    * @param client
    * @throws IOException
    */
@@ -148,7 +166,7 @@ public class FTPFileSystem extends FileSystem {
 
   /**
    * Resolve against given working directory. *
-   * 
+   * 返回一个绝对路径
    * @param workDir
    * @param path
    * @return
@@ -160,6 +178,15 @@ public class FTPFileSystem extends FileSystem {
     return new Path(workDir, path);
   }
 
+
+  /**
+   * 根据文件的名称和缓存大小执行打开操作，
+   * 返回文件数据的输入流
+   * @param file
+   * @param bufferSize the size of the buffer to be used.
+   * @return
+   * @throws IOException
+   */
   @Override
   public FSDataInputStream open(Path file, int bufferSize) throws IOException {
     FTPClient client = connect();

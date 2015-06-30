@@ -29,7 +29,8 @@ import org.apache.hadoop.io.WritableFactory;
 
 /****************************************************
  * Provides server default configuration values to clients.
- * 
+ * 文件系统默认服务器类
+ * 给客户端提供默认服务器配置值
  ****************************************************/
 @InterfaceAudience.Public
 @InterfaceStability.Evolving

@@ -33,6 +33,12 @@ import org.apache.hadoop.io.WritableFactory;
  * of block. 
  * 
  */
+
+/**
+ * 块位置类
+ * 域包含主机号、端口号和拓扑路径以及偏移量和长度
+ * 主要方法为域的get、set方法和实现Writable接口的读写方法
+ */
 @InterfaceAudience.Public
 @InterfaceStability.Stable
 public class BlockLocation implements Writable {

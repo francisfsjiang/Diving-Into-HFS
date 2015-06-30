@@ -40,6 +40,11 @@ import org.apache.hadoop.util.Shell;
  */
 @InterfaceAudience.Private
 @InterfaceStability.Evolving /*Evolving for a release,to be changed to Stable */
+
+/**
+ * 该类继承于AbstractFileSystem分之下，对应
+ * FileSystem分之下的原生本地文件系统
+ */
 public class RawLocalFs extends DelegateToFileSystem {
 
   RawLocalFs(final Configuration conf) throws IOException, URISyntaxException {
@@ -60,12 +65,21 @@ public class RawLocalFs extends DelegateToFileSystem {
     super(theUri, new RawLocalFileSystem(), conf, 
         FsConstants.LOCAL_FS_URI.getScheme(), false);
   }
-  
+
+  /**
+   * 返回URI默认端口
+   * @return
+   */
   @Override
   protected int getUriDefaultPort() {
     return -1; // No default port for file:///
   }
-  
+
+  /**
+   * 返回默认服务器
+   * @return
+   * @throws IOException
+   */
   @Override
   protected FsServerDefaults getServerDefaults() throws IOException {
     return LocalConfigKeys.getServerDefaults();
@@ -74,8 +88,16 @@ public class RawLocalFs extends DelegateToFileSystem {
   @Override
   protected boolean supportsSymlinks() {
     return true;
-  }  
-  
+  }
+
+  /**
+   * 建立符号连接
+   * 符号链接一般用于将一个文件或这个目录结构移动到系统中的另一个位置
+   * @param target
+   * @param link
+   * @param createParent
+   * @throws IOException
+   */
   @Override
   protected void createSymlink(Path target, Path link, boolean createParent) 
       throws IOException {
@@ -99,7 +121,8 @@ public class RawLocalFs extends DelegateToFileSystem {
     }
   }
 
-  /** 
+  /**
+   * 读取建立的符号连接
    * Returns the target of the given symlink. Returns the empty string if  
    * the given path does not refer to a symlink or there is an error 
    * acessing the symlink.
@@ -118,6 +141,8 @@ public class RawLocalFs extends DelegateToFileSystem {
   }
   
   /**
+   *
+   * 获取文件连接状态
    * Return a FileStatus representing the given path. If the path refers 
    * to a symlink return a FileStatus representing the link rather than
    * the object the link refers to.
@@ -158,7 +183,14 @@ public class RawLocalFs extends DelegateToFileSystem {
       throw e;
     }
   }
-  
+
+
+  /**
+   * 获取连接目标
+   * @param f
+   * @return
+   * @throws IOException
+   */
   @Override
   protected Path getLinkTarget(Path f) throws IOException {
     /* We should never get here. Valid local links are resolved transparently
