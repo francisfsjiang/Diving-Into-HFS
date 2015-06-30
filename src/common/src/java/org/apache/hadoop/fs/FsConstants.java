@@ -23,7 +23,9 @@ import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 
 /**
- * FileSystem related constants.
+ * 此类保存了{@link FileSystem}需要用到的常量
+ *
+ * @author neveralso
  */
 @InterfaceAudience.Public
 @InterfaceStability.Stable

@@ -22,7 +22,12 @@ import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 
 /** Thrown for unexpected filesystem errors, presumed to reflect disk errors
- * in the native filesystem. */
+ * in the native filesystem.
+ *
+ * 此异常会在文件系统异常时抛出，例如本地文件系统上发生磁盘错误时。
+ *
+ * @author neveralso
+ */
 @InterfaceAudience.Public
 @InterfaceStability.Stable
 public class FSError extends Error {

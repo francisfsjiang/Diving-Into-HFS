@@ -30,114 +30,139 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 /**
- * This is a generic input stream for verifying checksums for
- * data before it is read by a user.
+ * FSInputChecker是一个抽象类，继承了{@link FSInputStream}，
+ * 当<code>verifyChecksum</code>设置为true时，所用从该类读取
+ * 的字节都是经过校验和校验的。
+ *
+ * @author neveralso
  */
 @InterfaceAudience.LimitedPrivate({"HDFS"})
 @InterfaceStability.Unstable
 abstract public class FSInputChecker extends FSInputStream {
-  public static final Log LOG 
+  public static final Log LOG
   = LogFactory.getLog(FSInputChecker.class);
-  
-  /** The file name from which data is read from */
+
+  /**
+   * 保存被读取对象的文件路径。
+   */
   protected Path file;
+  /**
+   * 提供校验和方法的类
+   */
   private Checksum sum;
+  /**
+   * 标志是否需要在读取文件时进行校验和
+   */
   private boolean verifyChecksum = true;
+  /**
+   * 每次读取的Chunk的字节数
+   */
   private int maxChunkSize; // data bytes for checksum (eg 512)
+  /**
+   * 缓存从文件中已经读取的内容
+   */
   private byte[] buf; // buffer for non-chunk-aligned reading
+  /**
+   * 缓存从文件中已经读取的校验和
+   */
   private byte[] checksum;
   private IntBuffer checksumInts; // wrapper on checksum buffer
+  /**
+   * buf中目前的读取位置
+   */
   private int pos; // the position of the reader inside buf
+  /**
+   * 目前在buf中的字节数
+   */
   private int count; // the number of bytes currently in buf
-  
+  /**
+   * 校验和失败之后的重试次数
+   */
   private int numOfRetries;
-  
+
+  /**
+   * 保存了被读取文件的目前读取位置，应该是<code>maxChunkSize</code>
+   * 的整数倍
+   */
   // cached file position
   // this should always be a multiple of maxChunkSize
   private long chunkPos = 0;
 
+  /**
+   * 每次可以被读取到用户buffer的最大chunk数量，也就是说每次可以被读取到
+   * 用户buffer的字节数最大为<code>CHUNKS_PER_READ * maxChunkSize</code>。
+   * 此处值为实际测试所获取的值，更大的值也不会降低CPU使用量。
+   */
   // Number of checksum chunks that can be read at once into a user
   // buffer. Chosen by benchmarks - higher values do not reduce
   // CPU usage. The size of the data reads made to the underlying stream
   // will be CHUNKS_PER_READ * maxChunkSize.
   private static final int CHUNKS_PER_READ = 32;
+  /**
+   * 数据校验和默认为32bit
+   */
   protected static final int CHECKSUM_SIZE = 4; // 32-bit checksum
 
-  /** Constructor
-   * 
-   * @param file The name of the file to be read
-   * @param numOfRetries Number of read retries when ChecksumError occurs
+  /**
+   * 构造函数
+   * @param file 要读取的目标文件
+   * @param numOfRetries 当校验和失败是需要的重试次数
    */
-  protected FSInputChecker( Path file, int numOfRetries) {
+  protected FSInputChecker(Path file, int numOfRetries) {
     this.file = file;
     this.numOfRetries = numOfRetries;
   }
-  
-  /** Constructor
-   * 
-   * @param file The name of the file to be read
-   * @param numOfRetries Number of read retries when ChecksumError occurs
-   * @param sum the type of Checksum engine
-   * @param chunkSize maximun chunk size
-   * @param checksumSize the number byte of each checksum
+
+  /**
+   * 构造函数
+   * @param file 要读取的目标文件
+   * @param numOfRetries 当校验和失败是需要的重试次数
+   * @param sum 提供校验和方法的类
+   * @param chunkSize 指定Chunk的字节数
+   * @param checksumSize 指定Checksum值的大小
    */
-  protected FSInputChecker( Path file, int numOfRetries, 
+  protected FSInputChecker( Path file, int numOfRetries,
       boolean verifyChecksum, Checksum sum, int chunkSize, int checksumSize ) {
     this(file, numOfRetries);
     set(verifyChecksum, sum, chunkSize, checksumSize);
   }
-  
+
   /**
-   * Reads in checksum chunks into <code>buf</code> at <code>offset</code>
-   * and checksum into <code>checksum</code>.
-   * Since checksums can be disabled, there are two cases implementors need
-   * to worry about:
+   * 从文件中读取数据和校验和，将数据放入buf，将校验和放入checksum。
+   * 如果len不是ChunkSize的整数倍，那么将会读取少于len个字节，以保证
+   * 读取的数据量为ChunkSize的整数倍。
+   * 如果校验和功能被禁用，则在checksum位置传入null，并且在读取时不会
+   * 因为len不是ChunkSize的整数倍而导致读取字节数小于len。
    *
-   *  (a) needChecksum() will return false:
-   *     - len can be any positive value
-   *     - checksum will be null
-   *     Implementors should simply pass through to the underlying data stream.
-   * or
-   *  (b) needChecksum() will return true:
-   *    - len >= maxChunkSize
-   *    - checksum.length is a multiple of CHECKSUM_SIZE
-   *    Implementors should read an integer number of data chunks into
-   *    buf. The amount read should be bounded by len or by 
-   *    checksum.length / CHECKSUM_SIZE * maxChunkSize. Note that len may
-   *    be a value that is not a multiple of maxChunkSize, in which case
-   *    the implementation may return less than len.
-   *
-   * The method is used for implementing read, therefore, it should be optimized
-   * for sequential reading.
-   *
-   * @param pos chunkPos
-   * @param buf desitination buffer
-   * @param offset offset in buf at which to store data
-   * @param len maximum number of bytes to read
-   * @param checksum the data buffer into which to write checksums
-   * @return number of bytes read
+   * @param pos chunk在文件中的位置
+   * @param buf  读取数据将要放入的字节数组
+   * @param offset 数据放入字节数组的偏移量
+   * @param len 要读取的字节数
+   * @param checksum 校验和将要放入的字节数组
+   * @return 实际读取的字节数
    */
   abstract protected int readChunk(long pos, byte[] buf, int offset, int len,
       byte[] checksum) throws IOException;
 
-  /** Return position of beginning of chunk containing pos. 
-   *
-   * @param pos a postion in the file
-   * @return the starting position of the chunk which contains the byte
+  /**
+   * 返回pos位置所在的Chunk
+   * @param pos 文件中的位置
+   * @return pos位置所在的Chunk的起始位置
    */
   abstract protected long getChunkPosition(long pos);
 
-  /** Return true if there is a need for checksum verification */
+  /**
+   * 返回是否需要校验
+   * @return 需要true or 不需要false
+   */
   protected synchronized boolean needChecksum() {
     return verifyChecksum && sum != null;
   }
 
   /**
-   * Read one checksum-verified byte
-   * 
-   * @return     the next byte of data, or <code>-1</code> if the end of the
-   *             stream is reached.
-   * @exception  IOException  if an I/O error occurs.
+   * 从当前缓冲区读取一个字节
+   *
+   * @return   返回读取的字节，如果碰到EOF则返回-1
    */
 
   public synchronized int read() throws IOException {
@@ -149,36 +174,17 @@ abstract public class FSInputChecker extends FSInputStream {
     }
     return buf[pos++] & 0xff;
   }
-  
+
   /**
-   * Read checksum verified bytes from this byte-input stream into 
-   * the specified byte array, starting at the given offset.
+   * 读取len个字节到字节数组b的偏移量off处，读取的数据都经过校验。
+   * 此方法会尝试不断读取，知道读取到len个字节，直到EOF或者IOException
    *
-   * <p> This method implements the general contract of the corresponding
-   * <code>{@link InputStream#read(byte[], int, int) read}</code> method of
-   * the <code>{@link InputStream}</code> class.  As an additional
-   * convenience, it attempts to read as many bytes as possible by repeatedly
-   * invoking the <code>read</code> method of the underlying stream.  This
-   * iterated <code>read</code> continues until one of the following
-   * conditions becomes true: <ul>
-   *
-   *   <li> The specified number of bytes have been read,
-   *
-   *   <li> The <code>read</code> method of the underlying stream returns
-   *   <code>-1</code>, indicating end-of-file.
-   *
-   * </ul> If the first <code>read</code> on the underlying stream returns
-   * <code>-1</code> to indicate end-of-file then this method returns
-   * <code>-1</code>.  Otherwise this method returns the number of bytes
-   * actually read.
-   *
-   * @param      b     destination buffer.
-   * @param      off   offset at which to start storing bytes.
-   * @param      len   maximum number of bytes to read.
-   * @return     the number of bytes read, or <code>-1</code> if the end of
-   *             the stream has been reached.
-   * @exception  IOException  if an I/O error occurs.
-   *             ChecksumException if any checksum error occurs
+   * @param b 读取数据将要放入的字节数组
+   * @param off 数据放入字节数组的偏移量
+   * @param len 要读取的字节数
+   * @return   返回实际读取的字节数，如果碰到EOF则返回-1
+   * @exception  IOException  当有IO错误发生.
+   *             ChecksumException 当校验失败
    */
   public synchronized int read(byte[] b, int off, int len) throws IOException {
     // parameter check
@@ -191,19 +197,16 @@ abstract public class FSInputChecker extends FSInputStream {
     int n = 0;
     for (;;) {
       int nread = read1(b, off + n, len - n);
-      if (nread <= 0) 
+      if (nread <= 0)
         return (n == 0) ? nread : n;
       n += nread;
       if (n >= len)
         return n;
     }
   }
-  
+
   /**
-   * Fills the buffer with a chunk data. 
-   * No mark is supported.
-   * This method assumes that all data in the buffer has already been read in,
-   * hence pos > count.
+   * 向buf中填充一个经过校验的chunk
    */
   private void fill(  ) throws IOException {
     assert(pos>=count);
@@ -211,10 +214,16 @@ abstract public class FSInputChecker extends FSInputStream {
     count = readChecksumChunk(buf, 0, maxChunkSize);
     if (count < 0) count = 0;
   }
-  
-  /*
-   * Read characters into a portion of an array, reading from the underlying
-   * stream at most once if necessary.
+
+  /**
+   * 读取len个字节到字节数组b的偏移量off处，如果len超出了Chunk的大小
+   * 则会先向缓冲区中填入一个Chunk，再从buf复制到b中。
+   *
+   * @param b 读取数据将要放入的字节数组
+   * @param off 数据放入字节数组的偏移量
+   * @param len 要读取的字节数
+   * @return 成功读取的字节数
+   * @throws IOException
    */
   private int read1(byte b[], int off, int len)
   throws IOException {
@@ -234,38 +243,32 @@ abstract public class FSInputChecker extends FSInputStream {
         }
       }
     }
-    
+
     // copy content of the local buffer to the user buffer
     int cnt = (avail < len) ? avail : len;
     System.arraycopy(buf, pos, b, off, cnt);
     pos += cnt;
-    return cnt;    
+    return cnt;
   }
-  
-  /* Read up one or more checksum chunk to array <i>b</i> at pos <i>off</i>
-   * It requires at least one checksum chunk boundary
-   * in between <cur_pos, cur_pos+len> 
-   * and it stops reading at the last boundary or at the end of the stream;
-   * Otherwise an IllegalArgumentException is thrown.
-   * This makes sure that all data read are checksum verified.
-   * 
-   * @param b   the buffer into which the data is read.
-   * @param off the start offset in array <code>b</code>
-   *            at which the data is written.
-   * @param len the maximum number of bytes to read.
-   * @return    the total number of bytes read into the buffer, or
-   *            <code>-1</code> if there is no more data because the end of
-   *            the stream has been reached.
-   * @throws IOException if an I/O error occurs.
-   */ 
+
+  /**
+   * 读取一个或多个经过校验和检查的Chunk到b指定的字节数组的偏移量offset处，
+   * 这个方法保证所有读取到的数据都是经过校验。
+   *
+   * @param b   读取数据将要放入的字节数组
+   * @param off 数据放入字节数组的偏移量
+   * @param len 要读取的字节数
+   * @return    返回实际读取的字节数，如果碰到EOF则返回-1
+   * @throws IOException 如果有IO错误发生.
+   */
   private int readChecksumChunk(byte b[], final int off, final int len)
   throws IOException {
     // invalidate buffer
     count = pos = 0;
-          
+
     int read = 0;
     boolean retry = true;
-    int retriesLeft = numOfRetries; 
+    int retriesLeft = numOfRetries;
     do {
       retriesLeft--;
 
@@ -284,15 +287,15 @@ abstract public class FSInputChecker extends FSInputStream {
           if (retriesLeft == 0) {
             throw ce;
           }
-          
+
           // try a new replica
           if (seekToNewSource(chunkPos)) {
-            // Since at least one of the sources is different, 
+            // Since at least one of the sources is different,
             // the read might succeed, so we'll retry.
             seek(chunkPos);
           } else {
             // Neither the data stream nor the checksum stream are being read
-            // from different sources, meaning we'll still get a checksum error 
+            // from different sources, meaning we'll still get a checksum error
             // if we try to do the read again.  We throw an exception instead.
             throw ce;
           }
@@ -301,6 +304,15 @@ abstract public class FSInputChecker extends FSInputStream {
     return read;
   }
 
+  /**
+   * 计算字节数组b中的要进行校验的数据的校验和，并与checksum中的，即当前读取的
+   * chunk的校验和进行比较
+   *
+   * @param b 要进行校验的字节数组
+   * @param off 要进行校验的数据在字节数组的偏移量
+   * @param read 要校验的字节数
+   * @throws ChecksumException
+   */
   private void verifySums(final byte b[], final int off, int read)
     throws ChecksumException
   {
@@ -327,9 +339,7 @@ abstract public class FSInputChecker extends FSInputStream {
   }
 
   /**
-   * Convert a checksum byte array to a long
-   * This is deprecated since 0.22 since it is no longer in use
-   * by this class.
+   * 将一个checksum转换为一个long数字
    */
   @Deprecated
   static public long checksum2long(byte[] checksum) {
@@ -340,27 +350,24 @@ abstract public class FSInputChecker extends FSInputStream {
     return crc;
   }
 
+  /**
+   * 返回当前文件的读取位置
+   */
   @Override
   public synchronized long getPos() throws IOException {
     return chunkPos-Math.max(0L, count - pos);
   }
 
+  /**
+   * 返回当前缓冲区中尚未读取的字节。
+   */
   @Override
   public synchronized int available() throws IOException {
     return Math.max(0, count - pos);
   }
-  
+
   /**
-   * Skips over and discards <code>n</code> bytes of data from the
-   * input stream.
-   *
-   * <p>This method may skip more bytes than are remaining in the backing
-   * file. This produces no exception and the number of bytes skipped
-   * may include some number of bytes that were beyond the EOF of the
-   * backing file. Attempting to read from the stream after skipping past
-   * the end will result in -1 indicating the end of the file.
-   *
-   *<p>If <code>n</code> is negative, no bytes are skipped.
+   * 在输入流中跳过并忽略n个字节，如果n是负数，则不会跳过任何字节。
    *
    * @param      n   the number of bytes to be skipped.
    * @return     the actual number of bytes skipped.
@@ -377,16 +384,10 @@ abstract public class FSInputChecker extends FSInputStream {
   }
 
   /**
-   * Seek to the given position in the stream.
-   * The next read() will be from that position.
-   * 
-   * <p>This method may seek past the end of the file.
-   * This produces no exception and an attempt to read from
-   * the stream will result in -1 indicating the end of the file.
+   * 移动读取位置到pos，下一次read将会从pos位置读取。
    *
-   * @param      pos   the postion to seek to.
-   * @exception  IOException  if an I/O error occurs.
-   *             ChecksumException if the chunk to seek to is corrupted
+   * @param      pos   要移动到的指定位置
+   * @exception IOException
    */
 
   public synchronized void seek(long pos) throws IOException {
@@ -399,13 +400,13 @@ abstract public class FSInputChecker extends FSInputStream {
       this.pos = (int)(pos-start);
       return;
     }
-    
+
     // reset the current state
     resetState();
-    
+
     // seek to a checksum boundary
     chunkPos = getChunkPosition(pos);
-    
+
     // scan to the desired position
     int delta = (int)(pos - chunkPos);
     if( delta > 0) {
@@ -416,33 +417,35 @@ abstract public class FSInputChecker extends FSInputStream {
   /**
    * A utility function that tries to read up to <code>len</code> bytes from
    * <code>stm</code>
-   * 
-   * @param stm    an input stream
-   * @param buf    destiniation buffer
-   * @param offset offset at which to store data
+   * 一个静态工具类，从<code>stm</code>中读取<code>len</code>个字节，放入buf
+   * 中的offset位置。
+   * @param stm    输入流
+   * @param buf    用来存放读取的数据的buf
+   * @param offset buf中位置的偏移量
    * @param len    number of bytes to read
    * @return actual number of bytes read
    * @throws IOException if there is any IO error
    */
-  protected static int readFully(InputStream stm, 
+  protected static int readFully(InputStream stm,
       byte[] buf, int offset, int len) throws IOException {
     int n = 0;
     for (;;) {
       int nread = stm.read(buf, offset + n, len - n);
-      if (nread <= 0) 
+      if (nread <= 0)
         return (n == 0) ? nread : n;
       n += nread;
       if (n >= len)
         return n;
     }
   }
-  
+
   /**
-   * Set the checksum related parameters
-   * @param verifyChecksum whether to verify checksum
-   * @param sum which type of checksum to use
-   * @param maxChunkSize maximun chunk size
-   * @param checksumSize checksum size
+   * 设置校验和相关参数
+   *
+   * @param verifyChecksum 是否需要进行校验和
+   * @param sum 提供校验和方法的类
+   * @param chunkSize 指定Chunk的字节数
+   * @param checksumSize 指定Checksum值的大小
    */
   final protected synchronized void set(boolean verifyChecksum,
       Checksum sum, int maxChunkSize, int checksumSize) {
@@ -462,18 +465,27 @@ abstract public class FSInputChecker extends FSInputStream {
     this.pos = 0;
   }
 
+  /**
+   * 不支持mark
+   */
   final public boolean markSupported() {
     return false;
   }
-  
+  /**
+   * 不支持mark
+   */
   final public void mark(int readlimit) {
   }
-  
+  /**
+   * 不支持reset
+   */
   final public void reset() throws IOException {
     throw new IOException("mark/reset not supported");
   }
-  
 
+  /**
+   * 重置FSInputChecker的state
+   */
   /* reset this FSInputChecker's state */
   private void resetState() {
     // invalidate buffer

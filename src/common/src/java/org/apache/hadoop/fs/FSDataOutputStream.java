@@ -24,12 +24,21 @@ import org.apache.hadoop.classification.InterfaceStability;
 
 /** Utility that wraps a {@link OutputStream} in a {@link DataOutputStream},
  * buffers output through a {@link BufferedOutputStream} and creates a checksum
- * file. */
+ * file.
+ * 一个工具类，继承了{@link DataOutputStream}，包装一个{@link PositionCache}，
+ * 具体的方法调用都通过被包装的对象实现，通过这种方法实现了写入统计功能。
+ *
+ * @author neveralso
+ */
 @InterfaceAudience.Public
 @InterfaceStability.Stable
 public class FSDataOutputStream extends DataOutputStream implements Syncable {
   private OutputStream wrappedStream;
 
+  /**
+   * 此类包装了一个{@link FileSystem.Statistics}对象，在每次write
+   * 时进行统计。
+   */
   private static class PositionCache extends FilterOutputStream {
     private FileSystem.Statistics statistics;
     long position;

@@ -37,7 +37,11 @@ import org.apache.hadoop.util.Progressable;
  * pass all requests to the contained file system. Subclasses of
  * <code>FilterFs</code> may further override some of these methods and may also
  * provide additional methods and fields.
- * 
+ *
+ * 一个抽象类，包装了一个{@link AbstractFileSystem}对象，该类所有的方法都是通过调用
+ * 被包装对象的对应方法实现的，继承此类的类通过重载其方法来添加更多地功能
+ *
+ * @author neveralso
  */
 @InterfaceAudience.Private
 @InterfaceStability.Evolving /*Evolving for a release,to be changed to Stable */

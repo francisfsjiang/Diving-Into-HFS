@@ -25,7 +25,11 @@ import org.apache.hadoop.classification.InterfaceStability;
 
 
 /**
- * A class optimizes reading from FSInputStream by bufferring
+ * BufferedFSInputStream继承了{@link BufferedInputStream}，
+ * 通过缓存来优化其内包装的对象{@ling FSInputStream}的读取
+ * class optimizes reading from FSInputStream by bufferring
+ *
+ * @author neveralso
  */
 
 @InterfaceAudience.Private
@@ -33,15 +37,10 @@ import org.apache.hadoop.classification.InterfaceStability;
 public class BufferedFSInputStream extends BufferedInputStream
 implements Seekable, PositionedReadable {
   /**
-   * Creates a <code>BufferedFSInputStream</code>
-   * with the specified buffer size,
-   * and saves its  argument, the input stream
-   * <code>in</code>, for later use.  An internal
-   * buffer array of length  <code>size</code>
-   * is created and stored in <code>buf</code>.
+   * 创建一个指定buffer大小为size的<code>BufferedFSInputStream</code>
    *
-   * @param   in     the underlying input stream.
-   * @param   size   the buffer size.
+   * @param   in     要用到的输入流
+   * @param   size   buffer大小
    * @exception IllegalArgumentException if size <= 0.
    */
   public BufferedFSInputStream(FSInputStream in, int size) {
@@ -61,6 +60,13 @@ implements Seekable, PositionedReadable {
     return n;
   }
 
+  /**
+   * 如果要移动到的目标读取位置在目前的buffer中，那么优化他，直接在
+   * buffer内移动读取位置。
+   *
+   * @param pos
+   * @throws IOException
+   */
   public void seek(long pos) throws IOException {
     if( pos<0 ) {
       return;
@@ -80,6 +86,18 @@ implements Seekable, PositionedReadable {
     ((FSInputStream)in).seek(pos);
   }
 
+  /**
+   * 将输入源切换到一个新的输入源，并且将偏移量移动到<code>pos</code>。
+   * 此方法在FTP、S3、Local等文件系统上均无实现（直接返回false），现有
+   * 的唯一实现在
+   * {@link org.apache.hadoop.hdfs.DFSInputStream#seekToNewSource(long targetPos)}
+   * ，其功能是在当前读取的Block失效时，切换到新的Block，并且移动偏移量，操作成
+   * 功时返回true。
+   *
+   * @param targetPos 目标偏移量
+   * @return 成功true or 失败false
+   * @throws IOException
+   */
   public boolean seekToNewSource(long targetPos) throws IOException {
     pos = 0;
     count = 0;
