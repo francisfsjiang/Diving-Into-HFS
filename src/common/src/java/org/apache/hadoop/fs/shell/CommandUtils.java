@@ -17,6 +17,9 @@
  */
 package org.apache.hadoop.fs.shell;
 
+/**
+ * 该类仅提供一个用于格式化用法说明的静态方法.
+ */
 final class CommandUtils {
   static String formatDescription(String usage, String... desciptions) {
     StringBuilder b = new StringBuilder(usage + ": " + desciptions[0]);

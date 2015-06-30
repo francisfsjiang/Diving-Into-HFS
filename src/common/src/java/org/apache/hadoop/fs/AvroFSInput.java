@@ -25,20 +25,20 @@ import org.apache.avro.file.SeekableInput;
 import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 
-/** Adapts an {@link FSDataInputStream} to Avro's SeekableInput interface. */
+/** {@link FSDataInputStream} 到 Avro的SeekableInput接口的适配器. */
 @InterfaceAudience.Public
 @InterfaceStability.Stable
 public class AvroFSInput implements Closeable, SeekableInput {
   private final FSDataInputStream stream;
   private final long len;
 
-  /** Construct given an {@link FSDataInputStream} and its length. */
+  /** 由{@link FSDataInputStream}及其长度构建{@link AvroFSInput}实例 */
   public AvroFSInput(final FSDataInputStream in, final long len) {
     this.stream = in;
     this.len = len;
   }
 
-  /** Construct given a {@link FileContext} and a {@link Path}. */
+  /** 以{@link FileContext}和{@link Path}构建{@link AvroFSInput}实例 */
   public AvroFSInput(final FileContext fc, final Path p) throws IOException {
     FileStatus status = fc.getFileStatus(p);
     this.len = status.getLen();

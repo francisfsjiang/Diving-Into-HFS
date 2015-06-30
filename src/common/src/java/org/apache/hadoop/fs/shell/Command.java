@@ -27,30 +27,30 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.ipc.RemoteException;
 
 /**
- * An abstract class for the execution of a file system command
+ * 用于执行文件命令的抽象类.
  */
 abstract public class Command extends Configured {
   protected String[] args;
-  
+
   /** Constructor */
   protected Command(Configuration conf) {
     super(conf);
   }
-  
-  /** Return the command's name excluding the leading character - */
+
+  /** 删除潜在的前导字符, 返回命令名 */
   abstract public String getCommandName();
-  
-  /** 
-   * Execute the command on the input path
-   * 
+
+  /**
+   * 在给定的路径上执行文件命令
+   *
    * @param path the input path
    * @throws IOException if any error occurs
    */
   abstract protected void run(Path path) throws IOException;
-  
-  /** 
-   * For each source path, execute the command
-   * 
+
+  /**
+   * 在给定的路径簇上的执行命令, 并返回状态码
+   *
    * @return 0 if it runs successfully; -1 if it fails
    */
   public int runAll() {

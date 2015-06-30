@@ -52,6 +52,7 @@ import org.apache.hadoop.util.Progressable;
 import org.apache.hadoop.util.ReflectionUtils;
 
 /****************************************************************
+<<<<<<< HEAD
  * An abstract base class for a fairly generic filesystem.  It
  * may be implemented as a distributed filesystem, or as a "local"
  * one that reflects the locally-connected disk.  The local version
@@ -68,6 +69,14 @@ import org.apache.hadoop.util.ReflectionUtils;
  * <p>
  * The local implementation is {@link LocalFileSystem} and distributed
  * implementation is DistributedFileSystem.
+=======
+ * FileSystem（下简称FS）是一般的通用文件系统的抽象基类。FS可以被实现为
+ * 分布式的文件系统，如HDFS，亦或是一个本地的文件系统，
+ * 所有具有访问HDFS的潜在可能的用户代码都应该被封装在一个FileSystem实例里。
+ * HDFS是一个对外表现如同单一磁盘的多机系统，它的容错能力和对大容量存储的支持使得
+ * HDFS尤为实用。
+ * FileSystem的本地实现是{@link LocalFileSystem}，
+ * 分布式实现是{@link DistributedFileSystem}(在HDFS一支)。
  *****************************************************************/
 
 /**
@@ -137,10 +146,7 @@ public abstract class FileSystem extends Configured implements Closeable {
    */
   private Cache.Key key;
 
-  /** Recording statistics per a FileSystem class */
-  /**
-   * 文件系统和统计信息的映射
-   */
+  /** 命名方式不同，但statisticsTable仍然是一个共享的统计量，机制同AFS */
   private static final Map<Class<? extends FileSystem>, Statistics>
     statisticsTable =
       new IdentityHashMap<Class<? extends FileSystem>, Statistics>();
@@ -250,7 +256,6 @@ public abstract class FileSystem extends Configured implements Closeable {
 
   /** Update old-format filesystem names, for back-compatibility.  This should
    * eventually be replaced with a checkName() method that throws an exception
-   * for old-format names.
    * 为了向下兼容，更新旧格式的文件系统名字
    * */
   private static String fixName(String name) {
@@ -394,7 +399,7 @@ public abstract class FileSystem extends Configured implements Closeable {
    *
    * It is implemented using two RPCs. It is understood that it is inefficient,
    * but the implementation is thread-safe. The other option is to change the
-   * value of umask（默认属性） in configuration to be 0, but it is not thread-safe.
+   * value of umask in configuration to be 0, but it is not thread-safe.
    *
    * @param fs file system handle
    * @param file the name of the file to be created
@@ -1985,13 +1990,14 @@ public abstract class FileSystem extends Configured implements Closeable {
     }
   }
 
-
   /**
    * 统计信息——静态内部类
    * 主要包含了URI的模式信息
    * URI格式是scheme://authority/path
    * 对HDFS文件系统，scheme是hdfs;对本地文件系统，scheme是file
    * 该类包含了对读写的字节数、读取的操作次数内容进行的记录
+   * 被用于{@link AbstractFileSystem}和{@link FileSystem}中的统计信息。
+   * Statistics主要记录读写字节数。
    */
   public static final class Statistics {
     private final String scheme;

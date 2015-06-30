@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Parse the args of a command and check the format of args.
+ * 解析命令参数并检查参数格式.
  */
 public class CommandFormat {
   final String name;
@@ -39,8 +39,8 @@ public class CommandFormat {
       options.put(opt, Boolean.FALSE);
   }
 
-  /** Parse parameters starting from the given position
-   * 
+  /** 从指定位置开始向后解析参数.
+   *
    * @param args an array of input arguments
    * @param pos the position at which starts to parse
    * @return a list of parameters
@@ -63,9 +63,9 @@ public class CommandFormat {
       throw new IllegalArgumentException("Illegal number of arguments");
     return parameters;
   }
-  
-  /** Return if the option is set or not
-   * 
+
+  /** 测试指定的选项是否被设置
+   *
    * @param option String representation of an option
    * @return true is the option is set; false otherwise
    */

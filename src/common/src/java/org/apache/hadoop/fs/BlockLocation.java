@@ -28,10 +28,8 @@ import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableFactories;
 import org.apache.hadoop.io.WritableFactory;
 
-/*
- * A BlockLocation lists hosts, offset and length
- * of block. 
- * 
+/**
+ * 一个BlockLocation实例记录一个block的主机, 偏移量和长度信息.
  */
 
 /**
@@ -67,7 +65,7 @@ public class BlockLocation implements Writable {
   /**
    * Constructor with host, name, offset and length
    */
-  public BlockLocation(String[] names, String[] hosts, long offset, 
+  public BlockLocation(String[] names, String[] hosts, long offset,
                        long length) {
     if (names == null) {
       this.names = new String[0];
@@ -130,21 +128,21 @@ public class BlockLocation implements Writable {
       return this.topologyPaths;
     }
   }
-  
+
   /**
    * Get the start offset of file associated with this block
    */
   public long getOffset() {
     return offset;
   }
-  
+
   /**
    * Get the length of the block
    */
   public long getLength() {
     return length;
   }
-  
+
   /**
    * Set the start offset of file associated with this block
    */
@@ -214,7 +212,7 @@ public class BlockLocation implements Writable {
       host.write(out);
     }
   }
-  
+
   /**
    * Implement readFields of Writable
    */
@@ -228,7 +226,7 @@ public class BlockLocation implements Writable {
       name.readFields(in);
       names[i] = name.toString();
     }
-    
+
     int numHosts = in.readInt();
     this.hosts = new String[numHosts];
     for (int i = 0; i < numHosts; i++) {
@@ -236,7 +234,7 @@ public class BlockLocation implements Writable {
       host.readFields(in);
       hosts[i] = host.toString();
     }
-    
+
     int numTops = in.readInt();
     topologyPaths = new String[numTops];
     for (int i = 0; i < numTops; i++) {
@@ -245,7 +243,7 @@ public class BlockLocation implements Writable {
       topologyPaths[i] = path.toString();
     }
   }
-  
+
   public String toString() {
     StringBuilder result = new StringBuilder();
     result.append(offset);

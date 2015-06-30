@@ -44,13 +44,13 @@ import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.apache.hadoop.util.StringUtils;
 
-/** Provide command line access to a FileSystem. */
+/** 向HFS中的文件系统提供命令行访问接口. */
 @InterfaceAudience.Private
 public class FsShell extends Configured implements Tool {
 
   protected FileSystem fs;
   private Trash trash;
-  public static final SimpleDateFormat dateForm = 
+  public static final SimpleDateFormat dateForm =
     new SimpleDateFormat("yyyy-MM-dd HH:mm");
   protected static final SimpleDateFormat modifFmt =
     new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -65,8 +65,7 @@ public class FsShell extends Configured implements Tool {
   static final String TAIL_USAGE="-tail [-f] <file>";
   static final String DU_USAGE="-du [-s] [-h] <paths...>";
 
-  /**
-   */
+  /** 以空的配置构造实例 */
   public FsShell() {
     this(null);
   }
@@ -76,7 +75,7 @@ public class FsShell extends Configured implements Tool {
     fs = null;
     trash = null;
   }
-  
+
   protected void init() throws IOException {
     getConf().setQuietMode(true);
     if (this.fs == null) {
@@ -87,9 +86,9 @@ public class FsShell extends Configured implements Tool {
     }
   }
 
-  
+
   /**
-   * Copies from stdin to the indicated file.
+   * 从stdin复制到指定文件.
    */
   private void copyFromStdin(Path dst, FileSystem dstFs) throws IOException {
     if (dstFs.isDirectory(dst)) {
@@ -98,17 +97,17 @@ public class FsShell extends Configured implements Tool {
     if (dstFs.exists(dst)) {
       throw new IOException("Target " + dst.toString() + " already exists.");
     }
-    FSDataOutputStream out = dstFs.create(dst); 
+    FSDataOutputStream out = dstFs.create(dst);
     try {
       IOUtils.copyBytes(System.in, out, getConf(), false);
-    } 
+    }
     finally {
       out.close();
     }
   }
 
-  /** 
-   * Print from src to stdout.
+  /**
+   * 打印到stdout.
    */
   private void printToStdout(InputStream in) throws IOException {
     try {
@@ -118,9 +117,9 @@ public class FsShell extends Configured implements Tool {
     }
   }
 
-  
+
   /**
-   * Add local files to the indicated FileSystem name. src is kept.
+   * 将本地文件添加到HFS.
    */
   void copyFromLocal(Path[] srcs, String dstf) throws IOException {
     Path dstPath = new Path(dstf);
@@ -130,9 +129,9 @@ public class FsShell extends Configured implements Tool {
     else
       dstFs.copyFromLocalFile(false, false, srcs, dstPath);
   }
-  
+
   /**
-   * Add local files to the indicated FileSystem name. src is removed.
+   * 从本地移动多个文件到目标文件系统.
    */
   void moveFromLocal(Path[] srcs, String dstf) throws IOException {
     Path dstPath = new Path(dstf);
@@ -141,25 +140,27 @@ public class FsShell extends Configured implements Tool {
   }
 
   /**
-   * Add a local file to the indicated FileSystem name. src is removed.
+   * 从本地移动一个文件到目标文件系统.
    */
   void moveFromLocal(Path src, String dstf) throws IOException {
     moveFromLocal((new Path[]{src}), dstf);
   }
 
   /**
+   * 获取匹配模式的所有文件, 并将之复制到本地.
+   * 
    * Obtain the indicated files that match the file pattern <i>srcf</i>
    * and copy them to the local name. srcf is kept.
-   * When copying multiple files, the destination must be a directory. 
+   * When copying multiple files, the destination must be a directory.
    * Otherwise, IOException is thrown.
    * @param argv: arguments
-   * @param pos: Ignore everything before argv[pos]  
-   * @exception: IOException  
-   * @see org.apache.hadoop.fs.FileSystem.globStatus 
+   * @param pos: Ignore everything before argv[pos]
+   * @exception: IOException
+   * @see org.apache.hadoop.fs.FileSystem.globStatus
    */
   void copyToLocal(String[]argv, int pos) throws IOException {
     CommandFormat cf = new CommandFormat("copyToLocal", 2,2,"crc","ignoreCrc");
-    
+
     String srcstr = null;
     String dststr = null;
     try {
@@ -180,7 +181,7 @@ public class FsShell extends Configured implements Tool {
       }
       cat(srcstr, verifyChecksum);
     } else {
-      File dst = new File(dststr);      
+      File dst = new File(dststr);
       Path srcpath = new Path(srcstr);
       FileSystem srcFS = getSrcFileSystem(srcpath, verifyChecksum);
       if (copyCrc && !(srcFS instanceof ChecksumFileSystem)) {
@@ -189,7 +190,7 @@ public class FsShell extends Configured implements Tool {
         copyCrc = false;
       }
       FileStatus[] srcs = srcFS.globStatus(srcpath);
-      boolean dstIsDir = dst.isDirectory(); 
+      boolean dstIsDir = dst.isDirectory();
       if (srcs.length > 1 && !dstIsDir) {
         throw new IOException("When copying multiple files, "
                               + "destination should be a directory.");
@@ -207,7 +208,7 @@ public class FsShell extends Configured implements Tool {
    * It the {@link FileSystem} supports checksum, set verifyChecksum.
    */
   private FileSystem getSrcFileSystem(Path src, boolean verifyChecksum
-      ) throws IOException { 
+      ) throws IOException {
     FileSystem srcFs = src.getFileSystem(getConf());
     srcFs.setVerifyChecksum(verifyChecksum);
     return srcFs;
@@ -231,28 +232,28 @@ public class FsShell extends Configured implements Tool {
   private void copyToLocal(final FileSystem srcFS, final FileStatus srcStatus,
                            final File dst, final boolean copyCrc)
     throws IOException {
-    /* Keep the structure similar to ChecksumFileSystem.copyToLocal(). 
+    /* Keep the structure similar to ChecksumFileSystem.copyToLocal().
      * Ideal these two should just invoke FileUtil.copy() and not repeat
      * recursion here. Of course, copy() should support two more options :
      * copyCrc and useTmpFile (may be useTmpFile need not be an option).
      */
-    
+
     Path src = srcStatus.getPath();
     if (srcStatus.isFile()) {
       if (dst.exists()) {
         // match the error message in FileUtil.checkDest():
         throw new IOException("Target " + dst + " already exists");
       }
-      
+
       // use absolute name so that tmp file is always created under dest dir
       File tmp = FileUtil.createLocalTempFile(dst.getAbsoluteFile(),
                                               COPYTOLOCAL_PREFIX, true);
       if (!FileUtil.copy(srcFS, src, tmp, false, srcFS.getConf())) {
-        throw new IOException("Failed to copy " + src + " to " + dst); 
+        throw new IOException("Failed to copy " + src + " to " + dst);
       }
-      
+
       if (!tmp.renameTo(dst)) {
-        throw new IOException("Failed to rename tmp file " + tmp + 
+        throw new IOException("Failed to rename tmp file " + tmp +
                               " to local destination \"" + dst + "\".");
       }
 
@@ -260,14 +261,14 @@ public class FsShell extends Configured implements Tool {
         if (!(srcFS instanceof ChecksumFileSystem)) {
           throw new IOException("Source file system does not have crc files");
         }
-        
+
         ChecksumFileSystem csfs = (ChecksumFileSystem) srcFS;
         File dstcs = FileSystem.getLocal(srcFS.getConf())
           .pathToFile(csfs.getChecksumFile(new Path(dst.getCanonicalPath())));
         FileSystem fs = csfs.getRawFileSystem();
         FileStatus status = csfs.getFileStatus(csfs.getChecksumFile(src));
         copyToLocal(fs, status, dstcs, false);
-      } 
+      }
     } else if (srcStatus.isSymlink()) {
       throw new AssertionError("Symlinks unsupported");
     } else {
@@ -284,47 +285,47 @@ public class FsShell extends Configured implements Tool {
   }
 
   /**
-   * Get all the files in the directories that match the source file 
-   * pattern and merge and sort them to only one file on local fs 
+   * Get all the files in the directories that match the source file
+   * pattern and merge and sort them to only one file on local fs
    * srcf is kept.
    * @param srcf: a file pattern specifying source files
-   * @param dstf: a destination local file/directory 
-   * @exception: IOException  
-   * @see org.apache.hadoop.fs.FileSystem.globStatus 
+   * @param dstf: a destination local file/directory
+   * @exception: IOException
+   * @see org.apache.hadoop.fs.FileSystem.globStatus
    */
   void copyMergeToLocal(String srcf, Path dst) throws IOException {
     copyMergeToLocal(srcf, dst, false);
-  }    
-    
+  }
+
 
   /**
    * Get all the files in the directories that match the source file pattern
-   * and merge and sort them to only one file on local fs 
+   * and merge and sort them to only one file on local fs
    * srcf is kept.
-   * 
+   *
    * Also adds a string between the files (useful for adding \n
    * to a text file)
    * @param srcf: a file pattern specifying source files
    * @param dstf: a destination local file/directory
-   * @param endline: if an end of line character is added to a text file 
-   * @exception: IOException  
-   * @see org.apache.hadoop.fs.FileSystem.globStatus 
+   * @param endline: if an end of line character is added to a text file
+   * @exception: IOException
+   * @see org.apache.hadoop.fs.FileSystem.globStatus
    */
   void copyMergeToLocal(String srcf, Path dst, boolean endline) throws IOException {
     Path srcPath = new Path(srcf);
     FileSystem srcFs = srcPath.getFileSystem(getConf());
-    Path [] srcs = FileUtil.stat2Paths(srcFs.globStatus(srcPath), 
+    Path [] srcs = FileUtil.stat2Paths(srcFs.globStatus(srcPath),
                                        srcPath);
     for(int i=0; i<srcs.length; i++) {
       if (endline) {
-        FileUtil.copyMerge(srcFs, srcs[i], 
+        FileUtil.copyMerge(srcFs, srcs[i],
                            FileSystem.getLocal(getConf()), dst, false, getConf(), "\n");
       } else {
-        FileUtil.copyMerge(srcFs, srcs[i], 
+        FileUtil.copyMerge(srcFs, srcs[i],
                            FileSystem.getLocal(getConf()), dst, false, getConf(), null);
       }
     }
-  }      
+  }
 
   /**
    * Obtain the indicated file and copy to the local name.
@@ -336,10 +337,10 @@ public class FsShell extends Configured implements Tool {
 
   /**
    * Fetch all files that match the file pattern <i>srcf</i> and display
-   * their content on stdout. 
+   * their content on stdout.
    * @param srcf: a file pattern specifying source files
    * @exception: IOException
-   * @see org.apache.hadoop.fs.FileSystem.globStatus 
+   * @see org.apache.hadoop.fs.FileSystem.globStatus
    */
   void cat(String src, boolean verifyChecksum) throws IOException {
     //cat behavior in Linux
@@ -438,7 +439,7 @@ public class FsShell extends Configured implements Tool {
    * Parse the incoming command string
    * @param cmd
    * @param pos ignore anything before this pos in cmd
-   * @throws IOException 
+   * @throws IOException
    */
   private void setReplication(String[] cmd, int pos) throws IOException {
     CommandFormat c = new CommandFormat("setrep", 2, 2, "R", "w");
@@ -470,7 +471,7 @@ public class FsShell extends Configured implements Tool {
       waitForReplication(waitList, rep);
     }
   }
-    
+
   /**
    * Wait for all files in waitList to have replication number equal to rep.
    * @param waitList The files are waited for.
@@ -489,7 +490,7 @@ public class FsShell extends Configured implements Tool {
       for(boolean done = false; !done; ) {
         BlockLocation[] locations = fs.getFileBlockLocations(status, 0, len);
         int i = 0;
-        for(; i < locations.length && 
+        for(; i < locations.length &&
           locations[i].getHosts().length == rep; i++)
           if (!printWarning && locations[i].getHosts().length > rep) {
             System.out.println("\nWARNING: the waiting time may be long for "
@@ -516,7 +517,7 @@ public class FsShell extends Configured implements Tool {
    * @param newRep new replication factor
    * @param srcf a file pattern specifying source files
    * @param recursive if need to set replication factor for files in subdirs
-   * @throws IOException  
+   * @throws IOException
    * @see org.apache.hadoop.fs.FileSystem#globStatus(Path)
    */
   void setReplication(short newRep, String srcf, boolean recursive,
@@ -531,7 +532,7 @@ public class FsShell extends Configured implements Tool {
     }
   }
 
-  private void setReplication(short newRep, FileSystem srcFs, 
+  private void setReplication(short newRep, FileSystem srcFs,
                               Path src, boolean recursive,
                               List<Path> waitingList)
     throws IOException {
@@ -552,12 +553,12 @@ public class FsShell extends Configured implements Tool {
       } else if (items[i].isSymlink()) {
         throw new AssertionError("Symlinks unsupported");
       } else if (recursive) {
-        setReplication(newRep, srcFs, items[i].getPath(), recursive, 
+        setReplication(newRep, srcFs, items[i].getPath(), recursive,
                        waitingList);
       }
     }
   }
-    
+
   /**
    * Actually set the replication for this file
    * If it fails either throw IOException or print an error msg
@@ -576,13 +577,13 @@ public class FsShell extends Configured implements Tool {
       System.err.println("Could not set replication for: " + file);
     }
   }
-    
-    
+
+
   /**
    * Get a listing of all files in that match the file pattern <i>srcf</i>.
    * @param srcf a file pattern specifying source files
    * @param recursive if need to list files in subdirs
-   * @throws IOException  
+   * @throws IOException
    * @see org.apache.hadoop.fs.FileSystem#globStatus(Path)
    */
   private int ls(String srcf, boolean recursive) throws IOException {
@@ -590,10 +591,10 @@ public class FsShell extends Configured implements Tool {
     FileSystem srcFs = srcPath.getFileSystem(this.getConf());
     FileStatus[] srcs = srcFs.globStatus(srcPath);
     if (srcs==null || srcs.length==0) {
-      throw new FileNotFoundException("Cannot access " + srcf + 
+      throw new FileNotFoundException("Cannot access " + srcf +
           ": No such file or directory.");
     }
- 
+
     boolean printHeader = (srcs.length == 1) ? true: false;
     int numOfErrors = 0;
     for(int i=0; i<srcs.length; i++) {
@@ -618,7 +619,7 @@ public class FsShell extends Configured implements Tool {
           System.out.println("Found " + items.length + " items");
         }
       }
-      
+
       int maxReplication = 3, maxLen = 10, maxOwner = 0,maxGroup = 0;
 
       for(int i = 0; i < items.length; i++) {
@@ -627,21 +628,21 @@ public class FsShell extends Configured implements Tool {
         int len = String.valueOf(stat.getLen()).length();
         int owner = String.valueOf(stat.getOwner()).length();
         int group = String.valueOf(stat.getGroup()).length();
-        
+
         if (replication > maxReplication) maxReplication = replication;
         if (len > maxLen) maxLen = len;
         if (owner > maxOwner)  maxOwner = owner;
         if (group > maxGroup)  maxGroup = group;
       }
-      
+
       for (int i = 0; i < items.length; i++) {
         FileStatus stat = items[i];
         Path cur = stat.getPath();
         String mdate = dateForm.format(new Date(stat.getModificationTime()));
-        
-        System.out.print((stat.isDirectory() ? "d" : "-") + 
+
+        System.out.print((stat.isDirectory() ? "d" : "-") +
           stat.getPermission() + " ");
-        System.out.printf("%"+ maxReplication + 
+        System.out.printf("%"+ maxReplication +
           "s ", (stat.isFile() ? stat.getReplication() : "-"));
         if (maxOwner > 0)
           System.out.printf("%-"+ maxOwner + "s ", stat.getOwner());
@@ -662,7 +663,7 @@ public class FsShell extends Configured implements Tool {
    * Show the size of a partition in the filesystem that contains
    * the specified <i>path</i>.
    * @param path a path specifying the source partition. null means /.
-   * @throws IOException  
+   * @throws IOException
    */
   void df(String path) throws IOException {
     if (path == null) path = "/";
@@ -675,7 +676,7 @@ public class FsShell extends Configured implements Tool {
     final int PercentUsed = (int)(100.0f *  (float)stats.getUsed() / (float)stats.getCapacity());
     System.out.println("Filesystem\t\tSize\tUsed\tAvail\tUse%");
     System.out.printf("%s\t\t%d\t%d\t%d\t%d%%\n",
-      path, 
+      path,
       stats.getCapacity(), stats.getUsed(), stats.getRemaining(),
       PercentUsed);
   }
@@ -684,7 +685,7 @@ public class FsShell extends Configured implements Tool {
    * Show the size of all files that match the file pattern <i>src</i>
    * @param cmd
    * @param pos ignore anything before this pos in cmd
-   * @throws IOException  
+   * @throws IOException
    * @see org.apache.hadoop.fs.FileSystem#globStatus(Path)
    */
   void du(String[] cmd, int pos) throws IOException {
@@ -746,13 +747,13 @@ public class FsShell extends Configured implements Tool {
     }
     printUsageSummary(usages, humanReadable);
   }
-    
+
   /**
-   * Show the summary disk usage of each dir/file 
+   * Show the summary disk usage of each dir/file
    * that matches the file pattern <i>src</i>
    * @param cmd
    * @param pos ignore anything before this pos in cmd
-   * @throws IOException  
+   * @throws IOException
    * @see org.apache.hadoop.fs.FileSystem#globStatus(Path)
    */
   void dus(String[] cmd, int pos) throws IOException {
@@ -791,7 +792,7 @@ public class FsShell extends Configured implements Tool {
     try {
       fstatus = srcFs.getFileStatus(f);
       if (fstatus.isDirectory()) {
-        throw new IOException("cannot create directory " 
+        throw new IOException("cannot create directory "
             + src + ": File exists");
       }
       else {
@@ -875,7 +876,7 @@ public class FsShell extends Configured implements Tool {
               buf.append(f.getLen());
               break;
             case 'F':
-              buf.append(f.isDirectory() ? "directory" 
+              buf.append(f.isDirectory() ? "directory"
                                          : (f.isFile() ? "regular file" : "symlink"));
               break;
             case 'n':
@@ -906,11 +907,11 @@ public class FsShell extends Configured implements Tool {
   /**
    * Move files that match the file pattern <i>srcf</i>
    * to a destination file.
-   * When moving mutiple files, the destination must be a directory. 
+   * When moving mutiple files, the destination must be a directory.
    * Otherwise, IOException is thrown.
    * @param srcf a file pattern specifying source files
-   * @param dstf a destination local file/directory 
-   * @throws IOException  
+   * @param dstf a destination local file/directory
+   * @throws IOException
    * @see org.apache.hadoop.fs.FileSystem#globStatus(Path)
    */
   void rename(String srcf, String dstf) throws IOException {
@@ -925,7 +926,7 @@ public class FsShell extends Configured implements Tool {
     Path[] srcs = FileUtil.stat2Paths(fs.globStatus(srcPath), srcPath);
     Path dst = new Path(dstf);
     if (srcs.length > 1 && !fs.isDirectory(dst)) {
-      throw new IOException("When moving multiple files, " 
+      throw new IOException("When moving multiple files, "
                             + "destination should be a directory.");
     }
     for(int i=0; i<srcs.length; i++) {
@@ -935,7 +936,7 @@ public class FsShell extends Configured implements Tool {
         try {
           srcFstatus = fs.getFileStatus(srcs[i]);
         } catch(FileNotFoundException e) {
-          throw new FileNotFoundException(srcs[i] + 
+          throw new FileNotFoundException(srcs[i] +
           ": No such file or directory");
         }
         try {
@@ -957,14 +958,14 @@ public class FsShell extends Configured implements Tool {
    * Move/rename file(s) to a destination file. Multiple source
    * files can be specified. The destination is the last element of
    * the argvp[] array.
-   * If multiple source files are specified, then the destination 
+   * If multiple source files are specified, then the destination
    * must be a directory. Otherwise, IOException is thrown.
-   * @exception: IOException  
+   * @exception: IOException
    */
   private int rename(String argv[], Configuration conf) throws IOException {
     int i = 0;
     int exitCode = 0;
-    String cmd = argv[i++];  
+    String cmd = argv[i++];
     String dest = argv[argv.length-1];
     //
     // If the user has specified multiple source files, then
@@ -974,7 +975,7 @@ public class FsShell extends Configured implements Tool {
       Path dst = new Path(dest);
       FileSystem dstFs = dst.getFileSystem(getConf());
       if (!dstFs.isDirectory(dst)) {
-        throw new IOException("When moving multiple files, " 
+        throw new IOException("When moving multiple files, "
                               + "destination " + dest + " should be a directory.");
       }
     }
@@ -1016,11 +1017,11 @@ public class FsShell extends Configured implements Tool {
   /**
    * Copy files that match the file pattern <i>srcf</i>
    * to a destination file.
-   * When copying mutiple files, the destination must be a directory. 
+   * When copying mutiple files, the destination must be a directory.
    * Otherwise, IOException is thrown.
    * @param srcf a file pattern specifying source files
-   * @param dstf a destination local file/directory 
-   * @throws IOException  
+   * @param dstf a destination local file/directory
+   * @throws IOException
    * @see org.apache.hadoop.fs.FileSystem#globStatus(Path)
    */
   void copy(String srcf, String dstf, Configuration conf) throws IOException {
@@ -1030,7 +1031,7 @@ public class FsShell extends Configured implements Tool {
     FileSystem dstFs = dstPath.getFileSystem(getConf());
     Path [] srcs = FileUtil.stat2Paths(srcFs.globStatus(srcPath), srcPath);
     if (srcs.length > 1 && !dstFs.isDirectory(dstPath)) {
-      throw new IOException("When copying multiple files, " 
+      throw new IOException("When copying multiple files, "
                             + "destination should be a directory.");
     }
     for(int i=0; i<srcs.length; i++) {
@@ -1042,14 +1043,14 @@ public class FsShell extends Configured implements Tool {
    * Copy file(s) to a destination file. Multiple source
    * files can be specified. The destination is the last element of
    * the argvp[] array.
-   * If multiple source files are specified, then the destination 
+   * If multiple source files are specified, then the destination
    * must be a directory. Otherwise, IOException is thrown.
-   * @exception: IOException  
+   * @exception: IOException
    */
   private int copy(String argv[], Configuration conf) throws IOException {
     int i = 0;
     int exitCode = 0;
-    String cmd = argv[i++];  
+    String cmd = argv[i++];
     String dest = argv[argv.length-1];
     //
     // If the user has specified multiple source files, then
@@ -1058,7 +1059,7 @@ public class FsShell extends Configured implements Tool {
     if (argv.length > 3) {
       Path dst = new Path(dest);
       if (!fs.isDirectory(dst)) {
-        throw new IOException("When copying multiple files, " 
+        throw new IOException("When copying multiple files, "
                               + "destination " + dest + " should be a directory.");
       }
     }
@@ -1103,15 +1104,15 @@ public class FsShell extends Configured implements Tool {
    * @param srcf a file pattern specifying source files
    * @param recursive if need to delete subdirs
    * @param skipTrash Should we skip the trash, if it's enabled?
-   * @throws IOException  
+   * @throws IOException
    * @see org.apache.hadoop.fs.FileSystem#globStatus(Path)
    */
-  void delete(String srcf, final boolean recursive, final boolean skipTrash) 
+  void delete(String srcf, final boolean recursive, final boolean skipTrash)
                                                             throws IOException {
     //rm behavior in Linux
     //  [~/1207]$ ls ?.txt
     //  x.txt  z.txt
-    //  [~/1207]$ rm x.txt y.txt z.txt 
+    //  [~/1207]$ rm x.txt y.txt z.txt
     //  rm: cannot remove `y.txt': No such file or directory
 
     Path srcPattern = new Path(srcf);
@@ -1122,9 +1123,9 @@ public class FsShell extends Configured implements Tool {
       }
     }.globAndProcess(srcPattern, srcPattern.getFileSystem(getConf()));
   }
-    
+
   /* delete a file */
-  private void delete(Path src, FileSystem srcFs, boolean recursive, 
+  private void delete(Path src, FileSystem srcFs, boolean recursive,
                       boolean skipTrash) throws IOException {
     FileStatus fs = null;
     try {
@@ -1134,12 +1135,12 @@ public class FsShell extends Configured implements Tool {
       throw new FileNotFoundException("cannot remove "
           + src + ": No such file or directory.");
     }
-    
+
     if (fs.isDirectory() && !recursive) {
       throw new IOException("Cannot remove directory \"" + src +
                             "\", use -rmr instead");
     }
-    
+
     if(!skipTrash) {
       try {
 	      Trash trashTmp = new Trash(srcFs, getConf());
@@ -1153,11 +1154,11 @@ public class FsShell extends Configured implements Tool {
         if(cause != null) {
           msg = cause.getLocalizedMessage();
         }
-        System.err.println("Problem with Trash." + msg +". Consider using -skipTrash option");        
+        System.err.println("Problem with Trash." + msg +". Consider using -skipTrash option");
         throw e;
       }
     }
-    
+
     if (srcFs.delete(src, true)) {
       System.out.println("Deleted " + src);
     } else {
@@ -1181,7 +1182,7 @@ public class FsShell extends Configured implements Tool {
    * Parse the incoming command string
    * @param cmd
    * @param pos ignore anything before this pos in cmd
-   * @throws IOException 
+   * @throws IOException
    */
   private void tail(String[] cmd, int pos) throws IOException {
     CommandFormat c = new CommandFormat("tail", 1, 1, "f");
@@ -1233,24 +1234,24 @@ public class FsShell extends Configured implements Tool {
    * running various commands like chmod, chown etc.
    */
   static abstract class CmdHandler {
-    
+
     protected int errorCode = 0;
     protected boolean okToContinue = true;
     protected String cmdName;
-    
+
     int getErrorCode() { return errorCode; }
     boolean okToContinue() { return okToContinue; }
     String getName() { return cmdName; }
-    
+
     protected CmdHandler(String cmdName, FileSystem fs) {
       this.cmdName = cmdName;
     }
-    
+
     public abstract void run(FileStatus file, FileSystem fs) throws IOException;
   }
-  
+
   /** helper returns listStatus() */
-  private static FileStatus[] shellListStatus(String cmd, 
+  private static FileStatus[] shellListStatus(String cmd,
                                               FileSystem srcFs,
                                               FileStatus src) {
     if (src.isFile()) {
@@ -1265,20 +1266,20 @@ public class FsShell extends Configured implements Tool {
     } catch(FileNotFoundException fnfe) {
       System.err.println(cmd + ": could not get listing for '" + path + "'");
     } catch (IOException e) {
-      System.err.println(cmd + 
+      System.err.println(cmd +
                          ": could not get get listing for '" + path + "' : " +
                          e.getMessage().split("\n")[0]);
     }
     return null;
   }
-  
-  
+
+
   /**
-   * Runs the command on a given file with the command handler. 
+   * Runs the command on a given file with the command handler.
    * If recursive is set, command is run recursively.
-   */                                       
-  private static int runCmdHandler(CmdHandler handler, FileStatus stat, 
-                                   FileSystem srcFs, 
+   */
+  private static int runCmdHandler(CmdHandler handler, FileStatus stat,
+                                   FileSystem srcFs,
                                    boolean recursive) throws IOException {
     int errors = 0;
     handler.run(stat, srcFs);
@@ -1296,17 +1297,17 @@ public class FsShell extends Configured implements Tool {
 
   ///top level runCmdHandler
   int runCmdHandler(CmdHandler handler, String[] args,
-                                   int startIndex, boolean recursive) 
+                                   int startIndex, boolean recursive)
                                    throws IOException {
     int errors = 0;
-    
+
     for (int i=startIndex; i<args.length; i++) {
       Path srcPath = new Path(args[i]);
       FileSystem srcFs = srcPath.getFileSystem(getConf());
       Path[] paths = FileUtil.stat2Paths(srcFs.globStatus(srcPath), srcPath);
       // if nothing matches to given glob pattern then increment error count
       if(paths.length==0) {
-        System.err.println(handler.getName() + 
+        System.err.println(handler.getName() +
             ": could not get status for '" + args[i] + "'");
         errors++;
       }
@@ -1314,7 +1315,7 @@ public class FsShell extends Configured implements Tool {
         try {
           FileStatus file = srcFs.getFileStatus(path);
           if (file == null) {
-            System.err.println(handler.getName() + 
+            System.err.println(handler.getName() +
                                ": could not get status for '" + path + "'");
             errors++;
           } else {
@@ -1322,7 +1323,7 @@ public class FsShell extends Configured implements Tool {
           }
         } catch (IOException e) {
           String msg = (e.getMessage() != null ? e.getLocalizedMessage() :
-            (e.getCause().getMessage() != null ? 
+            (e.getCause().getMessage() != null ?
                 e.getCause().getLocalizedMessage() : "null"));
           System.err.println(handler.getName() + ": could not get status for '"
                                         + path + "': " + msg.split("\n")[0]);
@@ -1330,10 +1331,10 @@ public class FsShell extends Configured implements Tool {
         }
       }
     }
-    
+
     return (errors > 0 || handler.getErrorCode() != 0) ? 1 : 0;
   }
-  
+
   /**
    * Return an abbreviated English-language desc of the byte length
    * @deprecated Consider using {@link org.apache.hadoop.util.StringUtils#byteDesc} instead.
@@ -1356,9 +1357,9 @@ public class FsShell extends Configured implements Tool {
       "The full syntax is: \n\n" +
       "hadoop fs [-fs <local | file system URI>] [-conf <configuration file>]\n\t" +
       "[-D <property=value>] [-ls <path>] [-lsr <path>] [-df [<path>]] [-du [-s] [-h] <path>]\n\t" +
-      "[-dus <path>] [-mv <src> <dst>] [-cp <src> <dst>] [-rm [-skipTrash] <src>]\n\t" + 
+      "[-dus <path>] [-mv <src> <dst>] [-cp <src> <dst>] [-rm [-skipTrash] <src>]\n\t" +
       "[-rmr [-skipTrash] <src>] [-put <localsrc> ... <dst>] [-copyFromLocal <localsrc> ... <dst>]\n\t" +
-      "[-moveFromLocal <localsrc> ... <dst>] [" + 
+      "[-moveFromLocal <localsrc> ... <dst>] [" +
       GET_SHORT_USAGE + "\n\t" +
       "[-getmerge <src> <localdst> [addnl]] [-cat <src>]\n\t" +
       "[" + COPYTOLOCAL_SHORT_USAGE + "] [-moveToLocal <src> <localdst>]\n\t" +
@@ -1367,17 +1368,17 @@ public class FsShell extends Configured implements Tool {
       "[-tail [-f] <path>] [-text <path>]\n\t" +
       "[" + FsShellPermissions.CHMOD_USAGE + "]\n\t" +
       "[" + FsShellPermissions.CHOWN_USAGE + "]\n\t" +
-      "[" + FsShellPermissions.CHGRP_USAGE + "]\n\t" +      
-      "[" + Count.USAGE + "]\n\t" +      
+      "[" + FsShellPermissions.CHGRP_USAGE + "]\n\t" +
+      "[" + Count.USAGE + "]\n\t" +
       "[-help [cmd]]\n";
 
     String conf ="-conf <configuration file>:  Specify an application configuration file.";
- 
+
     String D = "-D <property=value>:  Use value for given property.";
-  
-    String fs = "-fs [local | <file system URI>]: \tSpecify the file system to use.\n" + 
+
+    String fs = "-fs [local | <file system URI>]: \tSpecify the file system to use.\n" +
       "\t\tIf not specified, the current configuration is used, \n" +
-      "\t\ttaken from the following, in increasing precedence: \n" + 
+      "\t\ttaken from the following, in increasing precedence: \n" +
       "\t\t\tcore-default.xml inside the hadoop jar file \n" +
       "\t\t\tcore-site.xml in $HADOOP_CONF_DIR \n" +
       "\t\t'local' means use the local file system as your DFS. \n" +
@@ -1386,18 +1387,18 @@ public class FsShell extends Configured implements Tool {
       "\t\tappear first on the command line.  Exactly one additional\n" +
       "\t\targument must be specified. \n";
 
-        
-    String ls = "-ls <path>: \tList the contents that match the specified file pattern. If\n" + 
+
+    String ls = "-ls <path>: \tList the contents that match the specified file pattern. If\n" +
       "\t\tpath is not specified, the contents of /user/<currentUser>\n" +
       "\t\twill be listed. Directory entries are of the form \n" +
       "\t\t\tdirName (full path) <dir> \n" +
-      "\t\tand file entries are of the form \n" + 
+      "\t\tand file entries are of the form \n" +
       "\t\t\tfileName(full path) <r n> size \n" +
-      "\t\twhere n is the number of replicas specified for the file \n" + 
+      "\t\twhere n is the number of replicas specified for the file \n" +
       "\t\tand size is the size of the file, in bytes.\n";
 
     String lsr = "-lsr <path>: \tRecursively list the contents that match the specified\n" +
-      "\t\tfile pattern.  Behaves very similarly to hadoop fs -ls,\n" + 
+      "\t\tfile pattern.  Behaves very similarly to hadoop fs -ls,\n" +
       "\t\texcept that the data is shown for all the entries in the\n" +
       "\t\tsubtree.\n";
 
@@ -1411,15 +1412,15 @@ public class FsShell extends Configured implements Tool {
       "\t\t       matches the pattern, shows the total (summary) size.\n" +
       "\t\t  -h   Formats the sizes of files in a human-readable fashion\n" +
       "\t\t       rather than a number of bytes.\n" +
-      "\n" + 
+      "\n" +
       "\t\tNote that, even without the -s option, this only shows size summaries\n" +
       "\t\tone level deep into a directory.\n" +
-      "\t\tThe output is in the form \n" + 
-      "\t\t\tsize\tname(full path)\n"; 
+      "\t\tThe output is in the form \n" +
+      "\t\t\tsize\tname(full path)\n";
 
     String dus = "-dus <path>: \tShow the amount of space, in bytes, used by the files that \n" +
       "\t\tmatch the specified file pattern. This is equivalent to -du -s above.\n";
-    
+
     String mv = "-mv <src> <dst>:   Move files that match the specified file pattern <src>\n" +
       "\t\tto a destination <dst>.  When moving multiple files, the \n" +
       "\t\tdestination must be a directory. \n";
@@ -1438,14 +1439,14 @@ public class FsShell extends Configured implements Tool {
       "\t\t-skipTrash option bypasses trash, if enabled, and immediately\n" +
       "deletes <src>";
 
-    String put = "-put <localsrc> ... <dst>: \tCopy files " + 
+    String put = "-put <localsrc> ... <dst>: \tCopy files " +
     "from the local file system \n\t\tinto fs. \n";
 
     String copyFromLocal = "-copyFromLocal <localsrc> ... <dst>:" +
     " Identical to the -put command.\n";
 
     String moveFromLocal = "-moveFromLocal <localsrc> ... <dst>:" +
-    " Same as -put, except that the source is\n\t\tdeleted after it's copied.\n"; 
+    " Same as -put, except that the source is\n\t\tdeleted after it's copied.\n";
 
     String get = GET_SHORT_USAGE
       + ":  Copy files that match the file pattern <src> \n" +
@@ -1459,16 +1460,16 @@ public class FsShell extends Configured implements Tool {
     String cat = "-cat <src>: \tFetch all files that match the file pattern <src> \n" +
       "\t\tand display their content on stdout.\n";
 
-    
+
     String text = "-text <src>: \tTakes a source file and outputs the file in text format.\n" +
       "\t\tThe allowed formats are zip and TextRecordInputStream.\n";
-         
-    
+
+
     String copyToLocal = COPYTOLOCAL_SHORT_USAGE
                          + ":  Identical to the -get command.\n";
 
     String moveToLocal = "-moveToLocal <src> <localdst>:  Not implemented yet \n";
-        
+
     String mkdir = "-mkdir <path>: \tCreate a directory in specified location. \n";
 
     String setrep = SETREP_SHORT_USAGE
@@ -1503,7 +1504,7 @@ public class FsShell extends Configured implements Tool {
       "\t\tE.g. 754 is same as u=rwx,g=rx,o=r\n\n" +
       "\t\tIf none of 'augo' is specified, 'a' is assumed and unlike\n" +
       "\t\tshell command, no umask is applied.\n";
-    
+
     String chown = FsShellPermissions.CHOWN_USAGE + "\n" +
       "\t\tChanges owner and group of a file.\n" +
       "\t\tThis is similar to shell's chown with a few exceptions.\n\n" +
@@ -1518,12 +1519,12 @@ public class FsShell extends Configured implements Tool {
       "\t\tLinux allows it. If user names have dots in them and you are\n" +
       "\t\tusing local file system, you might see surprising results since\n" +
       "\t\tshell command 'chown' is used for local files.\n";
-    
+
     String chgrp = FsShellPermissions.CHGRP_USAGE + "\n" +
       "\t\tThis is equivalent to -chown ... :GROUP ...\n";
 
     String expunge = "-expunge: Empty the Trash.\n";
-    
+
     String help = "-help [cmd]: \tDisplays help for given command or all commands if none\n" +
       "\t\tis specified.\n";
 
@@ -1623,11 +1624,11 @@ public class FsShell extends Configured implements Tool {
       System.out.println(text);
       System.out.println(stat);
       System.out.println(chmod);
-      System.out.println(chown);      
+      System.out.println(chown);
       System.out.println(chgrp);
       System.out.println(Count.DESCRIPTION);
       System.out.println(help);
-    }        
+    }
   }
 
   /**
@@ -1638,14 +1639,14 @@ public class FsShell extends Configured implements Tool {
     int exitCode = 0;
     int i = startindex;
     boolean rmSkipTrash = false;
-    
+
     // Check for -skipTrash option in rm/rmr
-    if(("-rm".equals(cmd) || "-rmr".equals(cmd)) 
+    if(("-rm".equals(cmd) || "-rmr".equals(cmd))
         && "-skipTrash".equals(argv[i])) {
       rmSkipTrash = true;
       i++;
     }
-    
+
     //
     // for each source file, issue the command
     //
@@ -1708,24 +1709,24 @@ public class FsShell extends Configured implements Tool {
 
   /**
    * Displays format of commands.
-   * 
+   *
    */
   private static void printUsage(String cmd) {
     String prefix = "Usage: java " + FsShell.class.getSimpleName();
     if ("-fs".equals(cmd)) {
-      System.err.println("Usage: java FsShell" + 
+      System.err.println("Usage: java FsShell" +
                          " [-fs <local | file system URI>]");
     } else if ("-conf".equals(cmd)) {
-      System.err.println("Usage: java FsShell" + 
+      System.err.println("Usage: java FsShell" +
                          " [-conf <configuration file>]");
     } else if ("-D".equals(cmd)) {
-      System.err.println("Usage: java FsShell" + 
+      System.err.println("Usage: java FsShell" +
                          " [-D <[property=value>]");
     } else if ("-ls".equals(cmd) || "-lsr".equals(cmd) ||
                "-du".equals(cmd) || "-dus".equals(cmd) ||
                "-touchz".equals(cmd) || "-mkdir".equals(cmd) ||
                "-text".equals(cmd)) {
-      System.err.println("Usage: java FsShell" + 
+      System.err.println("Usage: java FsShell" +
                          " [" + cmd + " <path>]");
     } else if ("-df".equals(cmd) ) {
       System.err.println("Usage: java FsShell" +
@@ -1733,24 +1734,24 @@ public class FsShell extends Configured implements Tool {
     } else if (Count.matches(cmd)) {
       System.err.println(prefix + " [" + Count.USAGE + "]");
     } else if ("-rm".equals(cmd) || "-rmr".equals(cmd)) {
-      System.err.println("Usage: java FsShell [" + cmd + 
+      System.err.println("Usage: java FsShell [" + cmd +
                            " [-skipTrash] <src>]");
     } else if ("-mv".equals(cmd) || "-cp".equals(cmd)) {
-      System.err.println("Usage: java FsShell" + 
+      System.err.println("Usage: java FsShell" +
                          " [" + cmd + " <src> <dst>]");
     } else if ("-put".equals(cmd) || "-copyFromLocal".equals(cmd) ||
                "-moveFromLocal".equals(cmd)) {
-      System.err.println("Usage: java FsShell" + 
+      System.err.println("Usage: java FsShell" +
                          " [" + cmd + " <localsrc> ... <dst>]");
     } else if ("-get".equals(cmd)) {
-      System.err.println("Usage: java FsShell [" + GET_SHORT_USAGE + "]"); 
+      System.err.println("Usage: java FsShell [" + GET_SHORT_USAGE + "]");
     } else if ("-copyToLocal".equals(cmd)) {
-      System.err.println("Usage: java FsShell [" + COPYTOLOCAL_SHORT_USAGE+ "]"); 
+      System.err.println("Usage: java FsShell [" + COPYTOLOCAL_SHORT_USAGE+ "]");
     } else if ("-moveToLocal".equals(cmd)) {
-      System.err.println("Usage: java FsShell" + 
+      System.err.println("Usage: java FsShell" +
                          " [" + cmd + " [-crc] <src> <localdst>]");
     } else if ("-cat".equals(cmd)) {
-      System.err.println("Usage: java FsShell" + 
+      System.err.println("Usage: java FsShell" +
                          " [" + cmd + " <src>]");
     } else if ("-setrep".equals(cmd)) {
       System.err.println("Usage: java FsShell [" + SETREP_SHORT_USAGE + "]");
@@ -1790,7 +1791,7 @@ public class FsShell extends Configured implements Tool {
       System.err.println("           [-test -[ezd] <path>]");
       System.err.println("           [-stat [format] <path>]");
       System.err.println("           [" + TAIL_USAGE + "]");
-      System.err.println("           [" + FsShellPermissions.CHMOD_USAGE + "]");      
+      System.err.println("           [" + FsShellPermissions.CHMOD_USAGE + "]");
       System.err.println("           [" + FsShellPermissions.CHOWN_USAGE + "]");
       System.err.println("           [" + FsShellPermissions.CHGRP_USAGE + "]");
       System.err.println("           [-help [cmd]]");
@@ -1805,7 +1806,7 @@ public class FsShell extends Configured implements Tool {
   public int run(String argv[]) throws Exception {
 
     if (argv.length < 1) {
-      printUsage(""); 
+      printUsage("");
       return -1;
     }
 
@@ -1821,7 +1822,7 @@ public class FsShell extends Configured implements Tool {
         printUsage(cmd);
         return exitCode;
       }
-    } else if ("-get".equals(cmd) || 
+    } else if ("-get".equals(cmd) ||
                "-copyToLocal".equals(cmd) || "-moveToLocal".equals(cmd)) {
       if (argv.length < 3) {
         printUsage(cmd);
@@ -1844,7 +1845,7 @@ public class FsShell extends Configured implements Tool {
     // initialize FsShell
     try {
       init();
-    } catch (RPC.VersionMismatch v) { 
+    } catch (RPC.VersionMismatch v) {
       System.err.println("Version Mismatch between client and server" +
                          "... command aborted.");
       return exitCode;
@@ -1857,12 +1858,12 @@ public class FsShell extends Configured implements Tool {
     try {
       if ("-put".equals(cmd) || "-copyFromLocal".equals(cmd)) {
         Path[] srcs = new Path[argv.length-2];
-        for (int j=0 ; i < argv.length-1 ;) 
+        for (int j=0 ; i < argv.length-1 ;)
           srcs[j++] = new Path(argv[i++]);
         copyFromLocal(srcs, argv[i++]);
       } else if ("-moveFromLocal".equals(cmd)) {
         Path[] srcs = new Path[argv.length-2];
-        for (int j=0 ; i < argv.length-1 ;) 
+        for (int j=0 ; i < argv.length-1 ;)
           srcs[j++] = new Path(argv[i++]);
         moveFromLocal(srcs, argv[i++]);
       } else if ("-get".equals(cmd) || "-copyToLocal".equals(cmd)) {
@@ -1879,8 +1880,8 @@ public class FsShell extends Configured implements Tool {
       } else if ("-moveToLocal".equals(cmd)) {
         moveToLocal(argv[i++], new Path(argv[i++]));
       } else if ("-setrep".equals(cmd)) {
-        setReplication(argv, i);           
-      } else if ("-chmod".equals(cmd) || 
+        setReplication(argv, i);
+      } else if ("-chmod".equals(cmd) ||
                  "-chown".equals(cmd) ||
                  "-chgrp".equals(cmd)) {
         exitCode = FsShellPermissions.changePermissions(fs, cmd, argv, i, this);
@@ -1889,13 +1890,13 @@ public class FsShell extends Configured implements Tool {
           exitCode = doall(cmd, argv, i);
         } else {
           exitCode = ls(Path.CUR_DIR, false);
-        } 
+        }
       } else if ("-lsr".equals(cmd)) {
         if (i < argv.length) {
           exitCode = doall(cmd, argv, i);
         } else {
           exitCode = ls(Path.CUR_DIR, true);
-        } 
+        }
       } else if ("-mv".equals(cmd)) {
         exitCode = rename(argv, getConf());
       } else if ("-cp".equals(cmd)) {
@@ -1937,7 +1938,7 @@ public class FsShell extends Configured implements Tool {
           printHelp("");
         }
       } else if ("-tail".equals(cmd)) {
-        tail(argv, i);           
+        tail(argv, i);
       } else {
         exitCode = -1;
         System.err.println(cmd.substring(1) + ": Unknown command");
@@ -1955,22 +1956,22 @@ public class FsShell extends Configured implements Tool {
       try {
         String[] content;
         content = e.getLocalizedMessage().split("\n");
-        System.err.println(cmd.substring(1) + ": " + 
+        System.err.println(cmd.substring(1) + ": " +
                            content[0]);
       } catch (Exception ex) {
-        System.err.println(cmd.substring(1) + ": " + 
-                           ex.getLocalizedMessage());  
+        System.err.println(cmd.substring(1) + ": " +
+                           ex.getLocalizedMessage());
       }
     } catch (IOException e) {
       //
       // IO exception encountered locally.
-      // 
+      //
       exitCode = -1;
-      System.err.println(cmd.substring(1) + ": " + 
-                         e.getLocalizedMessage());  
+      System.err.println(cmd.substring(1) + ": " +
+                         e.getLocalizedMessage());
     } catch (Exception re) {
       exitCode = -1;
-      System.err.println(cmd.substring(1) + ": " + re.getLocalizedMessage());  
+      System.err.println(cmd.substring(1) + ": " + re.getLocalizedMessage());
     } finally {
     }
     return exitCode;
@@ -2006,15 +2007,15 @@ public class FsShell extends Configured implements Tool {
     final void globAndProcess(Path srcPattern, FileSystem srcFs
         ) throws IOException {
       List<IOException> exceptions = new ArrayList<IOException>();
-      for(Path p : FileUtil.stat2Paths(srcFs.globStatus(srcPattern), 
+      for(Path p : FileUtil.stat2Paths(srcFs.globStatus(srcPattern),
                                        srcPattern))
-        try { process(p, srcFs); } 
+        try { process(p, srcFs); }
         catch(IOException ioe) { exceptions.add(ioe); }
-    
+
       if (!exceptions.isEmpty())
         if (exceptions.size() == 1)
           throw exceptions.get(0);
-        else 
+        else
           throw new IOException("Multiple IOExceptions: " + exceptions);
     }
   }
