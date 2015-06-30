@@ -26,29 +26,34 @@ import org.apache.hadoop.classification.InterfaceStability;
 import org.apache.hadoop.conf.Configuration;
 
 /**
- * Factory for URL stream handlers.
- * 
- * There is only one handler whose job is to create UrlConnections. A
- * FsUrlConnection relies on FileSystem to choose the appropriate FS
- * implementation.
- * 
- * Before returning our handler, we make sure that FileSystem knows an
- * implementation for the requested scheme/protocol.
+ * FsUrlStreamHandlerFactory是由多个URL流输入输出处理器组成的工厂方法
+ * 实现了URLStreamHandlerFactory接口
+ * 拥有三个私有的成员变量Configuration对象conf,HashMap<String, Boolean>对象 protocols
+ * 还有private java.net.URLStreamHandler对象 handler
+ * 在众多的类中只有一个处理器的工作是生成UrlConnections对象，UrlConnections类
+ * 依赖于FileSystem并选择合适的接口进行实现
+ * 在createURLStreamHandler方法中返回handler之前，需要FileSystem类的实现接口中
+ * 明确清楚传入需要的参数
  */
 @InterfaceAudience.Private
 @InterfaceStability.Unstable
 public class FsUrlStreamHandlerFactory implements
     URLStreamHandlerFactory {
 
-  // The configuration holds supported FS implementation class names.
+  // Configuration对象conf中设置了支持FS的接口类的名称
   private Configuration conf;
 
-  // This map stores whether a protocol is know or not by FileSystem
+  // 字典对象存的是这个protocol键是否在FileSystem中,在的则值存入true,不在则值存入false
   private Map<String, Boolean> protocols = new HashMap<String, Boolean>();
 
-  // The URL Stream handler
+  // URLStream 处理器
   private java.net.URLStreamHandler handler;
-
+/**
+  * FsUrlStreamHandlerFactory第一个构造函数
+  * conf引用到一个新创建的Configuration类对象中
+  * 确定了conf的值后调用FsUrlStreamHandler
+  * 并将返回值赋值给handler
+  */
   public FsUrlStreamHandlerFactory() {
     this.conf = new Configuration();
     // force the resolution of the configuration files
@@ -57,14 +62,26 @@ public class FsUrlStreamHandlerFactory implements
     this.conf.getClass("fs.file.impl", null);
     this.handler = new FsUrlStreamHandler(this.conf);
   }
-
+/**
+  * FsUrlStreamHandlerFactory第二个构造函数
+  * conf引用到一个配置好的Configuration类对象中
+  * 确定了conf的值后调用FsUrlStreamHandler
+  * 并将返回值赋值给handler
+  */
   public FsUrlStreamHandlerFactory(Configuration conf) {
     this.conf = new Configuration(conf);
     // force the resolution of the configuration files
     this.conf.getClass("fs.file.impl", null);
     this.handler = new FsUrlStreamHandler(this.conf);
   }
-
+/**
+  * @param String protocol
+  * @return java.net.URLStreamHandler 返回一个handler
+  * FsUrlStreamHandlerFactory第二个构造函数
+  * createURLStreamHandler接收一个String参数protocol
+  * 判断protocols字典中是否存在这个protocol
+  * 若存在则将handler变量返回,不然则返回null
+  */
   public java.net.URLStreamHandler createURLStreamHandler(String protocol) {
     if (!protocols.containsKey(protocol)) {
       boolean known =

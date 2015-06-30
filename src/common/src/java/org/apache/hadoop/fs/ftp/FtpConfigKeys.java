@@ -25,8 +25,7 @@ import org.apache.hadoop.fs.CommonConfigurationKeys;
 import org.apache.hadoop.fs.FsServerDefaults;
 
 /** 
- * This class contains constants for configuration keys used
- * in the ftp file system.
+ * 这个类包含了使用final修饰的配置关键变量,用于这个FTP File System
  */
 @InterfaceAudience.Private
 @InterfaceStability.Unstable

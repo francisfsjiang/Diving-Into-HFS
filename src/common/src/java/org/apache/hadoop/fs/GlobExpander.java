@@ -27,7 +27,7 @@ import org.apache.hadoop.classification.InterfaceStability;
 @InterfaceAudience.Private
 @InterfaceStability.Unstable
 class GlobExpander {
-  
+  //内部类StringWithOffset能够存储GlobExpander的string和offset成员变量
   static class StringWithOffset {
     String string;
     int offset;
@@ -39,11 +39,10 @@ class GlobExpander {
   }
   
   /**
-   * Expand globs in the given <code>filePattern</code> into a collection of 
-   * file patterns so that in the expanded set no file pattern has a
-   * slash character ("/") in a curly bracket pair.
+   * 静态方法expand()匹配指定模式的文件名或目录名称filePattern
+   * 并将其结果存入List<String>对象fullyExpanded中返回
    * @param filePattern
-   * @return expanded file patterns
+   * @return List<String>对象
    * @throws IOException 
    */
   public static List<String> expand(String filePattern) throws IOException {
@@ -63,10 +62,15 @@ class GlobExpander {
   }
   
   /**
-   * Expand the leftmost outer curly bracket pair containing a
-   * slash character ("/") in <code>filePattern</code>.
+   * 静态方法expandLeftmost()最左匹配带有偏移量模式的文件名或目录名称filePatternWithOffset
+   * 从内部类StringWithOffset对象filePatternWithOffset中获得filePattern
+   * 并调用leftmostOuterCurlyContainingSlash(filePattern,ilePatternWithOffset.offset)方法
+   * 获得leftmost值,若为-1则返回null
+   * 通过给定的leftmost获得filePattern的子串赋值为prefix
+   * 以leftmost整数值作为起点遍历filePattern串中的字符
+   * 并以'//','{','}',','分情况处理
    * @param filePattern
-   * @return expanded file patterns
+   * @return List<StringWithOffset>对象 exp
    * @throws IOException 
    */
   private static List<StringWithOffset> expandLeftmost(StringWithOffset
@@ -132,11 +136,12 @@ class GlobExpander {
   }
   
   /**
-   * Finds the index of the leftmost opening curly bracket containing a
-   * slash character ("/") in <code>filePattern</code>.
+   * 静态方法leftmostOuterCurlyContainingSlash以offset整数值作为起点遍历filePattern串中的字符
+   * 并以'//','{','}','/'分情况处理,找到能在'{}'字符之间找到'/'的最大下标值并返回
+   * 找不到结果则返回-1
    * @param filePattern
-   * @return the index of the leftmost opening curly bracket containing a
-   * slash character ("/"), or -1 if there is no such bracket
+   * @param offset
+   * @return int数据类型
    * @throws IOException 
    */
   private static int leftmostOuterCurlyContainingSlash(String filePattern,

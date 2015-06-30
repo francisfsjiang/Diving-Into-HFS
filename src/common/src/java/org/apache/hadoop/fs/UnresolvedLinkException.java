@@ -24,7 +24,9 @@ import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 
 /** 
- * Thrown when a symbolic link is encountered in a path.
+ * UnresolvedLinkException继承自IOException异常类
+ * 有一个静态常量serialVersionUID = 1L
+ * UnresolvedLinkException()方法和UnresolvedLinkException(String msg)均调用父类方法
  */
 @InterfaceAudience.LimitedPrivate({"HDFS"})
 @InterfaceStability.Stable

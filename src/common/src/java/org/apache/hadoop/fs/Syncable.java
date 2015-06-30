@@ -23,25 +23,26 @@ import java.io.IOException;
 import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 
-/** This interface for flush/sync operation. */
+/** 
+  * 这个接口声明了刷新缓冲区以及同步装饰器的操作
+  */
 @InterfaceAudience.Public
 @InterfaceStability.Evolving
 public interface Syncable {
   /**
-   * @deprecated As of HADOOP 0.21.0, replaced by hflush
-   * @see #hflush()
+   * @deprecated 装饰器,被hflush替代
    */
   @Deprecated  public void sync() throws IOException;
   
-  /** Flush out the data in client's user buffer. After the return of
-   * this call, new readers will see the data.
+ /**
    * @throws IOException if any error occurs
+   * 刷新并清空FTPClient对象client的user的缓冲区里存着的数据,然后将这个响应返回,新的用户能看到刷新后的数据
    */
   public void hflush() throws IOException;
   
-  /** Similar to posix fsync, flush out the data in client's user buffer 
-   * all the way to the disk device (but the disk may have it in its cache).
+ /**
    * @throws IOException if error occurs
+   * 刷新并清空FTPClient对象client的硬盘驱动里存着的数据
    */
   public void hsync() throws IOException;
 }

@@ -28,7 +28,11 @@ import org.apache.hadoop.classification.InterfaceStability;
 import org.apache.hadoop.conf.Configuration;
 
 /**
- * Representation of a URL connection to open InputStreams.
+ * URL连接到InputStreams上的类
+ * 具有Configuration对象conf和InputStream对象is作为实例属性
+ * 继承自URLConnection的connect方法和getInputStream方法,并Override覆盖其原来方法
+ * 构造函数接收两个参数,第一个参数是Configuration conf.
+ * 第二个参数是URL对象url,调用其超类URLConnection构造函数super(url)
  */
 @InterfaceAudience.Private
 @InterfaceStability.Unstable
@@ -42,7 +46,12 @@ class FsUrlConnection extends URLConnection {
     super(url);
     this.conf = conf;
   }
-
+/**
+  * @throw IOException
+  * connect方法是继承自URLConnection,在FsUrlConnection类中Override的方法
+  * 该方法通过FileSystem.get(url.toURI(), conf)方法获得FileSystem对象fs
+  * 并用fs打开url的地址获得的输入流对象赋值给FsUrlConnection类的实例变量is
+  */
   @Override
   public void connect() throws IOException {
     try {
@@ -52,7 +61,12 @@ class FsUrlConnection extends URLConnection {
       throw new IOException(e.toString());
     }
   }
-
+/**
+  * @throw IOException
+  * @return InputStream对象 
+  * getInputStream()方法是继承自URLConnection,在FsUrlConnection类中Override的方法
+  * 该方法首先判断FsUrlConnection类的实例变量is是否为null,若为null则调用connect方法
+  */
   /* @inheritDoc */
   @Override
   public InputStream getInputStream() throws IOException {
