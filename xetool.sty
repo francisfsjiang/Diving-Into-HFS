@@ -56,25 +56,33 @@
     \end{mpost}
 }
 
-\newcommand{\XeRfChapter}[1]{第\ref{#1}章}
-\newcommand{\XeStructureItem}[2]{\textbf{\XeRfChapter{#1}} & \textbf{#2} \\}
-\newenvironment{XeStructure}[2]{%
-    \begin{center}
-        \begin{tabular}{rl}
-            章节 & 主要内容 \\
-            \hline{}
-}{%
-            \hline{}
-        \end{tabular}
-    \end{center}
-}
-
-
 \newcommand{\XePublic}{\textcolor{cyan}{\faUnlock}}
 \newcommand{\XePrivate}{\textcolor{orange}{\faLock}}
 \newcommand{\XeProtected}{\textcolor{gray}{\faKey}}
- 
+
 \newcommand{\blankfigure}{%
     \begin{centering}
         \fcolorbox{red}{orange}{\textcolor{white}{此处应有图}}
     \end{centering}}
+
+\newcommand{\XeDLTItem}[2]{#1 & #2 \\}
+\newenvironment{XeDuoLineTabular}[3][rl]{%
+	\begin{center}
+		\begin{tabular}{#1}
+		#2 & #3 \\
+		\hline
+}{%
+		\hline
+		\end{tabular}
+	\end{center}
+}
+
+\newcommand{\XeRfChapter}[1]{第\ref{#1}章}
+\newcommand{\XeStructureItem}[2]{%
+	\XeDLTItem{\textbf{\XeRfChapter{#1}}}{\textbf{#2}}
+}
+\newenvironment{XeStructure}[2]{%
+	\begin{XeDuoLineTabular}[rl]{章节}{主要内容}
+}{%
+    \end{XeDuoLineTabular}
+}

@@ -1,8 +1,11 @@
 pdf:
 	xelatex report.tex
 
+tut:
+	xelatex review_example.tex
+
 clean:
-	-rm report.aux report.lof report.log report.lot report.out report.run.xml report.toc
+	-rm *.aux *.lof *.log *.lot *.out *.run.xml *.toc
 	-rm *~
 	-rm content/*~
 	-rm gfx/*~
