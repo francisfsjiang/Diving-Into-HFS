@@ -2,9 +2,25 @@
 \label{ch:hfs}
 
 \section{The big picture}
+\label{sec:hfs:bigpic}
 
-\HFS 总体架构
+精到的描述\HFS 的整体架构并不是一件简单的工作, 但通过对{\Apache\space\Hadoop}项目的文档
+\emph{The Architecture of Hadoop}中提供的项目架构图进行适当的修改,
+可以得出一个更适合描述\HFS 项目整体的项目架构图.
 
 \blankfigure
 
+\section{核心模块}
+\label{sec:hfs:modules}
 
+如果以包为单位来考察\HFS, 且仅仅考虑与\HFS 自身相关的代码, 那么这张粗粒度的表格中几乎没有什么表项:
+\begin{XeDuoLineTabular}{包}{作用}
+    \XeDLTItem{fs}{文件系统相关的大部分代码}
+    \XeDLTItem{io}{I/O相关的代码}
+    % TODO 脑补一下这张表里应该有啥
+\end{XeDuoLineTabular}
+
+如果以更细粒度的逻辑结构来划分``模块''之间的关系, 那么\HFS 的逻辑功能块的划分应该是这个样子:
+\begin{XeDuoLineTabular}
+    \XeDLTItem{fs}{文件系统相关的大部分代码}
+\end{XeDuoLineTabular}

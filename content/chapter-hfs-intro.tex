@@ -44,7 +44,8 @@ The structure and logic rules used to manage the groups of information and their
 \subsection{作为服务提供者的\HFS}
 
 服务提供者是\HFS 在\Hadoop 中的角色,
-其主要职责是向上层的\Hadoop 应用提供可靠的文件访问服务.
+其主要职责是向上层的\Hadoop 应用提供可靠的文件访问服务, 或者, 更进一步的,
+上层应用同时提供可靠的流式访问服务和文件级别的访问服务.
 
 \subsection{作为抽象层的\HFS}
 
@@ -64,14 +65,12 @@ instead they access files across all file systems using \emph{FileContext}.
 
 类似地, 我们也可以这样描述\HFS
 \begin{quote}
-    \HFS 是建立在不同的具体文件系统智商的抽象层.
+    \HFS 是一个建立在不同的具体文件系统之上的抽象层.
 \end{quote}
 
 \blankfigure{}
 
-如~\ref{ch:hfs-intro:hfs}节所述, \HFS 是用于向\Hadoop 提供文件服务的,
-横断于各个具体文件系统之上的抽象层.
-HAL屏蔽底层硬件之间的差异, 向上提驱动磁盘的接口;
+如上图, HAL屏蔽底层硬件之间的差异, 向上提驱动磁盘的接口;
 具体文件系统屏蔽不同体系(如NTFS, ext, xfs, btfs, etc.)下信息在物理磁盘上的组织方式的差异,
 向上提供操纵文件的接口;
 而抽象文件系统, 负责屏蔽不同的具体文件系统之间的差异(如命名管理, 权限控制等),
@@ -93,4 +92,3 @@ one that reflects the locally-connected disk.
 \end{quote}
 
 其中所指的分布式文件系统的实例之一, 就是\HDFS.
-
