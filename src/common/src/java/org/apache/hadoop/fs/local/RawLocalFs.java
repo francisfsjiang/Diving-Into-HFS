@@ -34,10 +34,6 @@ import org.apache.hadoop.fs.RawLocalFileSystem;
 import org.apache.hadoop.fs.permission.FsPermission;
 import org.apache.hadoop.util.Shell;
 
-/**
- * The RawLocalFs implementation of AbstractFileSystem.
- *  This impl delegates to the old FileSystem
- */
 @InterfaceAudience.Private
 @InterfaceStability.Evolving /*Evolving for a release,to be changed to Stable */
 
@@ -51,15 +47,6 @@ public class RawLocalFs extends DelegateToFileSystem {
     this(FsConstants.LOCAL_FS_URI, conf);
   }
   
-  /**
-   * This constructor has the signature needed by
-   * {@link AbstractFileSystem#createFileSystem(URI, Configuration)}.
-   * 
-   * @param theUri which must be that of localFs
-   * @param conf
-   * @throws IOException
-   * @throws URISyntaxException 
-   */
   RawLocalFs(final URI theUri, final Configuration conf) throws IOException,
       URISyntaxException {
     super(theUri, new RawLocalFileSystem(), conf, 
@@ -68,17 +55,14 @@ public class RawLocalFs extends DelegateToFileSystem {
 
   /**
    * 返回URI默认端口
-   * @return
    */
   @Override
   protected int getUriDefaultPort() {
-    return -1; // No default port for file:///
+    return -1;
   }
 
   /**
    * 返回默认服务器
-   * @return
-   * @throws IOException
    */
   @Override
   protected FsServerDefaults getServerDefaults() throws IOException {
@@ -93,10 +77,6 @@ public class RawLocalFs extends DelegateToFileSystem {
   /**
    * 建立符号连接
    * 符号链接一般用于将一个文件或这个目录结构移动到系统中的另一个位置
-   * @param target
-   * @param link
-   * @param createParent
-   * @throws IOException
    */
   @Override
   protected void createSymlink(Path target, Path link, boolean createParent) 
@@ -109,7 +89,6 @@ public class RawLocalFs extends DelegateToFileSystem {
     if (createParent) {
       mkdir(link.getParent(), FsPermission.getDefault(), true);
     }
-    // NB: Use createSymbolicLink in java.nio.file.Path once available
     try {
       Shell.execCommand(Shell.LINK_COMMAND, "-s",
                         new URI(target.toString()).getPath(),
@@ -123,15 +102,8 @@ public class RawLocalFs extends DelegateToFileSystem {
 
   /**
    * 读取建立的符号连接
-   * Returns the target of the given symlink. Returns the empty string if  
-   * the given path does not refer to a symlink or there is an error 
-   * acessing the symlink.
    */
   private String readLink(Path p) {
-    /* NB: Use readSymbolicLink in java.nio.file.Path once available. Could
-     * use getCanonicalPath in File to get the target of the symlink but that 
-     * does not indicate if the given path refers to a symlink.
-     */
     try {
       final String path = p.toUri().getPath();
       return Shell.execCommand(Shell.READ_LINK_COMMAND, path).trim(); 
@@ -143,20 +115,15 @@ public class RawLocalFs extends DelegateToFileSystem {
   /**
    *
    * 获取文件连接状态
-   * Return a FileStatus representing the given path. If the path refers 
-   * to a symlink return a FileStatus representing the link rather than
-   * the object the link refers to.
    */
   @Override
   protected FileStatus getFileLinkStatus(final Path f) throws IOException {
     String target = readLink(f);
     try {
-      FileStatus fs = getFileStatus(f);
-      // If f refers to a regular file or directory      
+      FileStatus fs = getFileStatus(f);  
       if ("".equals(target)) {
         return fs;
       }
-      // Otherwise f refers to a symlink
       return new FileStatus(fs.getLen(), 
           false,
           fs.getReplication(), 
@@ -169,17 +136,10 @@ public class RawLocalFs extends DelegateToFileSystem {
           new Path(target),
           f);
     } catch (FileNotFoundException e) {
-      /* The exists method in the File class returns false for dangling 
-       * links so we can get a FileNotFoundException for links that exist.
-       * It's also possible that we raced with a delete of the link. Use
-       * the readBasicFileAttributes method in java.nio.file.attributes 
-       * when available.
-       */
       if (!"".equals(target)) {
         return new FileStatus(0, false, 0, 0, 0, 0, FsPermission.getDefault(), 
             "", "", new Path(target), f);        
       }
-      // f refers to a file or directory that does not exist
       throw e;
     }
   }
@@ -187,17 +147,10 @@ public class RawLocalFs extends DelegateToFileSystem {
 
   /**
    * 获取连接目标
-   * @param f
-   * @return
-   * @throws IOException
    */
   @Override
   protected Path getLinkTarget(Path f) throws IOException {
-    /* We should never get here. Valid local links are resolved transparently
-     * by the underlying local file system and accessing a dangling link will 
-     * result in an IOException, not an UnresolvedLinkException, so FileContext
-     * should never call this function.
-     */
+
     throw new AssertionError();
   }
 }

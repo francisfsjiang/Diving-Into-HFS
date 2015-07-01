@@ -28,8 +28,6 @@ import org.apache.hadoop.fs.FsServerDefaults;
 /**
  * 该类包含一些用在LocalFileSystem、RawLocalFs、CheckSumFs的
  * 配置关键字的常量
- * This class contains constants for configuration keys used
- * in the local file system, raw local fs and checksum fs.
  */
 @InterfaceAudience.Private
 @InterfaceStability.Unstable
