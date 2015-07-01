@@ -1,6 +1,67 @@
 \chapter{说明}
 
-并不知道应该说些什么.
+首先, 这个导出工具叫XGeb.
+它依赖Eclipse JDT, 用于将Java源代码解析成逻辑结构.
+
+\section{导出的先决条件}
+
+注意: 当且仅当一份JavaDoc注释
+属于类或方法
+包含中文或其他非\emph{ACSII}字符
+不包含``@@''
+时, 该JavaDoc才会被导出.
+
+完成复核之后, 不需要被导出的Javadoc, 在任意地方添加``@@''即可略过.
+
+\section{XGen的内部机制与应对策略}
+
+\section{JavaDoc的捕获}
+
+XGen捕获JavaDoc的核心是, JDT的解析结果中, JavaDoc不会被纳入行号计数.
+这意味着, 当一段JavaDoc和紧邻其后的类或方法之间没有空行的时候,
+这个类或者方法的开始行数和JavaDoc的开始行数是相同的.
+
+XGen两次遍历语法树, 每个pass处理的任务分别为
+\begin{centering}
+    \begin{enumerate}
+        \item 捕获所有JavaDoc及其行号, 同时对JavaDoc进行预处理
+        \item 捕获所有类/方法的定义, 尝试找出对应的JavaDoc
+    \end{enumerate}
+\end{centering}
+
+所以, JavaDoc和紧邻其后的类或方法之间不要留空行.
+
+\section{预处理}
+
+XGen的预处理流程如下
+
+\begin{centering}
+    \begin{enumerate}
+        \item 如果文本不含中文, 直接丢弃
+        \item 删除注释用的/**, *和*/
+        \item 删除所有独立tags, 比如@param
+        \item 替换<code></code>和{@link Clazz{\#}method}成LaTeX中的\emph{}
+    \end{enumerate}
+\end{centering}
+
+JavaDoc的原文会被全部导出, 因此需要移除非必要的文本.
+注意, 正则表达式并不能完成解析HTML这样的工作, 所以请手动移除\emph{code}之外的其他标签.
+
+\section{导出}
+
+XGen导出的内容包括
+
+\begin{centering}
+    \begin{enumerate}
+        \item JavaDoc正文
+        \item 方法的modifier, 即public/private/protected
+        \item 方法返回类型, 构造方法的返回类型视作当前类
+    \end{enumerate}
+\end{centering}
+
+注意, 不导出参数列, 因为J系语言名字太长, 加上参数列根本没地方印.
+因为不导出参数列, 所以并不能区分重载方法.
+因为不区分重载方法, 所以, 重载方法的所有文档集合到一处便是.
 
 \chapter{渲染示例}
 \input{example/gen}
