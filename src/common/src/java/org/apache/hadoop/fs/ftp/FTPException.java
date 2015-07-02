@@ -21,7 +21,7 @@ import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 
 /**
- * 这个类封装了@link Throwable Throwable对象用于抛出指定异常
+ * 这个类封装了{@link Throwable} Throwable对象用于抛出指定异常
  * FTPException继承自RuntimeException,final修饰了静态变量serialVersionUID = 1L
  */
 @InterfaceAudience.Public

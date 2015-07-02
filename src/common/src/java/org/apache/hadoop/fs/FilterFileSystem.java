@@ -81,9 +81,7 @@ public class FilterFileSystem extends FileSystem {
       Progressable progress) throws IOException {
     return fs.append(f, bufferSize, progress);
   }
-<<<<<<< HEAD
 
-  /** {@inheritDoc} */
   /**
    * 创建一个文件输出流
    * @param f the file name to open
@@ -97,8 +95,6 @@ public class FilterFileSystem extends FileSystem {
    * @return
    * @throws IOException
    */
-=======
->>>>>>> benco
   @Override
   public FSDataOutputStream create(Path f, FsPermission permission,
       boolean overwrite, int bufferSize, short replication, long blockSize,

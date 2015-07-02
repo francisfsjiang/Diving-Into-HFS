@@ -42,7 +42,7 @@ import org.apache.hadoop.util.Progressable;
 
 /**
  * 由FTP服务器支持的文件系统,基于FTP协议和FTP服务器交互的FileSystem API实现
- * 继承自FileSystem@link FileSystem
+ * 继承自{@link FileSystem}
  */
 @InterfaceAudience.Public
 @InterfaceStability.Stable
@@ -61,7 +61,7 @@ public class FTPFileSystem extends FileSystem {
   * 初始化的函数通过获得的host,port,user,password配置Configuration对象.
   * host通过Configuration对象设置保存在fs.ftp.host
   * port通过Configuration对象设置保存在fs.ftp.host.port
-  * user通过Configuration对象设置保存在"fs.ftp.user." + host 
+  * user通过Configuration对象设置保存在"fs.ftp.user." + host
   * password通过Configuration对象设置保存在"fs.ftp.password." + host
   */
   @Override
@@ -158,7 +158,7 @@ public class FTPFileSystem extends FileSystem {
     }
     return new Path(workDir, path);
   }
- /** 
+ /**
    * open函数接收两个参数,Path对象file和基本数据类型int bufferSize
    * 获得连接的FTPClient对象,并得到工作目录的绝对路径
    * 判断fileStat是不是一个目录,若是则断开FTPClient对象client连接
@@ -214,7 +214,7 @@ public class FTPFileSystem extends FileSystem {
         throw new IOException("File already exists: " + file);
       }
     }
-    
+
     Path parent = absolute.getParent();
     if (parent == null || !mkdirs(client, parent, FsPermission.getDefault())) {
       parent = (parent == null) ? new Path("/") : parent;
@@ -251,7 +251,7 @@ public class FTPFileSystem extends FileSystem {
       Progressable progress) throws IOException {
     throw new IOException("Not supported");
   }
-  
+
   /**
    * exists方法可以不需要打开一个新的连接可以判断FTPClient对象client是否有文件目录file
    */
@@ -341,14 +341,14 @@ public class FTPFileSystem extends FileSystem {
   }
 /**
   * 返回uri格式
-  */ 
+  */
   @Override
   public URI getUri() {
     return uri;
   }
 /**
   * 使用FTPClient对象client获得连接,并返回当前文件目录下的文件列表
-  */ 
+  */
   @Override
   public FileStatus[] listStatus(Path file) throws IOException {
     FTPClient client = connect();
@@ -434,7 +434,7 @@ public class FTPFileSystem extends FileSystem {
   }
 
   /**
-   * 覆盖在FTPFile@link FileStatus文件目录信息
+   * 覆盖在FTPFile{@link FileStatus}文件目录信息
    * 使用默认的blockSize当FTP Client不清楚Server的Block Size
    */
   private FileStatus getFileStatus(FTPFile ftpFile, Path parentPath) {

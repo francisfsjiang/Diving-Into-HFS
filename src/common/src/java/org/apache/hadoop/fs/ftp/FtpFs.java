@@ -40,13 +40,13 @@ import org.apache.hadoop.fs.FsServerDefaults;
 public class FtpFs extends DelegateToFileSystem {
  /**
    * 构造函数需要链接到上层抽象类AbstractFileSystem的URL和Configuration
-   * @link AbstractFileSystem#createFileSystem(URI, Configuration).
+   * {@link AbstractFileSystem#createFileSystem(URI, Configuration)}.
    */
   FtpFs(final URI theUri, final Configuration conf) throws IOException
       URISyntaxException {
     super(theUri, new FTPFileSystem(), conf, FsConstants.FTP_SCHEME, true);
   }
-  
+
 /**
   * 返回FTP的默认端口
   */
