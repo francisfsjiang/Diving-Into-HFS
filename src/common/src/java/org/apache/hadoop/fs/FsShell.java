@@ -88,7 +88,7 @@ public class FsShell extends Configured implements Tool {
 
 
   /**
-   * 从stdin复制到指定文件.
+   * 从stdin复制到指定<code>FileSystem</code>的指定文件.
    */
   private void copyFromStdin(Path dst, FileSystem dstFs) throws IOException {
     if (dstFs.isDirectory(dst)) {
@@ -273,9 +273,7 @@ public class FsShell extends Configured implements Tool {
     }
   }
 
-  /**
-   * 将符合srcf的模式的文件均拷贝到本地，合并为一个文件，源文件将被保留。
-   */
+
   void copyMergeToLocal(String srcf, Path dst) throws IOException {
     copyMergeToLocal(srcf, dst, false);
   }
@@ -283,7 +281,8 @@ public class FsShell extends Configured implements Tool {
 
   /**
    * 将符合srcf的模式的文件均拷贝到本地，合并为一个文件，源文件将被保留，
-   * 但此方法在合并时，会在每个被合并的文件末尾加入一行来区分每个文件。
+   * 此方法在合并时，可以指定是否在每个被合并的文件末尾加入一行来
+   * 区分每个文件。
    */
   void copyMergeToLocal(String srcf, Path dst, boolean endline) throws IOException {
     Path srcPath = new Path(srcf);
@@ -405,9 +404,7 @@ public class FsShell extends Configured implements Tool {
     }.globAndProcess(srcPattern, srcPattern.getFileSystem(getConf()));
   }
 
-  /**
-   * 解析传入的setrep命令
-   */
+
   private void setReplication(String[] cmd, int pos) throws IOException {
     CommandFormat c = new CommandFormat("setrep", 2, 2, "R", "w");
     String dst = null;
@@ -884,10 +881,7 @@ public class FsShell extends Configured implements Tool {
     }
   }
 
-  /**
-   * 移动/重命名文件，当一次移动多个文件时，目标位置必须是一个目录，否则会抛出
-   * <code>IOException</code>
-   */
+
   private int rename(String argv[], Configuration conf) throws IOException {
     int i = 0;
     int exitCode = 0;
@@ -940,9 +934,7 @@ public class FsShell extends Configured implements Tool {
     return exitCode;
   }
 
-  /**
-   * 复制文件，当一次复制多个文件时，目标位置必须是一个目录，否则会抛出
-   */
+
   void copy(String srcf, String dstf, Configuration conf) throws IOException {
     Path srcPath = new Path(srcf);
     FileSystem srcFs = srcPath.getFileSystem(getConf());
@@ -1013,9 +1005,6 @@ public class FsShell extends Configured implements Tool {
     return exitCode;
   }
 
-  /**
-   * 删除所有匹配srcf的文件
-   */
   void delete(String srcf, final boolean recursive, final boolean skipTrash)
                                                             throws IOException {
     //rm behavior in Linux
@@ -1034,7 +1023,7 @@ public class FsShell extends Configured implements Tool {
   }
 
   /**
-   * 删除src指定的文件
+   * 删除src指定的文件，可以指定是否递归删除，可以指定是否移入垃圾箱
    */
   private void delete(Path src, FileSystem srcFs, boolean recursive,
                       boolean skipTrash) throws IOException {

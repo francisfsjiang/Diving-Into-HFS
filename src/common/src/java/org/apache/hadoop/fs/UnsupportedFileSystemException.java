@@ -23,17 +23,13 @@ import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 
 /**
- * File system for a given file system name/scheme is not supported
+ * 此异常的出现情况是，请求的文件系统或者文件scheme不被支持
  */
 @InterfaceAudience.Public
 @InterfaceStability.Stable
 public class UnsupportedFileSystemException extends IOException {
   private static final long serialVersionUID = 1L;
 
-  /**
-   * Constructs exception with the specified detail message. 
-   * @param message exception message.
-   */
   UnsupportedFileSystemException(final String message) {
     super(message);
   }

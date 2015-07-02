@@ -132,7 +132,7 @@ public class ContentSummary implements Writable{
     return qOption ? QUOTA_HEADER : HEADER;
   }
 
-  /** {@inheritDoc} */
+
   public String toString() {
     return toString(true);
   }

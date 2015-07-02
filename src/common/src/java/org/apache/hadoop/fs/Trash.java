@@ -42,6 +42,8 @@ import org.apache.hadoop.util.StringUtils;
  * design permits trash management without enumeration of the full trash
  * content, without date support in the filesystem, and without clock
  * synchronization.)
+ *
+ * 本类提供了
  */
 @InterfaceAudience.Public
 @InterfaceStability.Stable
