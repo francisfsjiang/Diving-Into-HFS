@@ -841,14 +841,8 @@ public class FsShell extends Configured implements Tool {
   }
 
   /**
-   * Move files that match the file pattern <i>srcf</i>
-   * to a destination file.
-   * When moving mutiple files, the destination must be a directory.
-   * Otherwise, IOException is thrown.
-   * @param srcf a file pattern specifying source files
-   * @param dstf a destination local file/directory
-   * @throws IOException
-   * @see org.apache.hadoop.fs.FileSystem#globStatus(Path)
+   * 移动/重命名文件，当一次移动多个文件时，目标位置必须是一个目录，否则会抛出
+   * <code>IOException</code>
    */
   void rename(String srcf, String dstf) throws IOException {
     Path srcPath = new Path(srcf);
@@ -891,12 +885,8 @@ public class FsShell extends Configured implements Tool {
   }
 
   /**
-   * Move/rename file(s) to a destination file. Multiple source
-   * files can be specified. The destination is the last element of
-   * the argvp[] array.
-   * If multiple source files are specified, then the destination
-   * must be a directory. Otherwise, IOException is thrown.
-   * @exception: IOException
+   * 移动/重命名文件，当一次移动多个文件时，目标位置必须是一个目录，否则会抛出
+   * <code>IOException</code>
    */
   private int rename(String argv[], Configuration conf) throws IOException {
     int i = 0;
@@ -951,14 +941,7 @@ public class FsShell extends Configured implements Tool {
   }
 
   /**
-   * Copy files that match the file pattern <i>srcf</i>
-   * to a destination file.
-   * When copying mutiple files, the destination must be a directory.
-   * Otherwise, IOException is thrown.
-   * @param srcf a file pattern specifying source files
-   * @param dstf a destination local file/directory
-   * @throws IOException
-   * @see org.apache.hadoop.fs.FileSystem#globStatus(Path)
+   * 复制文件，当一次复制多个文件时，目标位置必须是一个目录，否则会抛出
    */
   void copy(String srcf, String dstf, Configuration conf) throws IOException {
     Path srcPath = new Path(srcf);
@@ -976,12 +959,7 @@ public class FsShell extends Configured implements Tool {
   }
 
   /**
-   * Copy file(s) to a destination file. Multiple source
-   * files can be specified. The destination is the last element of
-   * the argvp[] array.
-   * If multiple source files are specified, then the destination
-   * must be a directory. Otherwise, IOException is thrown.
-   * @exception: IOException
+   * 复制文件，当一次复制多个文件时，目标位置必须是一个目录，否则会抛出
    */
   private int copy(String argv[], Configuration conf) throws IOException {
     int i = 0;
@@ -1036,12 +1014,7 @@ public class FsShell extends Configured implements Tool {
   }
 
   /**
-   * Delete all files that match the file pattern <i>srcf</i>.
-   * @param srcf a file pattern specifying source files
-   * @param recursive if need to delete subdirs
-   * @param skipTrash Should we skip the trash, if it's enabled?
-   * @throws IOException
-   * @see org.apache.hadoop.fs.FileSystem#globStatus(Path)
+   * 删除所有匹配srcf的文件
    */
   void delete(String srcf, final boolean recursive, final boolean skipTrash)
                                                             throws IOException {
@@ -1060,7 +1033,9 @@ public class FsShell extends Configured implements Tool {
     }.globAndProcess(srcPattern, srcPattern.getFileSystem(getConf()));
   }
 
-  /* delete a file */
+  /**
+   * 删除src指定的文件
+   */
   private void delete(Path src, FileSystem srcFs, boolean recursive,
                       boolean skipTrash) throws IOException {
     FileStatus fs = null;
@@ -1102,23 +1077,23 @@ public class FsShell extends Configured implements Tool {
     }
   }
 
+  /**
+   * 清空垃圾桶
+   */
   private void expunge() throws IOException {
     trash.expunge();
     trash.checkpoint();
   }
 
   /**
-   * Returns the Trash object associated with this shell.
+   * 返回与这个FsShell对象相关的<code>Trash</code>对象
    */
   public Path getCurrentTrashDir() {
     return trash.getCurrentTrashDir();
   }
 
   /**
-   * Parse the incoming command string
-   * @param cmd
-   * @param pos ignore anything before this pos in cmd
-   * @throws IOException
+   * 解析输入的命令，并执行tail命令
    */
   private void tail(String[] cmd, int pos) throws IOException {
     CommandFormat c = new CommandFormat("tail", 1, 1, "f");
@@ -1166,8 +1141,10 @@ public class FsShell extends Configured implements Tool {
   }
 
   /**
-   * This class runs a command on a given FileStatus. This can be used for
-   * running various commands like chmod, chown etc.
+   * 该类会在给定的<code>FileStatus</code>对象上运行，可以
+   * 被用来执行chmod，chown等多种操作。
+   * 例如在<code>FsShellPermissions</code>类中，此类
+   * 被继承为<code>ChmodHandler</code>和<code>CmdHandler</code>
    */
   static abstract class CmdHandler {
 
@@ -1186,7 +1163,10 @@ public class FsShell extends Configured implements Tool {
     public abstract void run(FileStatus file, FileSystem fs) throws IOException;
   }
 
-  /** helper returns listStatus() */
+  /**
+   * 返回src指定的文件夹所在的目录的所有文件的<code>FileStatus</code>
+   * 对象.
+   */
   private static FileStatus[] shellListStatus(String cmd,
                                               FileSystem srcFs,
                                               FileStatus src) {
@@ -1211,8 +1191,7 @@ public class FsShell extends Configured implements Tool {
 
 
   /**
-   * Runs the command on a given file with the command handler.
-   * If recursive is set, command is run recursively.
+   * 对一个CommandHandler执行其对应的命令，如果recursive选项为ture，则会递归执行
    */
   private static int runCmdHandler(CmdHandler handler, FileStatus stat,
                                    FileSystem srcFs,
@@ -1271,10 +1250,7 @@ public class FsShell extends Configured implements Tool {
     return (errors > 0 || handler.getErrorCode() != 0) ? 1 : 0;
   }
 
-  /**
-   * Return an abbreviated English-language desc of the byte length
-   * @deprecated Consider using {@link org.apache.hadoop.util.StringUtils#byteDesc} instead.
-   */
+
   @Deprecated
   public static String byteDesc(long len) {
     return StringUtils.byteDesc(len);
@@ -1287,6 +1263,10 @@ public class FsShell extends Configured implements Tool {
   public static synchronized String limitDecimalTo2(double d) {
     return StringUtils.limitDecimalTo2(d);
   }
+
+  /**
+   * 根据不同的cmd来输出对应的帮助信息。
+   */
 
   private void printHelp(String cmd) {
     String summary = "hadoop fs is the command to execute fs commands. " +
@@ -1568,8 +1548,7 @@ public class FsShell extends Configured implements Tool {
   }
 
   /**
-   * Apply operation specified by 'cmd' on all parameters
-   * starting from argv[startindex].
+   * 对argv中从startindex开始的所有参数，执行cmd指定的命令。
    */
   private int doall(String cmd, String argv[], int startindex) {
     int exitCode = 0;
@@ -1644,8 +1623,7 @@ public class FsShell extends Configured implements Tool {
   }
 
   /**
-   * Displays format of commands.
-   *
+   * 打印指定cmd的使用格式。
    */
   private static void printUsage(String cmd) {
     String prefix = "Usage: java " + FsShell.class.getSimpleName();
@@ -1737,7 +1715,7 @@ public class FsShell extends Configured implements Tool {
   }
 
   /**
-   * run
+   * Shell命令的主要处理函数，该函数会根据输入指令的不同，调用具体的处理函数。
    */
   public int run(String argv[]) throws Exception {
 
@@ -1921,7 +1899,7 @@ public class FsShell extends Configured implements Tool {
   }
 
   /**
-   * main() has some simple utility methods
+   * hadoop文件系统Shell接口的主要入口函数
    */
   public static void main(String argv[]) throws Exception {
     FsShell shell = new FsShell();
@@ -1935,7 +1913,9 @@ public class FsShell extends Configured implements Tool {
   }
 
   /**
-   * Accumulate exceptions if there is any.  Throw them at last.
+   * 该类的作用是累积发生的Exception，等到指定的时间再进行抛出。
+   *
+   * 例如在ls命令中，首先会逐条显示文件的信息，然后再抛出异常。
    */
   private abstract class DelayedExceptionThrowing {
     abstract void process(Path p, FileSystem srcFs) throws IOException;
@@ -1958,7 +1938,7 @@ public class FsShell extends Configured implements Tool {
 
 
   /**
-   * Utility class for a line of du output
+   * 工具类，用作du的输出
    */
   private static class UsagePair {
     public String path;

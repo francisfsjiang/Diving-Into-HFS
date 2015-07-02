@@ -26,8 +26,6 @@ import org.apache.hadoop.classification.InterfaceStability;
 import org.apache.hadoop.conf.Configuration;
 
 /**
- * URLStream handler relying on FileSystem and on a given Configuration to
- * handle URL protocols.
  * FsUrlStreamHandler类继承自URLStreamHandler,URLStreamHandler依赖于FileSystem类
  * 并且传入Configuration对象conf到其构造函数FsUrlStreamHandler(Configuration conf)
  * FsUrlStreamHandler拥有一个私有的实例对象 Configuration对象conf

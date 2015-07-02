@@ -40,7 +40,7 @@ class FsShellPermissions {
   
   /*========== chmod ==========*/
 
-  /*
+  /**
    * chmod shell command模式几乎是被允许使用的最灵活的模式.
    * 最主要的限制是只认识使用rwxXt.
    * 为了减少错误并同时加强八进制使用模式规范
@@ -53,11 +53,13 @@ class FsShellPermissions {
   
   private static class ChmodHandler extends CmdHandler {
     /**
-      * @param FileSystem对象 fs
-      * @param String对象 modeStr
-      * @throw IOException
+      *
       * ChmodHandler继承自CmdHandler,ChmodHandler构造函数调用父类的构造函数并传入"chmod"和fs
       * 同时传入modeStr生成ChmodParser对象赋值给FsShellPermissions类的静态变量ChmodParser pp
+     *
+     * @param FileSystem对象 fs
+     * @param String对象 modeStr
+     * @throw IOException
       */
     ChmodHandler(FileSystem fs, String modeStr) throws IOException {
       super("chmod", fs);
