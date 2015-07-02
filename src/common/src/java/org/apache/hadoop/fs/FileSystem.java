@@ -168,9 +168,7 @@ public abstract class FileSystem extends Configured implements Closeable {
    * configuration and the user
    * 通过URI、配置对象和用户来获取缓存中的一个文件系统对象
    * 具体过程为先判断用户字符串，若为空，则获取用户组信息的当前用户；
-   * 若不为空，则创建远程用户。
-   * 然后根据URI和配置对象返回文件系统对象
-   *
+   * 若不为空，则创建远程用户。最后根据URI和配置对象返回文件系统对象
    * @param uri
    * @param conf
    * @param user
@@ -287,6 +285,7 @@ public abstract class FileSystem extends Configured implements Closeable {
    * of the URI determines a configuration property name,
    * <tt>fs.<i>scheme</i>.class</tt> whose value names the FileSystem class.
    * The entire URI is passed to the FileSystem instance's initialize method.
+   * 通过URI的模式和权限获得文件系统的实例
    */
   public static FileSystem get(URI uri, Configuration conf) throws IOException {
     String scheme = uri.getScheme();
@@ -315,6 +314,7 @@ public abstract class FileSystem extends Configured implements Closeable {
   /**
    * Returns the FileSystem for this URI's scheme and authority and the
    * passed user. Internally invokes {@link #newInstance(URI, Configuration)}
+   * 通过URI模式、权限和用户名返回文件系统实例
    * @param uri
    * @param conf
    * @param user
@@ -361,13 +361,17 @@ public abstract class FileSystem extends Configured implements Closeable {
   }
 
   /** Returns a unique configured filesystem implementation.
+   * 返回一个实现的配置好的文件系统实例
+   * 该方法总是返回一个新的文件系统对象
    * This always returns a new FileSystem object. */
-  public static FileSystem newInstance(Configuration conf) throws IOException {
+
+   public static FileSystem newInstance(Configuration conf) throws IOException {
     return newInstance(getDefaultUri(conf), conf);
   }
 
   /**
    * Get a unique local file system object
+   * 获取一个唯一的本地文件系统实例
    * @param conf the configuration to configure the file system with
    * @return a LocalFileSystem
    * This always returns a new FileSystem object.
@@ -380,14 +384,16 @@ public abstract class FileSystem extends Configured implements Closeable {
   /**
    * Close all cached filesystems. Be sure those filesystems are not
    * used anymore.
-   *
+   * 关闭所有缓存的文件系统实例。
    * @throws IOException
    */
   public static void closeAll() throws IOException {
     CACHE.closeAll();
   }
 
-  /** Make sure that a path specifies a FileSystem. */
+  /** Make sure that a path specifies a FileSystem.
+   * 该方法确认路径为一个文件系统
+   * */
   public Path makeQualified(Path path) {
     checkPath(path);
     return path.makeQualified(this.getUri(), this.getWorkingDirectory());
@@ -396,7 +402,7 @@ public abstract class FileSystem extends Configured implements Closeable {
   /** create a file with the provided permission
    * The permission of the file is set to be the provided permission as in
    * setPermission, not permission&~umask
-   *
+   * 通过提供的权限创建一个文件。
    * It is implemented using two RPCs. It is understood that it is inefficient,
    * but the implementation is thread-safe. The other option is to change the
    * value of umask in configuration to be 0, but it is not thread-safe.
@@ -419,7 +425,7 @@ public abstract class FileSystem extends Configured implements Closeable {
   /** create a directory with the provided permission
    * The permission of the directory is set to be the provided permission as in
    * setPermission, not permission&~umask
-   *
+   * 通过提供的权限创建一个目录。
    * @see #create(FileSystem, Path, FsPermission)
    *
    * @param fs file system handle
@@ -445,7 +451,9 @@ public abstract class FileSystem extends Configured implements Closeable {
     super(null);
   }
 
-  /** Check that a Path belongs to this FileSystem. */
+  /** Check that a Path belongs to this FileSystem.
+   * 检查路径属于文件系统
+   * */
   protected void checkPath(Path path) {
     URI uri = path.toUri();
     if (uri.getScheme() == null)                // fs is relative
@@ -485,7 +493,8 @@ public abstract class FileSystem extends Configured implements Closeable {
    * Return an array containing hostnames, offset and size of
    * portions of the given file.  For a nonexistent
    * file or regions, null will be returned.
-   *
+   * 返回一个文件的主机名、偏移量和分配的大小。
+   * 对于一个不存在的文件，返回NULL
    * This call is most helpful with DFS, where it returns
    * hostnames of machines that contain the given file.
    *
@@ -532,6 +541,7 @@ public abstract class FileSystem extends Configured implements Closeable {
 
   /**
    * Return a set of server default configuration values
+   * 返回默认服务器配置变量值
    * @return server default configuration values
    * @throws IOException
    */
@@ -546,6 +556,7 @@ public abstract class FileSystem extends Configured implements Closeable {
 
   /**
    * Opens an FSDataInputStream at the indicated Path.
+   * 在指示的路径上打开一个文件系统的数据输入流
    * @param f the file name to open
    * @param bufferSize the size of the buffer to be used.
    */
@@ -798,6 +809,7 @@ public abstract class FileSystem extends Configured implements Closeable {
   /**
    * Creates the given Path as a brand-new zero-length file.  If
    * create fails, or if it already existed, return false.
+   * 在所给路径上创建一个全新的零长度的文件。
    */
   public boolean createNewFile(Path f) throws IOException {
     if (exists(f)) {
@@ -810,6 +822,7 @@ public abstract class FileSystem extends Configured implements Closeable {
 
   /**
    * Append to an existing file (optional operation).
+   * 在一个存在文件上进行追加操作
    * Same as append(f, getConf().getInt("io.file.buffer.size", 4096), null)
    * @param f the existing file to be appended.
    * @throws IOException
@@ -853,7 +866,7 @@ public abstract class FileSystem extends Configured implements Closeable {
 
   /**
    * Set replication for an existing file.
-   *
+   * 给一个存在的文件进行复制操作
    * @param src file name
    * @param replication new replication
    * @throws IOException
@@ -868,6 +881,7 @@ public abstract class FileSystem extends Configured implements Closeable {
   /**
    * Renames Path src to Path dst.  Can take place on local fs
    * or remote DFS.
+   * 文件重命名操作
    * @throws IOException on failure
    * @return true if rename is successful
    */
@@ -988,7 +1002,9 @@ public abstract class FileSystem extends Configured implements Closeable {
    * the marked path will be deleted as a result of closing the FileSystem.
    *
    * The path has to exist in the file system.
-   *
+   * 标记一个在文件系统关闭的时候要被删除掉的路径。
+   * 当JVM关闭的时候，所有的文件系统对象都会被自动关闭，
+   * 那么所有被标记的路径都会被删除掉。
    * @param f the path to delete.
    * @return  true if deleteOnExit is successful, otherwise false.
    * @throws IOException
@@ -1006,6 +1022,7 @@ public abstract class FileSystem extends Configured implements Closeable {
   /**
    * Delete all files that were marked as delete-on-exit. This recursively
    * deletes all files in the specified paths.
+   * 退出时进行删除操作。该方法会递归删除所有指定路径的文件。
    */
   protected void processDeleteOnExit() {
     synchronized (deleteOnExit) {
@@ -1023,6 +1040,7 @@ public abstract class FileSystem extends Configured implements Closeable {
   }
 
   /** Check if exists.
+   * 检查路径是否存在
    * @param f source file
    */
   public boolean exists(Path f) throws IOException {
@@ -1035,7 +1053,8 @@ public abstract class FileSystem extends Configured implements Closeable {
 
   /** True iff the named path is a directory.
    * Note: Avoid using this method. Instead reuse the FileStatus
-   * returned by getFileStatus() or listStatus() methods.
+   * returned by getFileStatus() or listStatus() methods
+   * 判断路径是否为目录.
    */
   public boolean isDirectory(Path f) throws IOException {
     try {
@@ -1048,6 +1067,7 @@ public abstract class FileSystem extends Configured implements Closeable {
   /** True iff the named path is a regular file.
    * Note: Avoid using this method. Instead reuse the FileStatus
    * returned by getFileStatus() or listStatus() methods.
+   * 判断路径是否为常规文件
    */
   public boolean isFile(Path f) throws IOException {
     try {
@@ -1064,7 +1084,10 @@ public abstract class FileSystem extends Configured implements Closeable {
     return getFileStatus(f).getLen();
   }
 
-  /** Return the {@link ContentSummary} of a given {@link Path}. */
+  /** Return the {@link ContentSummary} of a given {@link Path}.
+   * 获取文件的内容总和，包括长度的总和、文件数量的总和
+   * 和文件目录的总和。
+   * */
   public ContentSummary getContentSummary(Path f) throws IOException {
     FileStatus status = getFileStatus(f);
     if (status.isFile()) {
@@ -1119,7 +1142,7 @@ public abstract class FileSystem extends Configured implements Closeable {
   /**
    * Filter files/directories in the given path using the user-supplied path
    * filter.
-   *
+   * 根据用户提供的路径过滤，列出查找到的文件的状态
    * @param f
    *          a path name
    * @param filter
@@ -1241,7 +1264,7 @@ public abstract class FileSystem extends Configured implements Closeable {
    * their path names.
    * Return null if pathPattern has no glob and the path does not exist.
    * Return an empty array if pathPattern has a glob and no path matches it.
-   *
+   * 返回匹配路径模式并且满足用户提供的路径过滤的文件状态对象数组，
    * @param pathPattern
    *          a regular expression specifying the path pattern
    * @param filter
@@ -1480,6 +1503,8 @@ public abstract class FileSystem extends Configured implements Closeable {
 
   /** Return the current user's home directory in this filesystem.
    * The default implementation returns "/user/$USER/".
+   * 返回当前用户在这个文件系统中的home目录
+   * 默认返回"/user/$USER/"
    */
   public Path getHomeDirectory() {
     return this.makeQualified(
@@ -1490,12 +1515,13 @@ public abstract class FileSystem extends Configured implements Closeable {
   /**
    * Set the current working directory for the given file system. All relative
    * paths will be resolved relative to it.
-   *
+   * 设置工作目录
    * @param new_dir
    */
   public abstract void setWorkingDirectory(Path new_dir);
 
   /**
+   * 返回工作目录
    * Get the current working directory for the given file system
    * @return the directory pathname
    */
@@ -1506,7 +1532,7 @@ public abstract class FileSystem extends Configured implements Closeable {
    * Note: with the new FilesContext class, getWorkingDirectory()
    * will be removed.
    * The working directory is implemented in FilesContext.
-   *
+   * 获取初始的工作目录
    * Some file systems like LocalFileSystem have an initial workingDir
    * that we use as the starting workingDir. For other file systems
    * like HDFS there is no built in notion of an inital workingDir.
@@ -1529,6 +1555,7 @@ public abstract class FileSystem extends Configured implements Closeable {
    * Make the given file and all non-existent parents into
    * directories. Has the semantics of Unix 'mkdir -p'.
    * Existence of the directory hierarchy is not an error.
+   * 根据路径和权限创建目录
    */
   public abstract boolean mkdirs(Path f, FsPermission permission
       ) throws IOException;
@@ -1536,6 +1563,7 @@ public abstract class FileSystem extends Configured implements Closeable {
   /**
    * The src file is on the local disk.  Add it to FS at
    * the given dst name and the source is kept intact afterwards
+   * 在本地文件进行复制操作
    */
   public void copyFromLocalFile(Path src, Path dst)
     throws IOException {
@@ -1545,6 +1573,7 @@ public abstract class FileSystem extends Configured implements Closeable {
   /**
    * The src files is on the local disk.  Add it to FS at
    * the given dst name, removing the source afterwards.
+   * 在本地文件进行移动操作
    */
   public void moveFromLocalFile(Path[] srcs, Path dst)
     throws IOException {
@@ -1637,6 +1666,7 @@ public abstract class FileSystem extends Configured implements Closeable {
    * do nothing, because we've written to exactly the right place.  A remote
    * FS will copy the contents of tmpLocalFile to the correct target at
    * fsOutputFile.
+   * 完成本地文件输出，实际上是调用本地文件的移动操作
    */
   public void completeLocalOutput(Path fsOutputFile, Path tmpLocalFile)
     throws IOException {
@@ -1675,7 +1705,9 @@ public abstract class FileSystem extends Configured implements Closeable {
   }
 
   /** Return the number of bytes that large input files should be optimally
-   * be split into to minimize i/o time. */
+   * be split into to minimize i/o time.
+   * 获得默认的块大小
+   * */
   public long getDefaultBlockSize() {
     // default to 32MB: large enough to minimize the impact of seeks
     return getConf().getLong("fs.local.block.size", 32 * 1024 * 1024);
@@ -1683,6 +1715,7 @@ public abstract class FileSystem extends Configured implements Closeable {
 
   /**
    * Get the default replication.
+   * 获得默认的复制文本
    */
   public short getDefaultReplication() { return 1; }
 
@@ -1692,12 +1725,13 @@ public abstract class FileSystem extends Configured implements Closeable {
    * @return a FileStatus object
    * @throws FileNotFoundException when the path does not exist;
    *         IOException see specific implementation
+   * 获取文件状态
    */
   public abstract FileStatus getFileStatus(Path f) throws IOException;
 
   /**
    * Get the checksum of a file.
-   *
+   * 获得文件的校验和
    * @param f The file path
    * @return The file checksum.  The default return value is null,
    *  which indicates that no checksum algorithm is implemented
@@ -1708,6 +1742,7 @@ public abstract class FileSystem extends Configured implements Closeable {
   }
 
   /**
+   * 设置是否确认检验和的布尔标识
    * Set the verify checksum flag. This is only applicable if the
    * corresponding FileSystem supports checksum. By default doesn't do anything.
    * @param verifyChecksum
@@ -1719,7 +1754,7 @@ public abstract class FileSystem extends Configured implements Closeable {
   /**
    * Return a list of file status objects that corresponds to the list of paths
    * excluding those non-existent paths.
-   *
+   * 根据
    * @param paths
    *          the list of paths we want information from
    * @return a list of FileStatus objects
@@ -1744,7 +1779,7 @@ public abstract class FileSystem extends Configured implements Closeable {
    * Returns a status object describing the use and capacity of the
    * file system. If the file system has multiple partitions, the
    * use and capacity of the root partition is reflected.
-   *
+   * 该方法返回描述文件系统的使用和容量的状态对象
    * @return a FsStatus object
    * @throws IOException
    *           see specific implementation
@@ -1769,6 +1804,7 @@ public abstract class FileSystem extends Configured implements Closeable {
   }
 
   /**
+   * 设置路径的权限
    * Set permission of a path.
    * @param p
    * @param permission
@@ -1780,6 +1816,7 @@ public abstract class FileSystem extends Configured implements Closeable {
   /**
    * Set owner of a path (i.e. a file or a directory).
    * The parameters username and groupname cannot both be null.
+   * 设置路径的拥有者
    * @param p The path
    * @param username If it is null, the original username remains unchanged.
    * @param groupname If it is null, the original groupname remains unchanged.
@@ -1790,6 +1827,7 @@ public abstract class FileSystem extends Configured implements Closeable {
 
   /**
    * Set access time of a file
+   * 设置文件的访问时间
    * @param p The path
    * @param mtime Set the modification time of this file.
    *              The number of milliseconds since Jan 1, 1970.
@@ -1926,7 +1964,7 @@ public abstract class FileSystem extends Configured implements Closeable {
 
 
     /**
-     * ClientFinalizer类为继承了Thread类
+     * ClientFinalizer类继承了Thread类
      * 当Java虚拟机停止运行时,该线程才会启动
      * 调用run进关闭清理工作
      */
@@ -1992,12 +2030,10 @@ public abstract class FileSystem extends Configured implements Closeable {
 
   /**
    * 统计信息——静态内部类
-   * 主要包含了URI的模式信息
+   * 主要包含了URI的模式信息，被用于AbstractFileSystem和link FileSystem
    * URI格式是scheme://authority/path
    * 对HDFS文件系统，scheme是hdfs;对本地文件系统，scheme是file
    * 该类包含了对读写的字节数、读取的操作次数内容进行的记录
-   * 被用于{@link AbstractFileSystem}和{@link FileSystem}中的统计信息。
-   * Statistics主要记录读写字节数。
    */
   public static final class Statistics {
     private final String scheme;

@@ -28,9 +28,8 @@ import org.apache.hadoop.io.WritableFactories;
 import org.apache.hadoop.io.WritableFactory;
 
 /****************************************************
- * 文件系统默认服务器类, 
- * 向客户端提供默认服务器配置值,
- * 向客户端提供服务器的相关设置参数，包括数据块的大小，
+ * 文件系统默认服务器类，
+ * 向客户端提供服务器的默认相关设置参数，包括数据块的大小，
  * 校验和的位数，Packet的大小，文件的副本的数量，
  * 文件缓冲区的大小
  ****************************************************/
@@ -87,6 +86,12 @@ public class FsServerDefaults implements Writable {
   // /////////////////////////////////////////
   // Writable
   // /////////////////////////////////////////
+
+  /**
+   * 将服务器的参数值写到输出缓存中
+   * @param out <code>DataOuput</code> to serialize this object into.
+   * @throws IOException
+   */
   @InterfaceAudience.Private
   public void write(DataOutput out) throws IOException {
     out.writeLong(blockSize);
@@ -96,6 +101,11 @@ public class FsServerDefaults implements Writable {
     out.writeInt(fileBufferSize);
   }
 
+  /**
+   * 读入服务器的各参数值
+   * @param in <code>DataInput</code> to deseriablize this object from.
+   * @throws IOException
+   */
   @InterfaceAudience.Private
   public void readFields(DataInput in) throws IOException {
     blockSize = in.readLong();

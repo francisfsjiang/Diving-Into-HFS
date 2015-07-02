@@ -29,7 +29,8 @@ import org.apache.hadoop.io.Writable;
 
 /** Interface that represents the client side information for a file.
  * 该类抽象提供了文件信息的抽象，屏蔽了具体文件系统的具体实现。
- *
+ * 文件的状态信息具体包含有文件路径、文件长度、是否是目录、复制块大小、
+ * 块大小、修改时间、访问时间、权限、拥有者、所属的组、符号链接等
  * @author neveralso
  */
 @InterfaceAudience.Public
@@ -131,7 +132,7 @@ public class FileStatus implements Writable, Comparable {
   }
   
   /**
-   * 判断是否为文件目录，此类将被{@link FileStatus#isDirectory()}代替。
+   * 判断是否为文件目录，此方法将被isDirectory代替。
    */
   @Deprecated
   public boolean isDir() {
@@ -230,7 +231,7 @@ public class FileStatus implements Writable, Comparable {
   }
   
   /**
-   * 设置文件所在工作组
+   * 设置文件所在工作组，默认为""
    */  
   protected void setGroup(String group) {
     this.group = (group == null) ? "" :  group;
