@@ -29,12 +29,14 @@ import org.apache.hadoop.fs.permission.FsPermission;
 import org.apache.hadoop.util.Progressable;
 
 /****************************************************************
- * FilterFileSystem是一个代理, 或者说, wrapper,
- * 它的成员属性包含一个{@link FileSystem}实例fs,
- * 把fs的所有protected方法导出成了public方法.
- *
- * Filter意为过滤器, {@link FilterFileSystem}选择的过滤策略是"直通",
+ * FilterFileSystem继承了FileSystem类，重写了父类的所有方法 。
+ * FilterFileSystem是一个代理, 或者说, wrapper。
+ * 它转换数据或者增加方法，加以封装，相当于起到了过滤文件系统的作用。
+ * Filter意为过滤器,FilterFileSystem选择的过滤策略是"直通",
  * 即什么都不做, 直接把参数传递给public方法对应的protected方法.
+ * FilterFileSystem包装了一个FileSystem对象，所有提供的方法都是与
+ * FileSystem中相同的方法，通过调用FileSystem对象对应的函数来实现，
+ * 来为各方法添加更多地功能。
  * <code>FilterFileSystem</code> contains
  * some other file system, which it uses as
  * its  basic file system, possibly transforming
@@ -48,11 +50,7 @@ import org.apache.hadoop.util.Progressable;
  * and may also provide additional methods
  * and fields.
  *
- * FilterFileSystem继承了FileSystem类，重写了父类的所有方法 
- * 它转换数据或者增加方法，加以封装，相当于起到了过滤文件系统的作用。
- * FilterFileSystem包装了一个FileSystem对象，所有提供的方法都是与
- * FileSystem中相同的方法，通过调用FileSystem对象对应的函数来实现。
- * 此类的目的是通过继承此类来重写其中的方法，来添加更多地功能
+ *
  *
  *****************************************************************/
 @InterfaceAudience.Public
@@ -100,12 +98,21 @@ public class FilterFileSystem extends FileSystem {
     fs.checkPath(path);
   }
 
+  /**
+   * 获取文件的块位置信息
+   * @param file
+   * @param start
+   * @param len
+   * @return
+   * @throws IOException
+   */
   public BlockLocation[] getFileBlockLocations(FileStatus file, long start,
     long len) throws IOException {
       return fs.getFileBlockLocations(file, start, len);
   }
 
   /**
+   * 打开一个文件数据的输出流
    * Opens an FSDataInputStream at the indicated Path.
    * @param f the file name to open
    * @param bufferSize the size of the buffer to be used.
@@ -115,12 +122,33 @@ public class FilterFileSystem extends FileSystem {
   }
 
   /** {@inheritDoc} */
+  /**
+   * 进行输出流的追加操作
+   * @param f the existing file to be appended.
+   * @param bufferSize the size of the buffer to be used.
+   * @param progress for reporting progress if it is not null.
+   * @return
+   * @throws IOException
+   */
   public FSDataOutputStream append(Path f, int bufferSize,
       Progressable progress) throws IOException {
     return fs.append(f, bufferSize, progress);
   }
 
   /** {@inheritDoc} */
+  /**
+   * 创建一个文件输出流
+   * @param f the file name to open
+   * @param permission
+   * @param overwrite if a file with this name already exists, then if true,
+   *   the file will be overwritten, and if false an error will be thrown.
+   * @param bufferSize the size of the buffer to be used.
+   * @param replication required block replication for the file.
+   * @param blockSize
+   * @param progress
+   * @return
+   * @throws IOException
+   */
   @Override
   public FSDataOutputStream create(Path f, FsPermission permission,
       boolean overwrite, int bufferSize, short replication, long blockSize,
@@ -131,7 +159,7 @@ public class FilterFileSystem extends FileSystem {
 
   /**
    * Set replication for an existing file.
-   *
+   * 复制一个存在的文件
    * @param src file name
    * @param replication new replication
    * @throws IOException
@@ -145,12 +173,22 @@ public class FilterFileSystem extends FileSystem {
   /**
    * Renames Path src to Path dst.  Can take place on local fs
    * or remote DFS.
+   * 重命名文件，文件可以是本地文件系统和远程分布式文件系统
    */
   public boolean rename(Path src, Path dst) throws IOException {
     return fs.rename(src, dst);
   }
 
   /** Delete a file */
+  /**
+   * 删除文件，可选择是否递归删除
+   * @param f the path to delete.
+   * @param recursive if path is a directory and set to
+   * true, the directory is deleted else throws an exception. In
+   * case of a file the recursive can be set to either true or false.
+   * @return
+   * @throws IOException
+   */
   public boolean delete(Path f, boolean recursive) throws IOException {
     return fs.delete(f, recursive);
   }
@@ -173,10 +211,20 @@ public class FilterFileSystem extends FileSystem {
   }
 
   /** List files in a directory. */
+  /**
+   * 列出文件状态
+   * @param f given path
+   * @return
+   * @throws IOException
+   */
   public FileStatus[] listStatus(Path f) throws IOException {
     return fs.listStatus(f);
   }
 
+  /**
+   * 获取home目录
+   * @return
+   */
   public Path getHomeDirectory() {
     return fs.getHomeDirectory();
   }
@@ -185,7 +233,7 @@ public class FilterFileSystem extends FileSystem {
   /**
    * Set the current working directory for the given file system. All relative
    * paths will be resolved relative to it.
-   *
+   * 设置工作目录
    * @param newDir
    */
   public void setWorkingDirectory(Path newDir) {
@@ -194,24 +242,37 @@ public class FilterFileSystem extends FileSystem {
 
   /**
    * Get the current working directory for the given file system
-   *
+   * 获取工作目录
    * @return the directory pathname
    */
   public Path getWorkingDirectory() {
     return fs.getWorkingDirectory();
   }
 
+  /**
+   * 获取初始工作目录
+   * @return
+   */
   protected Path getInitialWorkingDirectory() {
     return fs.getInitialWorkingDirectory();
   }
 
-  /** {@inheritDoc} */
+  /** {@inheritDoc}
+   * 获取文件状态
+   * */
   @Override
   public FsStatus getStatus(Path p) throws IOException {
     return fs.getStatus(p);
   }
 
   /** {@inheritDoc} */
+  /**
+   * 根据路径和权限创建目录
+   * @param f
+   * @param permission
+   * @return
+   * @throws IOException
+   */
   @Override
   public boolean mkdirs(Path f, FsPermission permission) throws IOException {
     return fs.mkdirs(f, permission);
@@ -239,6 +300,7 @@ public class FilterFileSystem extends FileSystem {
   }
 
   /**
+   * 从本地文件系统复制
    * The src file is on the local disk.  Add it to FS at
    * the given dst name.
    * delSrc indicates if the source should be removed
@@ -250,6 +312,7 @@ public class FilterFileSystem extends FileSystem {
   }
 
   /**
+   * 复制到本地文件系统
    * The src file is under FS, and the dst is on the local disk.
    * Copy it from FS control to the local dst name.
    * delSrc indicates if the src will be removed or not.
@@ -284,16 +347,22 @@ public class FilterFileSystem extends FileSystem {
   /** Return the total size of all files in the filesystem.*/
   public long getUsed() throws IOException{
     return fs.getUsed();
+
   }
 
   /** Return the number of bytes that large input files should be optimally
    * be split into to minimize i/o time. */
-  public long getDefaultBlockSize() {
+  /**
+   * 获取默认块大小
+   * @return
+   */
+   public long getDefaultBlockSize() {
     return fs.getDefaultBlockSize();
   }
 
   /**
    * Get the default replication.
+   * 获得默认副本
    */
   public short getDefaultReplication() {
     return fs.getDefaultReplication();
@@ -301,6 +370,7 @@ public class FilterFileSystem extends FileSystem {
 
   /**
    * Get file status.
+   * 获取文件状态信息
    */
   public FileStatus getFileStatus(Path f) throws IOException {
     return fs.getFileStatus(f);
@@ -312,6 +382,10 @@ public class FilterFileSystem extends FileSystem {
   }
 
   /** {@inheritDoc} */
+  /**
+   * 设置确认校验和的布尔变量
+   * @param verifyChecksum
+   */
   public void setVerifyChecksum(boolean verifyChecksum) {
     fs.setVerifyChecksum(verifyChecksum);
   }
@@ -321,6 +395,10 @@ public class FilterFileSystem extends FileSystem {
     return fs.getConf();
   }
 
+  /**
+   * 关闭文件系统实例
+   * @throws IOException
+   */
   @Override
   public void close() throws IOException {
     super.close();
@@ -328,20 +406,31 @@ public class FilterFileSystem extends FileSystem {
   }
 
   /** {@inheritDoc} */
+  /**
+   * 设置文件拥有者
+   * @param p The path
+   * @param username If it is null, the original username remains unchanged.
+   * @param groupname If it is null, the original groupname remains unchanged.
+   * @throws IOException
+   */
   @Override
   public void setOwner(Path p, String username, String groupname
       ) throws IOException {
     fs.setOwner(p, username, groupname);
   }
 
-  /** {@inheritDoc} */
+  /**
+   * 设置时间，包括修改时间和访问时间
+   * */
   @Override
   public void setTimes(Path p, long mtime, long atime
       ) throws IOException {
     fs.setTimes(p, mtime, atime);
   }
 
-  /** {@inheritDoc} */
+  /**
+   * 设置文件权限
+   */
   @Override
   public void setPermission(Path p, FsPermission permission
       ) throws IOException {
