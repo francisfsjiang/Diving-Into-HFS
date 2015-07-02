@@ -33,9 +33,11 @@
 \newenvironment{XeMethod}[3]{%
 %    \hspace{1em} \\ [0.5em]
     \begin{minipage}[t]{0.05\textwidth}
-		\begin{tabular}{c}
-    		#1
-		\end{tabular}
+		%\begin{table}[h]
+			\begin{tabular}{c}
+	    		#1
+			\end{tabular}
+		%\end{table}
     \end{minipage}
     \begin{minipage}[t]{0.95\textwidth}
         \textbf{#2} :: \textbf{#3} \\
@@ -45,7 +47,15 @@
 
 \newenvironment{XeClass}[1]{%
     \section{#1}
+	\def\MXeClassName{#1}
+}{%I
+}
+
+\newenvironment{XeInnerClass}[1]{%
+	\def\IMXeClassName{\MXeClassName}
+    \subsection{#1 @ \IMXeClassName}
 }{%
+	\def\MXeClassName{\IMXeClassName}
 }
 
 \newenvironment{XeClassDiagram}[1]{%
