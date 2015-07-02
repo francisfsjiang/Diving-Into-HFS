@@ -33,7 +33,8 @@ import org.apache.hadoop.io.WritableFactory;
 
 /**
  * 虽然前缀是Fs, 但与文件系统并没有太多关联.
- * 组合3个{@link FsAction}对象以表示完整的权限模式.
+ * 组合3个对象以表示完整的权限模式.
+ * 3个对象分别是用户行为、所属组行为和其他行为所对应的权限
  */
 @InterfaceAudience.Public
 @InterfaceStability.Stable
@@ -47,7 +48,9 @@ public class FsPermission implements Writable {
     WritableFactories.setFactory(FsPermission.class, FACTORY);
   }
 
-  /** Create an immutable {@link FsPermission} object. */
+  /** Create an immutable {@link FsPermission} object.
+   * 创建一个不可变的FsPermission对象
+   * */
   public static FsPermission createImmutable(short permission) {
     return new FsPermission(permission) {
       public FsPermission applyUMask(FsPermission umask) {
@@ -108,15 +111,29 @@ public class FsPermission implements Writable {
     this(new UmaskParser(mode).getUMask());
   }
 
-  /** Return user {@link FsAction}. */
+  /** Return user {@link FsAction}.
+   * 获取用户行为权限
+   * */
   public FsAction getUserAction() {return useraction;}
 
-  /** Return group {@link FsAction}. */
+  /** Return group {@link FsAction}.
+   * 获取所属组行为权限
+   * */
   public FsAction getGroupAction() {return groupaction;}
 
-  /** Return other {@link FsAction}. */
+  /** Return other {@link FsAction}.
+   * 获取其他行为权限
+   * */
   public FsAction getOtherAction() {return otheraction;}
 
+
+  /**
+   * 设置3个行为权限
+   * @param u
+   * @param g
+   * @param o
+   * @param sb
+   */
   private void set(FsAction u, FsAction g, FsAction o, boolean sb) {
     useraction = u;
     groupaction = g;
@@ -124,6 +141,11 @@ public class FsPermission implements Writable {
     stickyBit = sb;
   }
 
+
+  /**
+   * 从short模式设置权限
+   * @param n
+   */
   public void fromShort(short n) {
     FsAction[] v = FsAction.values();
 
@@ -151,6 +173,7 @@ public class FsPermission implements Writable {
 
   /**
    * Encode the object to a short.
+   * 解码权限到short模式
    */
   public short toShort() {
     int s =  (stickyBit ? 1 << 9 : 0)     |
@@ -161,7 +184,9 @@ public class FsPermission implements Writable {
     return (short)s;
   }
 
-  /** {@inheritDoc} */
+  /** {@inheritDoc}
+   * 判断行为权限是否相等
+   * */
   public boolean equals(Object obj) {
     if (obj instanceof FsPermission) {
       FsPermission that = (FsPermission)obj;
@@ -189,7 +214,9 @@ public class FsPermission implements Writable {
     return str;
   }
 
-  /** Apply a umask to this permission and return a new one */
+  /** Apply a umask to this permission and return a new one
+   * 应用umask到权限的设置，并返回一个新的权限
+   * */
   public FsPermission applyUMask(FsPermission umask) {
     return new FsPermission(useraction.and(umask.useraction.not()),
         groupaction.and(umask.groupaction.not()),
@@ -206,7 +233,7 @@ public class FsPermission implements Writable {
 
   /**
    * Get the user file creation mask (umask)
-   *
+   * 获取用户文件的umask
    * {@code UMASK_LABEL} config param has umask value that is either symbolic
    * or octal.
    *
@@ -263,19 +290,24 @@ public class FsPermission implements Writable {
     return stickyBit;
   }
 
-  /** Set the user file creation mask (umask) */
+  /** Set the user file creation mask (umask)
+   * 设置用户文件的umask
+   * */
   public static void setUMask(Configuration conf, FsPermission umask) {
     conf.set(UMASK_LABEL, String.format("%1$03o", umask.toShort()));
     conf.setInt(DEPRECATED_UMASK_LABEL, umask.toShort());
   }
 
-  /** Get the default permission. */
+  /** Get the default permission.
+   * 获取默认权限，short模式下为00777
+   * */
   public static FsPermission getDefault() {
     return new FsPermission((short)00777);
   }
 
   /**
    * Create a FsPermission from a Unix symbolic permission string
+   * 从Unix符号权限字符串创建一个文件系统权限对象
    * @param unixSymbolicPermission e.g. "-rw-rw-rw-"
    */
   public static FsPermission valueOf(String unixSymbolicPermission) {
