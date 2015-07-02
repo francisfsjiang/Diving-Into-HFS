@@ -29,6 +29,7 @@ import org.apache.hadoop.fs.FileSystem;
 /**
   * FTPInputStream继承自FsInputStream类
   * 并重写了InputStream接口中的各种方法
+  * @author benco
   */
 
 @InterfaceAudience.Private

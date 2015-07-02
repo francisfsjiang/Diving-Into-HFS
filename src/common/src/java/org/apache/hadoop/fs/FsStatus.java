@@ -29,6 +29,7 @@ import org.apache.hadoop.io.Writable;
   * FsStatus是用于展示FileSystem的容量,空闲空间和使用空间的情况{@link FileSystem}.
   * FsStatus有三个私有成员变量,capacity,used,remaining
   * 并且引用Writable接口,实现write(DataOutput out)方法和readFields(DataInput in)方法
+  * @author benco
   */
 @InterfaceAudience.Public
 @InterfaceStability.Stable

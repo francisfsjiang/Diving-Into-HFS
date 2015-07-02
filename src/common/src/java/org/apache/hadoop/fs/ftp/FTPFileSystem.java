@@ -44,6 +44,7 @@ import org.apache.hadoop.util.Progressable;
  * 该类为Apache Commons Net 的FTPClient 提供了访问Hadoop文件系统的接口。
  * 由FTP服务器支持的文件系统,基于FTP协议和FTP服务器交互的FileSystem API实现
  * 继承自FileSystem{@link FileSystem}
+ * @author benco
  */
 @InterfaceAudience.Public
 @InterfaceStability.Stable

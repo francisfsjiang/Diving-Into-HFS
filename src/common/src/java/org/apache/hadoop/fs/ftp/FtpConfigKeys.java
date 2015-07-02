@@ -26,6 +26,7 @@ import org.apache.hadoop.fs.FsServerDefaults;
 
 /** 
  * 这个类包含了使用final修饰的配置关键变量,用于这个FTP File System
+ * @author benco
  */
 @InterfaceAudience.Private
 @InterfaceStability.Unstable

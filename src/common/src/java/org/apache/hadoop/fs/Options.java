@@ -23,14 +23,14 @@ import org.apache.hadoop.fs.permission.FsPermission;
 import org.apache.hadoop.util.Progressable;
 
 /**
- * This class contains options related to file system operations.
+ * Options类是由final修饰的,无法被继承的类
+ * 包含一些连接到文件系统操作的option
  */
 @InterfaceAudience.Public
 @InterfaceStability.Evolving
 public final class Options {
   /**
-   * Class to support the varargs for create() options.
-   *
+   * 静态内部类CreateOpts支持create方法中实现可变参数
    */
   public static class CreateOpts {
     private CreateOpts() { };
@@ -55,7 +55,10 @@ public final class Options {
     public static CreateParent donotCreateParent() {
       return new CreateParent(false);
     }
-    
+    /**
+      * BlockSize内部类继承自CreateOpts类
+      * 内部含有blockSize常量
+      */
     public static class BlockSize extends CreateOpts {
       private final long blockSize;
       protected BlockSize(long bs) {
@@ -67,7 +70,10 @@ public final class Options {
       }
       public long getValue() { return blockSize; }
     }
-    
+    /**
+      * ReplicationFactor内部类继承自CreateOpts类
+      * 内部含有replication常量
+      */
     public static class ReplicationFactor extends CreateOpts {
       private final short replication;
       protected ReplicationFactor(short rf) { 
@@ -79,7 +85,10 @@ public final class Options {
       }
       public short getValue() { return replication; }
     }
-    
+    /**
+      * BufferSize内部类继承自CreateOpts类
+      * 内部含有bufferSize常量
+      */
     public static class BufferSize extends CreateOpts {
       private final int bufferSize;
       protected BufferSize(int bs) {
@@ -91,7 +100,10 @@ public final class Options {
       }
       public int getValue() { return bufferSize; }
     }
-    
+     /**
+      * BytesPerChecksum内部类继承自CreateOpts类
+      * 内部含有bytesPerChecksum常量
+      */   
     public static class BytesPerChecksum extends CreateOpts {
       private final int bytesPerChecksum;
       protected BytesPerChecksum(short bpc) { 
@@ -103,7 +115,10 @@ public final class Options {
       }
       public int getValue() { return bytesPerChecksum; }
     }
-    
+     /**
+      * Perms内部类继承自CreateOpts类
+      * 内部含有permissions常量
+      */   
     public static class Perms extends CreateOpts {
       private final FsPermission permissions;
       protected Perms(FsPermission perm) { 
@@ -114,7 +129,10 @@ public final class Options {
       }
       public FsPermission getValue() { return permissions; }
     }
-    
+     /**
+      * Progress内部类继承自CreateOpts类
+      * 内部含有progress常量
+      */  
     public static class Progress extends CreateOpts {
       private final Progressable progress;
       protected Progress(Progressable prog) { 
@@ -125,7 +143,10 @@ public final class Options {
       }
       public Progressable getValue() { return progress; }
     }
-    
+     /**
+      * CreateParent内部类继承自CreateOpts类
+      * 内部含有createParent常量
+      */  
     public static class CreateParent extends CreateOpts {
       private final boolean createParent;
       protected CreateParent(boolean createPar) {
@@ -135,11 +156,8 @@ public final class Options {
 
     
     /**
-     * Get an option of desired type
-     * @param theClass is the desired class of the opt
-     * @param opts - not null - at least one opt must be passed
-     * @return an opt from one of the opts of type theClass.
-     *   returns null if there isn't any
+     * 从想要的数据类型中获得option
+     * 当option为null则抛出IllegalArgumentException("Null opt")异常
      */
     protected static CreateOpts getOpt(Class<? extends CreateOpts> theClass,  CreateOpts ...opts) {
       if (opts == null) {
@@ -156,10 +174,7 @@ public final class Options {
       return result;
     }
     /**
-     * set an option
-     * @param newValue  the option to be set
-     * @param opts  - the option is set into this array of opts
-     * @return updated CreateOpts[] == opts + newValue
+     * 对指定的option设置或更新一个新的值newValue
      */
     protected static <T extends CreateOpts> CreateOpts[] setOpt(T newValue,
         CreateOpts ...opts) {
@@ -186,7 +201,7 @@ public final class Options {
   }
 
   /**
-   * Enum to support the varargs for rename() options
+   * 对支持可变参数的rename()方法的options进行枚举
    */
   public static enum Rename {
     NONE((byte) 0), // No options

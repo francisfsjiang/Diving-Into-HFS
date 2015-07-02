@@ -34,6 +34,7 @@ import org.apache.hadoop.fs.FsServerDefaults;
  * FTPFs是AbstractFileSystem以抽象的形式向Hadoop FS中具体的文件系统提供的实现接口
  * DelegateToFileSystem是代理类
  * FTPFs通过继承DelegateToFileSystem类,为旧式的文件系统提供了代理接口
+ * @author benco
  */
 @InterfaceAudience.Private
 @InterfaceStability.Evolving /*Evolving for a release,to be changed to Stable */

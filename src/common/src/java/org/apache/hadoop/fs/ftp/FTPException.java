@@ -23,6 +23,7 @@ import org.apache.hadoop.classification.InterfaceStability;
 /**
  * 这个类封装了{@link Throwable} Throwable对象用于抛出指定异常
  * FTPException继承自RuntimeException,final修饰了静态变量serialVersionUID = 1L
+ * @author benco
  */
 @InterfaceAudience.Public
 @InterfaceStability.Stable

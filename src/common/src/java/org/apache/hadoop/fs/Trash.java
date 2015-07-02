@@ -34,14 +34,12 @@ import org.apache.hadoop.fs.permission.FsAction;
 import org.apache.hadoop.fs.permission.FsPermission;
 import org.apache.hadoop.util.StringUtils;
 
-/** Provides a <i>trash</i> feature.  Files are moved to a user's trash
- * directory, a subdirectory of their home directory named ".Trash".  Files are
- * initially moved to a <i>current</i> sub-directory of the trash directory.
- * Within that sub-directory their original path is preserved.  Periodically
- * one may checkpoint the current trash and remove older checkpoints.  (This
- * design permits trash management without enumeration of the full trash
- * content, without date support in the filesystem, and without clock
- * synchronization.)
+/** 
+ * Trash类继承自Configured类,是为文件系统中的文件提供一个"垃圾"标签,
+ * 方便将文件移除到回收站中
+ * 这种设计保证了垃圾回收管理不需要详细查询垃圾文件的content
+ * 不需要文件系统的日期记录支持和时钟同步,保证了线程安全的垃圾回收功能
+ * @author benco
  */
 @InterfaceAudience.Public
 @InterfaceStability.Stable
@@ -65,6 +63,7 @@ public class Trash extends Configured {
   private final long interval;
 
   /** Construct a trash can accessor.
+   * Trash类的构造函数,通过给入Configuration对象conf进行相关设置
    * @param conf a Configuration
    */
   public Trash(Configuration conf) throws IOException {
@@ -72,7 +71,8 @@ public class Trash extends Configured {
   }
 
   /**
-   * Construct a trash can accessor for the FileSystem provided.
+   *  Trash类的构造函数,通过给入FileSystem对象fs和Configuration对象conf
+   *  对Trash类中的静态变量进行赋值
    */
   public Trash(FileSystem fs, Configuration conf) throws IOException {
     super(conf);
@@ -81,7 +81,10 @@ public class Trash extends Configured {
     this.current = new Path(trash, CURRENT);
     this.interval = conf.getLong("fs.trash.interval", 60) * MSECS_PER_MINUTE;
   }
-
+  /**
+   *  Trash类的私有构造函数,通过给入Path对象home和Configuration对象
+   *  对Trash类中的静态变量进行赋值
+   */
   private Trash(Path home, Configuration conf) throws IOException {
     super(conf);
     this.fs = home.getFileSystem(conf);
@@ -89,28 +92,31 @@ public class Trash extends Configured {
     this.current = new Path(trash, CURRENT);
     this.interval = conf.getLong("fs.trash.interval", 60) * MSECS_PER_MINUTE;
   }
-  
+  /**
+   * 返回要被删除文件目录与垃圾回收站的源目录组合的地址
+   * 将被删除的文件移除到垃圾回收站
+   */
   private Path makeTrashRelativePath(Path basePath, Path rmFilePath) {
     return new Path(basePath + rmFilePath.toUri().getPath());
   }
 
-  /** Move a file or directory to the current trash directory.
-   * @return false if the item is already in the trash or trash is disabled
+  /**
+   * 将当前要被删除的目录和文件移到当前的垃圾回收站中
    */ 
   public boolean moveToTrash(Path path) throws IOException {
     if (interval == 0)
       return false;
 
-    if (!path.isAbsolute())                       // make path absolute
+    if (!path.isAbsolute())                       
       path = new Path(fs.getWorkingDirectory(), path);
 
-    if (!fs.exists(path))                         // check that path exists
+    if (!fs.exists(path))                        
       throw new FileNotFoundException(path.toString());
 
     String qpath = path.makeQualified(fs).toString();
 
     if (qpath.startsWith(trash.toString())) {
-      return false;                               // already in trash
+      return false;                              
     }
 
     if (trash.getParent().toString().startsWith(qpath)) {
@@ -123,10 +129,9 @@ public class Trash extends Configured {
     
     IOException cause = null;
 
-    // try twice, in case checkpoint between the mkdirs() & rename()
     for (int i = 0; i < 2; i++) {
       try {
-        if (!fs.mkdirs(baseTrashPath, PERMISSION)) {      // create current
+        if (!fs.mkdirs(baseTrashPath, PERMISSION)) {    
           LOG.warn("Can't create(mkdir) trash directory: "+baseTrashPath);
           return false;
         }
@@ -136,10 +141,6 @@ public class Trash extends Configured {
         break;
       }
       try {
-        //
-        // if the target path in Trash already exists, then append with 
-        // a current time in millisecs.
-        //
         String orig = trashPath.toString();
         
         while(fs.exists(trashPath)) {
@@ -156,7 +157,7 @@ public class Trash extends Configured {
       new IOException("Failed to move to trash: "+path).initCause(cause);
   }
 
-  /** Create a trash checkpoint. */
+  /** 创建一个垃圾检查点. */
   public void checkpoint() throws IOException {
     if (!fs.exists(current))                      // no trash, no checkpoint
       return;
@@ -173,7 +174,7 @@ public class Trash extends Configured {
     }
   }
 
-  /** Delete old checkpoints. */
+  /** 删除过期的垃圾检查点. */
   public void expunge() throws IOException {
     FileStatus[] dirs = null;
     
@@ -211,21 +212,25 @@ public class Trash extends Configured {
     }
   }
 
-  //
-  // get the current working directory
-  //
+  /**
+   * 获得当前Trash的工作目录  
+   */
   Path getCurrentTrashDir() {
     return current;
   }
 
-  /** Return a {@link Runnable} that periodically empties the trash of all
-   * users, intended to be run by the superuser.  Only one checkpoint is kept
-   * at a time.
+  /** 
+   * 返回周期性清空所有用户垃圾文件的内部类Emptier的对象
+   * 该对象只能被超级用户运行,并且运行时只保持一个检查点
    */
   public Runnable getEmptier() throws IOException {
     return new Emptier(getConf());
   }
-
+ /** 
+   * 内部类Emptier实现Runnable接口
+   * 返回周期性清空所有用户垃圾文件的Emptier对象
+   * 该对象只能被超级用户运行调用run()方法,并且运行时只保持一个检查点
+   */
   private class Emptier implements Runnable {
 
     private Configuration conf;
@@ -286,17 +291,23 @@ public class Trash extends Configured {
             StringUtils.stringifyException(e));
       }
     }
-
+    /**
+      * 将时间间隔的值向上取整
+      */
     private long ceiling(long time, long interval) {
       return floor(time, interval) + interval;
     }
+
+    /**
+      * 将时间间隔的值向下取整
+      */
     private long floor(long time, long interval) {
       return (time / interval) * interval;
     }
 
   }
 
-  /** Run an emptier.*/
+  /** 获取Emptier对象并调用其run方法运行*/
   public static void main(String[] args) throws Exception {
     new Trash(new Configuration()).getEmptier().run();
   }
