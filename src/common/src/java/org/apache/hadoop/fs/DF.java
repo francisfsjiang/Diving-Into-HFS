@@ -30,21 +30,16 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.CommonConfigurationKeys;
 import org.apache.hadoop.util.Shell;
 
-////////////////////////////////////////
-//
-// 磁盘空间状态
-// 继承自{org.apache.hadoop.util.Shell}，在Shell中调用系统工具
-// {df -k <path>}实现，该命令无法在Windows环境下使用
-// 一种选择是在Windows环境下使用{fsutil volume diskfree <path>}替换
-//
-/** Filesystem disk space usage statistics.
- * Uses the unix 'df' program to get mount points, and java.io.File for
- * space utilization. Tested on Linux, FreeBSD, Cygwin. */
+/**
+ * 磁盘空间状态
+ * 继承自{org.apache.hadoop.util.Shell}，在Shell中调用系统工具
+ * <code>df -k <path></code>实现，该命令无法在Windows环境下使用
+ * 一种选择是在Windows环境下使用<code>fsutil volume diskfree <path></code>替换
+ */
 @InterfaceAudience.LimitedPrivate({"HDFS", "MapReduce"})
 @InterfaceStability.Evolving
 public class DF extends Shell {
 
-  /** Default DF refresh interval. */
   public static final long DF_INTERVAL_DEFAULT = 3 * 1000;
 
   private final String dirPath;
@@ -52,11 +47,10 @@ public class DF extends Shell {
   private String filesystem;
   private String mount;
 
-  ////////////////////////////////
-  //
-  // 操作系统类型
-  // 似乎放这不合适
-  //
+  /**
+   * 操作系统类型
+   * 似乎放这不合适
+   */
   enum OSType {
     OS_TYPE_UNIX("UNIX"),
     OS_TYPE_WIN("Windows"),
@@ -104,40 +98,54 @@ public class DF extends Shell {
   
   /// ACCESSORS
 
-  /** @return the canonical path to the volume we're checking. */
+  /**
+   * 返回正在检查的规范路径所指的位置
+   */
   public String getDirPath() {
     return dirPath;
   }
 
-  /** @return a string indicating which filesystem volume we're checking. */
+  /**
+   * 返回一个字符串，指示正在检查的文件系统
+   */
   public String getFilesystem() throws IOException {
     run();
     return filesystem;
   }
 
-  /** @return the capacity of the measured filesystem in bytes. */
+  /**
+   * 返回文件系统的总字节数
+   */
   public long getCapacity() {
     return dirFile.getTotalSpace();
   }
 
-  /** @return the total used space on the filesystem in bytes. */
+  /**
+   * 返回文件系统的已用字节数
+   */
   public long getUsed() {
     return dirFile.getTotalSpace() - dirFile.getFreeSpace();
   }
 
-  /** @return the usable space remaining on the filesystem in bytes. */
+  /**
+   * 返回文件系统的可用字节数
+   */
   public long getAvailable() {
     return dirFile.getUsableSpace();
   }
 
-  /** @return the amount of the volume full, as a percent. */
+  /**
+   * 返回文件系统中的使用百分比
+   */
   public int getPercentUsed() {
     double cap = (double) getCapacity();
     double used = (cap - (double) getAvailable());
     return (int) (used * 100.0 / cap);
   }
 
-  /** @return the filesystem mount point for the indicated volume */
+  /**
+   * 返回文件系统的挂载点
+   */
   public String getMount() throws IOException {
     run();
     return mount;
@@ -154,14 +162,19 @@ public class DF extends Shell {
       mount;
   }
 
-  // 检测命令
+  /**
+   * 检测命令
+   */
+
   @Override
   protected String[] getExecString() {
     // ignoring the error since the exit code it enough
     return new String[] {"bash","-c","exec 'df' '-k' '" + dirPath + "' 2>/dev/null"};
   }
 
-  // 解析输出
+  /**
+   * 解析输出
+   */
   @Override
   protected void parseExecResult(BufferedReader lines) throws IOException {
     lines.readLine();                         // skip headings

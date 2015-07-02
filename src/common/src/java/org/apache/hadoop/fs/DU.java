@@ -27,15 +27,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicLong;
 
-////////////////////////////////////////
-//
-// 文件夹的磁盘使用状态
-// 继承自{org.apache.hadoop.util.Shell}，在Shell中调用系统工具
-// 使用{du -sk <path>}实现，该命令无法在Windows环境下使用
-// 在Windows环境下使用{dir <path>}能得到相关信息，但无关的输出过多
-// 内部使用一个线程定期执行命令刷新状态
-//
-/** Filesystem disk space usage statistics.  Uses the unix 'du' program*/
+/**
+ * 文件夹的磁盘使用状态
+ * 继承自{org.apache.hadoop.util.Shell}，在Shell中调用系统工具
+ * 使用<code>du -sk <path></code>实现，该命令无法在Windows环境下使用
+ * 在Windows环境下使用<code>dir <path></code>能得到相关信息，但无关的输出过多
+ * 内部使用一个线程定期执行命令刷新状态
+ */
 @InterfaceAudience.LimitedPrivate({"HDFS", "MapReduce"})
 @InterfaceStability.Evolving
 public class DU extends Shell {
@@ -48,10 +46,7 @@ public class DU extends Shell {
   private long refreshInterval;
   
   /**
-   * Keeps track of disk usage.
-   * @param path the path to check disk usage in
-   * @param interval refresh the disk usage at this interval
-   * @throws IOException if we fail to refresh the disk usage
+   * 设置磁盘监控的路径以及时间间隔，开始保持对磁盘使用量的监控，
    */
   public DU(File path, long interval) throws IOException {
     super(0);
@@ -64,28 +59,15 @@ public class DU extends Shell {
     //populate the used variable
     run();
   }
-  
-  /**
-   * Keeps track of disk usage.
-   * @param path the path to check disk usage in
-   * @param conf configuration object
-   * @throws IOException if we fail to refresh the disk usage
-   */
+
   public DU(File path, Configuration conf) throws IOException {
     this(path, 600000L);
     //10 minutes default refresh interval
   }
 
-  ////////////////////////////////
-  //
-  // 刷新线程
-  //
   /**
-   * This thread refreshes the "used" variable.
-   * 
-   * Future improvements could be to not permanently
-   * run this thread, instead run when getUsed is called.
-   **/
+   * 刷新线程
+   */
   class DURefreshThread implements Runnable {
     
     public void run() {
@@ -113,24 +95,21 @@ public class DU extends Shell {
   }
   
   /**
-   * Decrease how much disk space we use.
-   * @param value decrease by this value
+   * 减少系统预留的磁盘空间
    */
   public void decDfsUsed(long value) {
     used.addAndGet(-value);
   }
 
   /**
-   * Increase how much disk space we use.
-   * @param value increase by this value
+   * 增加系统预留的磁盘空间
    */
   public void incDfsUsed(long value) {
     used.addAndGet(value);
   }
   
   /**
-   * @return disk space used 
-   * @throws IOException if the shell command fails
+   * 返回磁盘使用量
    */
   public long getUsed() throws IOException {
     //if the updating thread isn't started, update on demand
@@ -151,14 +130,14 @@ public class DU extends Shell {
   }
 
   /**
-   * @return the path of which we're keeping track of disk usage
+   * 返回被监控的路径
    */
   public String getDirPath() {
     return dirPath;
   }
   
   /**
-   * Start the disk usage checking thread.
+   * 开启一个进程，来监控磁盘使用
    */
   public void start() {
     //only start the thread if the interval is sane
@@ -170,7 +149,7 @@ public class DU extends Shell {
   }
   
   /**
-   * Shut down the refreshing thread.
+   * 关闭刷新线程
    */
   public void shutdown() {
     this.shouldRun = false;
@@ -184,12 +163,16 @@ public class DU extends Shell {
     return "du -sk " + dirPath +"\n" + used + "\t" + dirPath;
   }
 
-  // 检测命令
+  /**
+   * 检测命令
+   */
   protected String[] getExecString() {
     return new String[] {"du", "-sk", dirPath};
   }
 
-  // 解析输出
+  /**
+   * 解析输出
+   */
   protected void parseExecResult(BufferedReader lines) throws IOException {
     String line = lines.readLine();
     if (line == null) {
