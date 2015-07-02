@@ -41,10 +41,8 @@ import org.apache.hadoop.fs.permission.FsPermission;
 import org.apache.hadoop.util.Progressable;
 
 /**
- * 该类为Apache Commons Net 的FTPClient 提供了访问Hadoop文件系统的接口。
  * 由FTP服务器支持的文件系统,基于FTP协议和FTP服务器交互的FileSystem API实现
- * 继承自FileSystem{@link FileSystem}
- * @author benco
+ * 继承自FileSystem@link FileSystem
  */
 @InterfaceAudience.Public
 @InterfaceStability.Stable
@@ -52,25 +50,12 @@ public class FTPFileSystem extends FileSystem {
 
   public static final Log LOG = LogFactory
       .getLog(FTPFileSystem.class);
-  /**
-   *FTPClient访问文件系统所使用的缓存区大小
-   */
+
   public static final int DEFAULT_BUFFER_SIZE = 1024 * 1024;
 
-  /**
-   *  FTPClient访问文件系统所使用的数据块大小
-   */
   public static final int DEFAULT_BLOCK_SIZE = 4 * 1024;
 
   private URI uri;
-
-  /**
-   * 初始化方法，使用URI指定的host、port和userAndPassword信息，
-   * 来覆盖掉FTP默认的配置项
-   * @param uri
-   * @param conf the configuration
-   * @throws IOException
-   */
 /**
   * 使用超类FileSystem调用initialize,通过uri获得host,port,和userAndPassword
   * 初始化的函数通过获得的host,port,user,password配置Configuration对象.
@@ -78,14 +63,10 @@ public class FTPFileSystem extends FileSystem {
   * port通过Configuration对象设置保存在fs.ftp.host.port
   * user通过Configuration对象设置保存在"fs.ftp.user." + host 
   * password通过Configuration对象设置保存在"fs.ftp.password." + host
-  * @param uri
-  * @param conf
-  * @throw IOException
   */
   @Override
   public void initialize(URI uri, Configuration conf) throws IOException { // get
     super.initialize(uri, conf);
-    // get host information from uri (overrides info in conf)
     String host = uri.getHost();
     host = (host == null) ? conf.get("fs.ftp.host", null) : host;
     if (host == null) {
@@ -93,12 +74,10 @@ public class FTPFileSystem extends FileSystem {
     }
     conf.set("fs.ftp.host", host);
 
-    // get port information from uri, (overrides info in conf)
     int port = uri.getPort();
     port = (port == -1) ? FTP.DEFAULT_PORT : port;
     conf.setInt("fs.ftp.host.port", port);
 
-    // get user/password information from URI (overrides info in conf)
     String userAndPassword = uri.getUserInfo();
     if (userAndPassword == null) {
       userAndPassword = (conf.get("fs.ftp.user." + host, null) + ":" + conf
@@ -119,19 +98,11 @@ public class FTPFileSystem extends FileSystem {
   }
 
   /**
-   * Connect to the FTP server using configuration parameters *
-   * 首先创建一个FTPClient对象，然后获取配置信息
-   * 进而连接FTP服务器，如果登陆成功，则需进一步设置
-   * 文件传输方式、文件类型和缓存区大小
-   * 如果登陆失败，抛出IO异常
-   * ========= 
    * 使用获取得到的Configuration配置FTP Server
    * 通过在从初始化里保存好的host,port,user,password获取相应的值
    * 使用FTPClient类生成FTPClient对象,并通过给定主机地址和端口号进行连接
    * 使用FTPClient对象和从Configuration对象中取出的user和password Sign In
    * 设置FTP.BLOCK_TRANSFER_MODE,FTP.BINARY_FILE_TYPE and DEFAULT_BUFFER_SIZE
-   * @return FTPClient对象
-   * @throws IOException
    */
   private FTPClient connect() throws IOException {
     FTPClient client = null;
@@ -159,16 +130,10 @@ public class FTPFileSystem extends FileSystem {
   }
 
   /**
-   * Logout and disconnect the given FTPClient. *
-   * 断开连接：
-   * 先判断FTPClient是否处于连接状态。
-   * 若是，则先退出登陆，再断开连接。
    * FTPFileSystem类断开连接API
    * 判断FTPClient对象是否为null,不为null则进一步判断是否没有连接
    * 当判断为有连接,则通过FTPClient调用disconnect方法断开连接
    * logoutSuccess记录断开连接登出的状态,判断是否断开连接成功
-   * @param client
-   * @throws IOException
    */
   private void disconnect(FTPClient client) throws IOException {
     if (client != null) {
@@ -185,12 +150,7 @@ public class FTPFileSystem extends FileSystem {
   }
 
   /**
-   * Resolve against given working directory. *
    * 通过给定workDir工作目录和path路径
-   * 返回一个绝对路径
-   * @param workDir
-   * @param path
-   * @return Path对象,为当前路径下的工作目录
    */
   private Path makeAbsolute(Path workDir, Path path) {
     if (path.isAbsolute()) {
@@ -198,17 +158,6 @@ public class FTPFileSystem extends FileSystem {
     }
     return new Path(workDir, path);
   }
-<<<<<<< HEAD
-
-
-  /**
-   * 根据文件的名称和缓存大小执行打开操作，
-   * 返回文件数据的输入流
-   * @param file
-   * @param bufferSize the size of the buffer to be used.
-   * @return
-   * @throws IOException
-=======
  /** 
    * open函数接收两个参数,Path对象file和基本数据类型int bufferSize
    * 获得连接的FTPClient对象,并得到工作目录的绝对路径
@@ -217,10 +166,6 @@ public class FTPFileSystem extends FileSystem {
    * 获得当前工作目录的父路径,只有这样才能在使用InputStream状态下读
    * 当在FSDataInputStream内调用close()方法,FTPClient对象断开连接
    * 当FTPClient对象处于inconsistent状态,则要在FTP Server端登出和断开连接,并关闭文件流操作
-   * @param file
-   * @param bufferSize
-   * @return FSDataInputStream对象 fis
-   * @throw IOException
    */
   @Override
   public FSDataInputStream open(Path file, int bufferSize) throws IOException {
@@ -246,13 +191,6 @@ public class FTPFileSystem extends FileSystem {
   }
 
   /**
-   * @param file Path对象,file的URI路径
-   * @param permission FsPermission对象, FsPermission实现Writeable接口,强调文件系统的写入许可
-   * @param overwrite 布尔类型判断文件路径是否被覆盖
-   * @param bufferSize 字节缓冲区大小
-   * @param replication  
-   * @param blockSize 
-   * @return FSDataOutputStream对象 fos
    * create方法获得连接的FTPClient对象,并得到工作目录的绝对路径
    * 判断client对象是否存在file路径并判断是否被重写了,若存在,并重写了则删了这个路径,不然则断开FTPClient连接
    * 抛出异常IOException("File already exists: " + file)
@@ -316,9 +254,6 @@ public class FTPFileSystem extends FileSystem {
   
   /**
    * exists方法可以不需要打开一个新的连接可以判断FTPClient对象client是否有文件目录file
-   * @param FTPClient对象 client
-   * @param Path对象 file
-   * @return boolean 
    */
   private boolean exists(FTPClient client, Path file) {
     try {
@@ -331,10 +266,6 @@ public class FTPFileSystem extends FileSystem {
   }
   /**
    * Override的delete方法通过传入文件目录file,当recursive为true,使用建立连接的FTPClient对象删除这个文件目录
-   * @param Path对象 file
-   * @param FTPClient对象 client
-   * @throw IOException IO异常
-   * @return boolean recursive
    */
   @Override
   public boolean delete(Path file, boolean recursive) throws IOException {
@@ -348,9 +279,7 @@ public class FTPFileSystem extends FileSystem {
   }
 
   /**
-   * @param Path对象 file
-   * @param FTPClient对象 client
-   * delete装饰器调用上面提到的Override的delete方法
+   * delete装饰器调用delete(Path file, boolean recursive)方法
    */
   @Deprecated
   private boolean delete(FTPClient client, Path file) throws IOException {
@@ -358,9 +287,6 @@ public class FTPFileSystem extends FileSystem {
   }
 
   /**
-   * @param FTPClient对象 client
-   * @param Path对象 file
-   * @param boolean recursive
    * 获得client的工作目录并与file组合得到文件目录的绝对路径
    * 获得绝对路径下的所有文件,并调用delete方法全部删除
    */
@@ -386,9 +312,6 @@ public class FTPFileSystem extends FileSystem {
   }
 
 /**
-  * @param int accessGroup 
-  * @param FTPfile对象 ftpFile
-  * @return FsAction对象 action
   * 判断ftpFile与accessGroup是否有可读允许,有则将FsAction对象action赋值为FsAction.READ
   * 判断ftpFile与accessGroup是否有可写允许,有则将FsAction对象action赋值为FsAction.WRITE
   * 判断ftpFile与accessGroup是否有可操作允许,有则将FsAction对象action赋值为FsAction.EXECUTE
@@ -407,8 +330,6 @@ public class FTPFileSystem extends FileSystem {
     return action;
   }
 /**
-  * @param FTPFile对象 ftpFile
-  * @return FsPermission对象
   * 通过给user,group,others设置FsAction属性,创建FsPermission对象并返回
   */
   private FsPermission getPermissions(FTPFile ftpFile) {
@@ -419,7 +340,6 @@ public class FTPFileSystem extends FileSystem {
     return new FsPermission(user, group, others);
   }
 /**
-  * @return URI对象
   * 返回uri格式
   */ 
   @Override
@@ -427,8 +347,6 @@ public class FTPFileSystem extends FileSystem {
     return uri;
   }
 /**
-  * @param Path对象 file文件目录
-  * @throw IOException 
   * 使用FTPClient对象client获得连接,并返回当前文件目录下的文件列表
   */ 
   @Override
@@ -443,8 +361,6 @@ public class FTPFileSystem extends FileSystem {
   }
 
   /**
-   * @param FTPClient对象 client
-   * @param Path对象 file
    * listStatus方法也是与上述方法实现类似功能,获得当前FTPClient对象client的工作目录
    * 然后获取其绝对路径,最后返回绝对路径下的所有文件列表.
    */
@@ -464,8 +380,6 @@ public class FTPFileSystem extends FileSystem {
     return fileStats;
   }
 /**
-  * @param Path对象 file
-  * @return FileStatus对象 status
   * 通过getFileStatus的参数file,获得FTPClient对象client文件目录的状态
   */
   @Override
@@ -480,10 +394,6 @@ public class FTPFileSystem extends FileSystem {
   }
 
   /**
-   * @param FTPClient对象 client
-   * @param Path对象 file
-   * @return FileStatus对象 fileStat
-   * @throw IOException
    * 获取当前工作路径的绝对路径,再获得绝对路径的父路径
    * 若父路径不存在,则对它进行设置
    * 若父路径存在,则遍历其文件列表,判断是否存在ftpFile.getName() == file.getName()
@@ -524,18 +434,13 @@ public class FTPFileSystem extends FileSystem {
   }
 
   /**
-   * 覆盖在FTPFile{@link FileStatus}文件目录信息
+   * 覆盖在FTPFile@link FileStatus文件目录信息
    * 使用默认的blockSize当FTP Client不清楚Server的Block Size
-   * @param ftpFile
-   * @param parentPath
-   * @return FileStatus
    */
   private FileStatus getFileStatus(FTPFile ftpFile, Path parentPath) {
     long length = ftpFile.getSize();
     boolean isDir = ftpFile.isDirectory();
     int blockReplication = 1;
-    // Using default block size since there is no way in FTP client to know of
-    // block sizes on server. The assumption could be less than ideal.
     long blockSize = DEFAULT_BLOCK_SIZE;
     long modTime = ftpFile.getTimestamp().getTimeInMillis();
     long accessTime = 0;
@@ -548,10 +453,6 @@ public class FTPFileSystem extends FileSystem {
   }
   /**
    * 使用FTPClient对象client获得连接,并判断是否能创建文件目录
-   * @param Path对象 file
-   * @param FsPermission对象 permission
-   * @thros IOException
-   * @return boolean 是否能创建文件目录
    */
   @Override
   public boolean mkdirs(Path file, FsPermission permission) throws IOException {
@@ -565,11 +466,6 @@ public class FTPFileSystem extends FileSystem {
   }
 
   /**
-   * @param FTPClient对象 client
-   * @param Path对象 file
-   * @param FsPermission对象 permission
-   * @thros IOException
-   * @return boolean 是否能创建文件目录
    * 通过给定的client,file和permission判断是否可以在当前工作目录的绝对路径下创建一个文件目录
    */
   private boolean mkdirs(FTPClient client, Path file, FsPermission permission)
@@ -595,10 +491,6 @@ public class FTPFileSystem extends FileSystem {
   }
 
   /**
-   * @param FTPClient对象 client
-   * @param Path对象 file
-   * @thros IOException
-   * @return boolean 是否是文件目录
    * 通过调用getFileStatus(client, file).isFile()方法判断当前client实例在file目录下是否存在文件目录
    */
   private boolean isFile(FTPClient client, Path file) {
@@ -612,9 +504,6 @@ public class FTPFileSystem extends FileSystem {
   }
 
   /**
-   * @param Path对象 src
-   * @param Path对象 dst
-   * @return 判断源文件目录是否改名为dst
    * 调用 rename(FTPClient client, Path src, Path dst)函数,并返回结果
    */
   @Override
@@ -629,12 +518,6 @@ public class FTPFileSystem extends FileSystem {
   }
 
   /**
-   * 
-   * @param client
-   * @param src
-   * @param dst
-   * @return
-   * @throws IOException
    * 获取src的绝对路径和dst的绝对路径,若src的绝对路径的父路径与dst的不相等,则无法重命名
    * 重命名成功后则返回true
    */
@@ -663,14 +546,14 @@ public class FTPFileSystem extends FileSystem {
     return renamed;
   }
 /**
-  * @return 调用getHomeDirectory()返回home文件路径
+  * 调用getHomeDirectory()返回home文件路径
   */
   @Override
   public Path getWorkingDirectory() {
     return getHomeDirectory();
   }
 /**
-  * @return Path 返回当前工作目录
+  * 返回当前工作目录Path
   */
   @Override
   public Path getHomeDirectory() {
