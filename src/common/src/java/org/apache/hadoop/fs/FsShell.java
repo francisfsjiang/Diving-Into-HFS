@@ -148,15 +148,8 @@ public class FsShell extends Configured implements Tool {
 
   /**
    * 获取匹配模式的所有文件, 并将之复制到本地.
-   * 
-   * Obtain the indicated files that match the file pattern <i>srcf</i>
-   * and copy them to the local name. srcf is kept.
-   * When copying multiple files, the destination must be a directory.
-   * Otherwise, IOException is thrown.
-   * @param argv: arguments
-   * @param pos: Ignore everything before argv[pos]
-   * @exception: IOException
-   * @see org.apache.hadoop.fs.FileSystem.globStatus
+   * 源文件会被保存，当拷贝多个文件时，目标位置必须是一个文件夹，
+   * 否则会抛出IOException异常。
    */
   void copyToLocal(String[]argv, int pos) throws IOException {
     CommandFormat cf = new CommandFormat("copyToLocal", 2,2,"crc","ignoreCrc");
@@ -204,8 +197,8 @@ public class FsShell extends Configured implements Tool {
   }
 
   /**
-   * Return the {@link FileSystem} specified by src and the conf.
-   * It the {@link FileSystem} supports checksum, set verifyChecksum.
+   * 返回src和conf对应的{@link FileSystem}，如果目标{@link FileSystem}
+   * 支持校验和，则设置校验和。
    */
   private FileSystem getSrcFileSystem(Path src, boolean verifyChecksum
       ) throws IOException {
@@ -215,19 +208,15 @@ public class FsShell extends Configured implements Tool {
   }
 
   /**
-   * The prefix for the tmp file used in copyToLocal.
-   * It must be at least three characters long, required by
-   * {@link java.io.File#createTempFile(String, String, File)}.
+   * 在<code>copyToLocal</code>方法中使用的临时文件的
+   * 前缀，至少要3个字符长，此变量被
+   * {@link java.io.File#createTempFile(String, String, File)}
+   * 方法使用。
    */
   static final String COPYTOLOCAL_PREFIX = "_copyToLocal_";
 
   /**
-   * Copy a source file from a given file system to local destination.
-   * @param srcFS source file system
-   * @param src source path
-   * @param dst destination
-   * @param copyCrc copy CRC files?
-   * @exception IOException If some IO failed
+   * 将<code>FileSystem</code>中的文件拷贝到本地。
    */
   private void copyToLocal(final FileSystem srcFS, final FileStatus srcStatus,
                            final File dst, final boolean copyCrc)
@@ -285,13 +274,7 @@ public class FsShell extends Configured implements Tool {
   }
 
   /**
-   * Get all the files in the directories that match the source file
-   * pattern and merge and sort them to only one file on local fs
-   * srcf is kept.
-   * @param srcf: a file pattern specifying source files
-   * @param dstf: a destination local file/directory
-   * @exception: IOException
-   * @see org.apache.hadoop.fs.FileSystem.globStatus
+   * 将符合srcf的模式的文件均拷贝到本地，合并为一个文件，源文件将被保留。
    */
   void copyMergeToLocal(String srcf, Path dst) throws IOException {
     copyMergeToLocal(srcf, dst, false);
@@ -299,17 +282,8 @@ public class FsShell extends Configured implements Tool {
 
 
   /**
-   * Get all the files in the directories that match the source file pattern
-   * and merge and sort them to only one file on local fs
-   * srcf is kept.
-   *
-   * Also adds a string between the files (useful for adding \n
-   * to a text file)
-   * @param srcf: a file pattern specifying source files
-   * @param dstf: a destination local file/directory
-   * @param endline: if an end of line character is added to a text file
-   * @exception: IOException
-   * @see org.apache.hadoop.fs.FileSystem.globStatus
+   * 将符合srcf的模式的文件均拷贝到本地，合并为一个文件，源文件将被保留，
+   * 但此方法在合并时，会在每个被合并的文件末尾加入一行来区分每个文件。
    */
   void copyMergeToLocal(String srcf, Path dst, boolean endline) throws IOException {
     Path srcPath = new Path(srcf);
@@ -328,19 +302,15 @@ public class FsShell extends Configured implements Tool {
   }
 
   /**
-   * Obtain the indicated file and copy to the local name.
-   * srcf is removed.
+   * 获取并拷贝srcf指定的文件到本地目录，并且删除源文件。
+   * 但此方法尚未被实现。
    */
   void moveToLocal(String srcf, Path dst) throws IOException {
     System.err.println("Option '-moveToLocal' is not implemented yet.");
   }
 
   /**
-   * Fetch all files that match the file pattern <i>srcf</i> and display
-   * their content on stdout.
-   * @param srcf: a file pattern specifying source files
-   * @exception: IOException
-   * @see org.apache.hadoop.fs.FileSystem.globStatus
+   * 获取所有的符合srcf模式的文件，并显示到<code>stdout</code>
    */
   void cat(String src, boolean verifyChecksum) throws IOException {
     //cat behavior in Linux
@@ -436,10 +406,7 @@ public class FsShell extends Configured implements Tool {
   }
 
   /**
-   * Parse the incoming command string
-   * @param cmd
-   * @param pos ignore anything before this pos in cmd
-   * @throws IOException
+   * 解析传入的setrep命令
    */
   private void setReplication(String[] cmd, int pos) throws IOException {
     CommandFormat c = new CommandFormat("setrep", 2, 2, "R", "w");
@@ -473,10 +440,7 @@ public class FsShell extends Configured implements Tool {
   }
 
   /**
-   * Wait for all files in waitList to have replication number equal to rep.
-   * @param waitList The files are waited for.
-   * @param rep The new replication number.
-   * @throws IOException IOException
+   * 等待所有的在waitlist中的文件，直到其副本数量达到rep
    */
   void waitForReplication(List<Path> waitList, int rep) throws IOException {
     for(Path f : waitList) {
@@ -511,14 +475,7 @@ public class FsShell extends Configured implements Tool {
   }
 
   /**
-   * Set the replication for files that match file pattern <i>srcf</i>
-   * if it's a directory and recursive is true,
-   * set replication for all the subdirs and those files too.
-   * @param newRep new replication factor
-   * @param srcf a file pattern specifying source files
-   * @param recursive if need to set replication factor for files in subdirs
-   * @throws IOException
-   * @see org.apache.hadoop.fs.FileSystem#globStatus(Path)
+   *  改变一个文件的副本数。recursive选项用于递归改变目录下所有文件的副本数。
    */
   void setReplication(short newRep, String srcf, boolean recursive,
                       List<Path> waitingList)
@@ -560,11 +517,7 @@ public class FsShell extends Configured implements Tool {
   }
 
   /**
-   * Actually set the replication for this file
-   * If it fails either throw IOException or print an error msg
-   * @param file: a file/directory
-   * @param newRep: new replication factor
-   * @throws IOException
+   * 为文件设置副本数量
    */
   private void setFileReplication(Path file, FileSystem srcFs, short newRep, List<Path> waitList)
     throws IOException {
@@ -580,11 +533,7 @@ public class FsShell extends Configured implements Tool {
 
 
   /**
-   * Get a listing of all files in that match the file pattern <i>srcf</i>.
-   * @param srcf a file pattern specifying source files
-   * @param recursive if need to list files in subdirs
-   * @throws IOException
-   * @see org.apache.hadoop.fs.FileSystem#globStatus(Path)
+   * 即unix系统上的ls命令，获取符合<i>srcf</i>模式的文件的状态
    */
   private int ls(String srcf, boolean recursive) throws IOException {
     Path srcPath = new Path(srcf);
@@ -603,9 +552,6 @@ public class FsShell extends Configured implements Tool {
     return numOfErrors == 0 ? 0 : -1;
   }
 
-  /* list all files under the directory <i>src</i>
-   * ideally we should provide "-l" option, that lists like "ls -l".
-   */
   private int ls(FileStatus src, FileSystem srcFs, boolean recursive,
       boolean printHeader) throws IOException {
     final String cmd = recursive? "lsr": "ls";
@@ -660,10 +606,7 @@ public class FsShell extends Configured implements Tool {
   }
 
    /**
-   * Show the size of a partition in the filesystem that contains
-   * the specified <i>path</i>.
-   * @param path a path specifying the source partition. null means /.
-   * @throws IOException
+   * 显示包含path的文件系统的分区大小
    */
   void df(String path) throws IOException {
     if (path == null) path = "/";
@@ -682,11 +625,7 @@ public class FsShell extends Configured implements Tool {
   }
 
   /**
-   * Show the size of all files that match the file pattern <i>src</i>
-   * @param cmd
-   * @param pos ignore anything before this pos in cmd
-   * @throws IOException
-   * @see org.apache.hadoop.fs.FileSystem#globStatus(Path)
+   * 显示所有符合输入模式的文件的大小
    */
   void du(String[] cmd, int pos) throws IOException {
     CommandFormat c = new CommandFormat(
@@ -749,12 +688,7 @@ public class FsShell extends Configured implements Tool {
   }
 
   /**
-   * Show the summary disk usage of each dir/file
-   * that matches the file pattern <i>src</i>
-   * @param cmd
-   * @param pos ignore anything before this pos in cmd
-   * @throws IOException
-   * @see org.apache.hadoop.fs.FileSystem#globStatus(Path)
+   * 显示输入模式匹配的文件和文件目录的基本信息。
    */
   void dus(String[] cmd, int pos) throws IOException {
     String newcmd[] = new String[cmd.length + 1];
@@ -763,6 +697,9 @@ public class FsShell extends Configured implements Tool {
     du(newcmd, pos);
   }
 
+  /**
+   * 打印文件使用量的信息，此方法被<code>du</code>命令使用。
+   */
   private void printUsageSummary(List<UsagePair> usages,
                                  boolean humanReadable) {
     int maxColumnWidth = 0;
@@ -783,7 +720,7 @@ public class FsShell extends Configured implements Tool {
   }
 
   /**
-   * Create the given dir
+   * 创建一个目录
    */
   void mkdir(String src) throws IOException {
     Path f = new Path(src);
@@ -807,9 +744,8 @@ public class FsShell extends Configured implements Tool {
   }
 
   /**
-   * (Re)create zero-length file at the specified path.
-   * This will be replaced by a more UNIX-like touch when files may be
-   * modified.
+   * 在指定的src位置创建一个0长度的文件。
+   * 此命令在未来版本将会仿照unix中的touch命令。
    */
   void touchz(String src) throws IOException {
     Path f = new Path(src);
@@ -828,7 +764,7 @@ public class FsShell extends Configured implements Tool {
   }
 
   /**
-   * Check file types.
+   * 测试文件的类型
    */
   int test(String argv[], int i) throws IOException {
     if (!argv[i].startsWith("-") || argv[i].length() > 2)
@@ -849,14 +785,14 @@ public class FsShell extends Configured implements Tool {
   }
 
   /**
-   * Print statistics about path in specified format.
-   * Format sequences:
-   *   %b: Size of file in blocks
-   *   %n: Filename
-   *   %o: Block size
-   *   %r: replication
-   *   %y: UTC date as &quot;yyyy-MM-dd HH:mm:ss&quot;
-   *   %Y: Milliseconds since January 1, 1970 UTC
+   * 将path的统计信息按照指定的格式输出
+   * 格式字串:
+   *   %b: 文件的block数量
+   *   %n: 文件名
+   *   %o: block大小
+   *   %r: 副本数量
+   *   %y: UTC 时间,格式为yyyy-MM-dd HH:mm:ss
+   *   %Y: 毫秒数，从January 1, 1970 UTC开始
    */
   void stat(char[] fmt, String src) throws IOException {
     Path srcPath = new Path(src);
