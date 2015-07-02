@@ -52,38 +52,14 @@ import org.apache.hadoop.util.Progressable;
 import org.apache.hadoop.util.ReflectionUtils;
 
 /****************************************************************
-<<<<<<< HEAD
- * An abstract base class for a fairly generic filesystem.  It
- * may be implemented as a distributed filesystem, or as a "local"
- * one that reflects the locally-connected disk.  The local version
- * exists for small Hadoop instances and for testing.
- *
- * <p>
- *
- * All user code that may potentially use the Hadoop Distributed
- * File System should be written to use a FileSystem object.  The
- * Hadoop DFS is a multi-machine system that appears as a single
- * disk.  It's useful because of its fault tolerance and potentially
- * very large capacity.
- *
- * <p>
- * The local implementation is {@link LocalFileSystem} and distributed
- * implementation is DistributedFileSystem.
-=======
- * FileSystem（下简称FS）是一般的通用文件系统的抽象基类。FS可以被实现为
- * 分布式的文件系统，如HDFS，亦或是一个本地的文件系统，
- * 所有具有访问HDFS的潜在可能的用户代码都应该被封装在一个FileSystem实例里。
- * HDFS是一个对外表现如同单一磁盘的多机系统，它的容错能力和对大容量存储的支持使得
- * HDFS尤为实用。
- * FileSystem的本地实现是{@link LocalFileSystem}，
- * 分布式实现是{@link DistributedFileSystem}(在HDFS一支)。
- *****************************************************************/
-
-/**
- * FileSystem :fs中最基本的抽象类，包含了文件系统最基本的操作抽象，
- * 也包含了分布式文件的操纵抽象
+ * FileSystem（下简称FS）是一般的通用文件系统的抽象基类
  * 继承了Configured类，提供了访问配置文件的方法
  * 实现了Closeable接口，实现了关闭流的方法
+ * FS可以被实现为分布式的文件系统，如HDFS，亦或是一个本地的文件系统，
+ * 所有具有访问HDFS的潜在可能的用户代码都应该被封装在一个FileSystem实例里。
+ * HDFS是一个对外表现如同单一磁盘的多机系统，
+ * 它的容错能力和对大容量存储的支持使得HDFS尤为实用。
+ * FileSystem :
  * 1.域：
  * 文件系统的缓存
  * 键
