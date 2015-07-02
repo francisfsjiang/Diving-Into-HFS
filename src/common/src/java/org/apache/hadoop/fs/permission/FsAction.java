@@ -21,7 +21,8 @@ import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 
 /**
- * 将全线模式映射到Unix风格的表示.
+ * 将全线模式映射到Unix风格的表示,
+ * 管理文件系统的行为：读、写、可运行等。
  */
 @InterfaceAudience.LimitedPrivate({"HDFS"})
 @InterfaceStability.Unstable
@@ -48,6 +49,7 @@ public enum FsAction {
 
   /**
    * Return true if this action implies that action.
+   * 如果这个行为隐含着那个行为，返回真
    * @param that
    */
   public boolean implies(FsAction that) {
@@ -58,14 +60,23 @@ public enum FsAction {
   }
 
   /** AND operation. */
+  /**
+   * 行为的与操作
+   * @param that
+   * @return
+   */
   public FsAction and(FsAction that) {
     return vals[ordinal() & that.ordinal()];
   }
-  /** OR operation. */
+  /** OR operation.
+   * 行为的或操作
+   * */
   public FsAction or(FsAction that) {
     return vals[ordinal() | that.ordinal()];
   }
-  /** NOT operation. */
+  /** NOT operation.
+   * 行为的非操作
+   * */
   public FsAction not() {
     return vals[7 - ordinal()];
   }

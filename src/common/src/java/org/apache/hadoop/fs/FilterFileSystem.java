@@ -31,6 +31,7 @@ import org.apache.hadoop.util.Progressable;
 /****************************************************************
  * FilterFileSystem继承了FileSystem类，重写了父类的所有方法 。
  * FilterFileSystem是一个代理, 或者说, wrapper。
+ * 类中包含一个FileSystem实例，用来作为基础的文件系统，在其中给
  * 它转换数据或者增加方法，加以封装，相当于起到了过滤文件系统的作用。
  * Filter意为过滤器,FilterFileSystem选择的过滤策略是"直通",
  * 即什么都不做, 直接把参数传递给public方法对应的protected方法.
