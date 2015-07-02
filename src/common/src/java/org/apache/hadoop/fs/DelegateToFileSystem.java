@@ -31,8 +31,8 @@ import org.apache.hadoop.fs.permission.FsPermission;
 import org.apache.hadoop.util.Progressable;
 
 /**
- * Implementation of AbstractFileSystem based on the existing implementation of 
- * {@link FileSystem}.
+ * 一个<code>AbstractFileSystem</code>的实现，其内部包装了一个FileSystem对象，
+ * 这样使其可以利用现有的FileSystem实现。
  */
 @InterfaceAudience.Private
 @InterfaceStability.Unstable
