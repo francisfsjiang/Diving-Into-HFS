@@ -24,13 +24,13 @@ public class Path implements Comparable {
   /** The directory separator, a slash. */
   public static final String SEPARATOR = "/";
   public static final char SEPARATOR_CHAR = '/';
-  
+
   public static final String CUR_DIR = ".";
-  
+
   static final boolean WINDOWS
     = System.getProperty("os.name").startsWith("Windows");
 
-  private URI uri;                           
+  private URI uri;
 
   public Path(String parent, String child) {
     this(new Path(parent), new Path(child));
@@ -70,13 +70,13 @@ public class Path implements Comparable {
     if( path.length() == 0 ) {
        throw new IllegalArgumentException(
            "Can not create a Path from an empty string");
-    }   
+    }
   }
 
   public Path(String pathString) {
     checkPathArg( pathString );
-    
-    
+
+
     if (hasWindowsDrive(pathString, false))
       pathString = "/"+pathString;
 
@@ -88,7 +88,7 @@ public class Path implements Comparable {
     int colon = pathString.indexOf(':');
     int slash = pathString.indexOf('/');
     if ((colon != -1) &&
-        ((slash == -1) || (colon < slash))) {   
+        ((slash == -1) || (colon < slash))) {
       scheme = pathString.substring(0, colon);
       start = colon+1;
     }
@@ -109,7 +109,7 @@ public class Path implements Comparable {
   public Path(URI aUri) {
     uri = aUri;
   }
-  
+
   public Path(String scheme, String authority, String path) {
     checkPathArg( path );
     initialize(scheme, authority, path, null);
@@ -128,12 +128,12 @@ public class Path implements Comparable {
   private String normalizePath(String path) {
     path = path.replace("//", "/");
     path = path.replace("\\", "/");
-    
+
     int minLength = hasWindowsDrive(path, true) ? 4 : 1;
     if (path.length() > minLength && path.endsWith("/")) {
       path = path.substring(0, path.length()-1);
     }
-    
+
     return path;
   }
 
@@ -174,8 +174,8 @@ public class Path implements Comparable {
     String path = uri.getPath();
     int lastSlash = path.lastIndexOf('/');
     int start = hasWindowsDrive(path, true) ? 3 : 0;
-    if ((path.length() == start) ||            
-        (lastSlash == start && path.length() == start+1)) { 
+    if ((path.length() == start) ||
+        (lastSlash == start && path.length() == start+1)) {
       return null;
     }
     String parent;
@@ -205,10 +205,10 @@ public class Path implements Comparable {
     if (uri.getPath() != null) {
       String path = uri.getPath();
       if (path.indexOf('/')==0 &&
-          hasWindowsDrive(path, true) &&    
-          uri.getScheme() == null &&          
-          uri.getAuthority() == null)          
-        path = path.substring(1);                
+          hasWindowsDrive(path, true) &&
+          uri.getScheme() == null &&
+          uri.getAuthority() == null)
+        path = path.substring(1);
       buffer.append(path);
     }
     if (uri.getFragment() != null) {
@@ -234,7 +234,7 @@ public class Path implements Comparable {
     Path that = (Path)o;
     return this.uri.compareTo(that.uri);
   }
-  
+
 
   public int depth() {
     String path = uri.getPath();
@@ -247,18 +247,18 @@ public class Path implements Comparable {
     return depth;
   }
 
-  
+
   /**
    *  返回一个限定路径对象
-   *  @link #makeQualified(URI, Path)
+   *  {@link #makeQualified(URI, Path)}
    */
- 
+
   @Deprecated
   public Path makeQualified(FileSystem fs) {
     return makeQualified(fs.getUri(), fs.getWorkingDirectory());
   }
-  
-  
+
+
   @InterfaceAudience.LimitedPrivate({"HDFS", "MapReduce"})
   public Path makeQualified(URI defaultUri, Path workingDir ) {
     Path path = this;
@@ -267,7 +267,7 @@ public class Path implements Comparable {
     }
 
     URI pathUri = path.toUri();
-      
+
     String scheme = pathUri.getScheme();
     String authority = pathUri.getAuthority();
     String fragment = pathUri.getFragment();
@@ -286,10 +286,10 @@ public class Path implements Comparable {
         authority = "";
       }
     }
-    
+
     URI newUri = null;
     try {
-      newUri = new URI(scheme, authority , 
+      newUri = new URI(scheme, authority ,
         normalizePath(pathUri.getPath()), null, fragment);
     } catch (URISyntaxException e) {
       throw new IllegalArgumentException(e);
