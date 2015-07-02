@@ -1,6 +1,57 @@
-\chapter{说明}
+\chapter{Review要务}
+\label{ch:review}
 
-首先, 这个导出工具叫XGeb.
+\section{默认导出条件}
+
+一份JavaDoc文档被导出成为报告的一部分, 当且仅当:
+
+\begin{centering}
+    \begin{enumerate}
+        \item 注释中含有中文或其他非西文字符
+        \item 注释隶属于类或者方法, 且与紧随其后的类或者方法之间不留空行
+        \item 没有通过添加``@@''被显式的禁止导出
+    \end{enumerate}
+\end{centering}
+
+\section{默认导出内容}
+
+默认的导出内容包括
+
+\begin{centering}
+    \begin{enumerate}
+        \item JavaDoc正文
+        \item 方法的modifier, 即public/private/protected
+        \item 方法返回类型, 构造方法的返回类型视作当前类
+    \end{enumerate}
+\end{centering}
+
+\section{手动禁止导出}
+
+向JavaDoc内部任意位置添加``@@''(不含引号)即可禁止导出.
+
+\section{Review要务}
+
+Review中的核心要务总结如下:
+
+对照第\ref{ch:demo}章中渲染出的样例, 和随本文档发布的AFS.java,
+对现有文档做以下修改:
+
+\begin{centering}
+    \begin{enumerate}
+        \item 参考导出后的格式, 修正文档行文格式, 使适合报告文体
+        \item \textcolor{red}{删除<code></code>之外的所有HTML标签, 只留标签内部内容}
+        \item \textcolor{orange}{删除所有不准备导出导出的英文原文}
+        \item \textcolor{yellow}{删除或者折叠占据多行的JavaDoc Tags}
+        \item \textcolor{green}{同一系的重载方法, 合并所有文档其中任意一个方法上, 并禁止导出其他}
+        \item \textcolor{cyan}{统一到UTF-8编码}
+        \item \textcolor{blue}{在Tower.im上标注作者和复核人, 那张表格是生成作者信息的依据}
+        \item \textcolor{violet}{注释中对所有类名的引用, 改写成{@link Clazz}或者\emph{Clazz}的形式}
+    \end{enumerate}
+\end{centering}
+
+\chapter{XGen说明}
+
+首先, 这个导出工具暂拟命名XGeb, 不出意外的话应该是没时间给它改名字了.
 它依赖Eclipse JDT, 用于将Java源代码解析成逻辑结构.
 
 \section{导出的先决条件}
@@ -64,4 +115,6 @@ XGen导出的内容包括
 因为不区分重载方法, 所以, 重载方法的所有文档集合到一处便是.
 
 \chapter{渲染示例}
+\label{ch:demo}
+
 \input{example/gen}

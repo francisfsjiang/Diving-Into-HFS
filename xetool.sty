@@ -14,6 +14,9 @@
 
 \newenvironment{XeAuthors}{}{\\[1cm]}
 
+\newcommand{\XeChapRef}[1]{第\ref{#1}章}
+\newcommand{\XeSecRef}[1]{\ref{#1}节}
+
 \newenvironment{XeEnum}[1][-1em]{%
     \begin{enumerate}
         \setlength{\itemsep}{#1}
@@ -30,11 +33,10 @@
 \newenvironment{XeMethod}[3]{%
 %    \hspace{1em} \\ [0.5em]
     \begin{minipage}[t]{0.05\textwidth}
-		\raggedleft
 		\begin{tabular}{c}
     		#1
 		\end{tabular}
-    \end{minipage}}
+    \end{minipage}
     \begin{minipage}[t]{0.95\textwidth}
         \textbf{#2} :: \textbf{#3} \\
 }{%
@@ -68,9 +70,9 @@
 \newcommand{\XeFinal}{F}
 \newcommand{\XeSync}{S}
 
-\newcommand{\blankfigure}{%
+\newcommand{\blankfigure}[1][]{%
     \begin{centering}
-        \fcolorbox{red}{orange}{\textcolor{white}{此处应有图}}
+        \fcolorbox{red}{orange}{\textcolor{white}{此处应有图 #1}}
     \end{centering}}
 
 \newcommand{\XeDLTItem}[2]{#1 & #2 \\}

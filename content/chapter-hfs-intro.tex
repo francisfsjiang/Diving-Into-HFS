@@ -42,12 +42,14 @@ The structure and logic rules used to manage the groups of information and their
 对\Hadoop 而言, \HFS 的身份是服务提供者, 和一个基础抽象层.
 
 \subsection{作为服务提供者的\HFS}
+\label{ssec:hfs-intro:svr}
 
 服务提供者是\HFS 在\Hadoop 中的角色,
 其主要职责是向上层的\Hadoop 应用提供可靠的文件访问服务, 或者, 更进一步的,
 上层应用同时提供可靠的流式访问服务和文件级别的访问服务.
 
 \subsection{作为抽象层的\HFS}
+\label{ssec:hfs:al}
 
 根据\HadoopFS 中的\emph{AbstractFileSystem}类的文档
 \begin{quote}
@@ -70,7 +72,9 @@ instead they access files across all file systems using \emph{FileContext}.
 
 \blankfigure{}
 
-如上图, HAL屏蔽底层硬件之间的差异, 向上提驱动磁盘的接口;
+如上图,
+具体的驱动程序屏蔽具体硬件的物理差异, 向上提供操纵存储设备的接口;
+HAL蔽硬件驱动之间的差异, 向上提统一驱动存储设备的接口;
 具体文件系统屏蔽不同体系(如NTFS, ext, xfs, btfs, etc.)下信息在物理磁盘上的组织方式的差异,
 向上提供操纵文件的接口;
 而抽象文件系统, 负责屏蔽不同的具体文件系统之间的差异(如命名管理, 权限控制等),
@@ -80,14 +84,14 @@ instead they access files across all file systems using \emph{FileContext}.
 
 \HDFS 的知名度远要比\HFS 高的多.
 
-\HadoopFS 是~\ref{ch:hfs-intro:hfs}节中描述的一个宏观的抽象文件系统,
+\HadoopFS 是\XeSecRef{ch:hfs-intro:hfs}中描述的一个宏观的抽象文件系统,
 而\HadoopDFS 只是该抽象文件系统管理下的一种具体文件系统的实现.
 
 在\HFS 中, 处于继承树顶端且有着相当高的抽象程度的基类\FS 的文档中记录到:
 
 \begin{quote}
 (\FS\space is) an abstract base class for a fairly generic filesystem. It
-may be implemented as a distributed filesystem, or as a "local"
+may be implemented as a distributed filesystem, or as a ``local''
 one that reflects the locally-connected disk.
 \end{quote}
 
