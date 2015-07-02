@@ -24,7 +24,7 @@ import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 
 /** 抛出Checksum的错误，ChecksumException继承自IOException，
-*	记录一个字符串和常数，并作为参数传入父类的方法，
+*	记录一个字符串和常数，将字符串作为参数传入父类的构造器，
 */
 @InterfaceAudience.Public
 @InterfaceStability.Stable
@@ -35,7 +35,7 @@ public class ChecksumException extends IOException {
     super(description);
     this.pos = pos;
   }
-  
+
   public long getPos() {
     return pos;
   }
