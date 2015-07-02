@@ -25,7 +25,8 @@ import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 
 /**
- * 文件存在，并且可以被操作而不是被配置为覆盖时使用
+ * 此异常使用环境为，任意操作的目标文件已存在，而且相关配置中
+ * 并未标记文件可覆盖。
  */
 @InterfaceAudience.Public
 @InterfaceStability.Stable

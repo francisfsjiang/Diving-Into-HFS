@@ -23,11 +23,14 @@ import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 import org.apache.hadoop.io.Writable;
 
-/** 代表文件校验和的抽象类*/
+/**
+ * 代表文件校验和的抽象类
+ */
 @InterfaceAudience.Public
 @InterfaceStability.Stable
 public abstract class FileChecksum implements Writable {
-  /** 校验算法名 */ 
+
+  /** 校验算法名 */
   public abstract String getAlgorithmName();
 
   /** 校验和的byte长度 */ 
@@ -50,7 +53,9 @@ public abstract class FileChecksum implements Writable {
       && Arrays.equals(this.getBytes(), that.getBytes());
   }
   
-  /** {@inheritDoc} */
+  /**
+   * 返回hash值
+   */
   public int hashCode() {
     return getAlgorithmName().hashCode() ^ Arrays.hashCode(getBytes());
   }
