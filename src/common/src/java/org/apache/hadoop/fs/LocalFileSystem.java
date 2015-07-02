@@ -50,7 +50,6 @@ public class LocalFileSystem extends ChecksumFileSystem {
     rfs = rawLocalFileSystem;
   }
     
-  /** Convert a path to a File. */
   public File pathToFile(Path path) {
     return ((RawLocalFileSystem)fs).pathToFile(path);
   }
@@ -67,19 +66,12 @@ public class LocalFileSystem extends ChecksumFileSystem {
     FileUtil.copy(this, src, this, dst, delSrc, getConf());
   }
 
-  /**
-   * Moves files to a bad file directory on the same device, so that their
-   * storage will not be reused.
-   *
-   */
   public boolean reportChecksumFailure(Path p, FSDataInputStream in,
                                        long inPos,
                                        FSDataInputStream sums, long sumsPos) {
     try {
-      // canonicalize f
       File f = ((RawLocalFileSystem)fs).pathToFile(p).getCanonicalFile();
       
-      // find highest writable parent dir of f on the same device
       String device = new DF(f, getConf()).getMount();
       File parent = f.getParentFile();
       File dir = null;
@@ -93,7 +85,6 @@ public class LocalFileSystem extends ChecksumFileSystem {
                               "not able to find the highest writable parent dir");
       }
         
-      // move the file there
       File badDir = new File(dir, "bad_files");
       if (!badDir.mkdirs()) {
         if (!badDir.isDirectory()) {
@@ -108,7 +99,6 @@ public class LocalFileSystem extends ChecksumFileSystem {
       if (!b) {
         LOG.warn("Ignoring failure of renameTo");
       }
-      // move checksum file too
       File checkFile = ((RawLocalFileSystem)fs).pathToFile(getChecksumFile(p));
       b = checkFile.renameTo(new File(badDir, checkFile.getName()+suffix));
       if (!b) {

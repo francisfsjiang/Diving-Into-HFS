@@ -25,9 +25,8 @@ import org.apache.hadoop.classification.InterfaceStability;
 
 
 /**
- * BufferedFSInputStream继承了{@link BufferedInputStream}，
- * 通过缓存来优化其内包装的对象{@ling FSInputStream}的读取
- * class optimizes reading from FSInputStream by bufferring
+ * BufferedFSInputStream继承了@link BufferedInputStream，
+ * 通过缓存来优化其内包装的对象@ling FSInputStream的读取
  *
  * @author neveralso
  */
@@ -38,10 +37,6 @@ public class BufferedFSInputStream extends BufferedInputStream
 implements Seekable, PositionedReadable {
   /**
    * 创建一个指定buffer大小为size的<code>BufferedFSInputStream</code>
-   *
-   * @param   in     要用到的输入流
-   * @param   size   buffer大小
-   * @exception IllegalArgumentException if size <= 0.
    */
   public BufferedFSInputStream(FSInputStream in, int size) {
     super(in, size);
@@ -63,15 +58,11 @@ implements Seekable, PositionedReadable {
   /**
    * 如果要移动到的目标读取位置在目前的buffer中，那么优化他，直接在
    * buffer内移动读取位置。
-   *
-   * @param pos
-   * @throws IOException
    */
   public void seek(long pos) throws IOException {
     if( pos<0 ) {
       return;
     }
-    // optimize: check if the pos is in the buffer
     long end = ((FSInputStream)in).getPos();
     long start = end - count;
     if( pos>=start && pos<end) {
@@ -79,7 +70,6 @@ implements Seekable, PositionedReadable {
       return;
     }
 
-    // invalidate buffer
     this.pos = 0;
     this.count = 0;
 
@@ -90,13 +80,9 @@ implements Seekable, PositionedReadable {
    * 将输入源切换到一个新的输入源，并且将偏移量移动到<code>pos</code>。
    * 此方法在FTP、S3、Local等文件系统上均无实现（直接返回false），现有
    * 的唯一实现在
-   * {@link org.apache.hadoop.hdfs.DFSInputStream#seekToNewSource(long targetPos)}
+   * @link org.apache.hadoop.hdfs.DFSInputStream#seekToNewSource(long targetPos)
    * ，其功能是在当前读取的Block失效时，切换到新的Block，并且移动偏移量，操作成
-   * 功时返回true。
-   *
-   * @param targetPos 目标偏移量
-   * @return 成功true or 失败false
-   * @throws IOException
+   * 功时返回true
    */
   public boolean seekToNewSource(long targetPos) throws IOException {
     pos = 0;

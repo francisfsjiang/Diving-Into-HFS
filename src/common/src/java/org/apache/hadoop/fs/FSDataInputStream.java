@@ -1,20 +1,3 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.apache.hadoop.fs;
 
 import java.io.*;
@@ -22,15 +5,11 @@ import java.io.*;
 import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 
-/** Utility that wraps a {@link FSInputStream} in a {@link DataInputStream}
- * and buffers input through a {@link BufferedInputStream}.
- *
- * 一个包装类，类似于{@link DataInputStream}， 里面包装了一个
- * 实现了{@link Seekable}和{@link PositionReadbale}接口的
- * {@link java.io.InputStream}（通常是传入{@link FSInputStream}）,
+/** 
+ * 一个包装类，类似于@link DataInputStream， 里面包装了一个
+ * 实现了@link Seekable和@link PositionReadbale接口的
+ * @link java.io.InputStream(通常是传入@link FSInputStream),
  * 此类的方法都是通过调用被包装对象的对应方法来实现的。
- *
- * @author neveralso
  */
 @InterfaceAudience.Public
 @InterfaceStability.Stable

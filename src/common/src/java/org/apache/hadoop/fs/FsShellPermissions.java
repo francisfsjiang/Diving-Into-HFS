@@ -33,6 +33,7 @@ import org.apache.hadoop.fs.permission.ChmodParser;
  * 因为FsShell类越来越大,所以将FsShellPermissions类单独分离出来
  * FsShellPermissions类中有三个静态内部类,分别是ChmodHandler,ChownHandler和ChgrpHandler
  * 还有一个静态方法changePermissions,将三个静态内部类的情况与命令行关联起来使用
+ * @author benco
  */
 @InterfaceAudience.Private
 @InterfaceStability.Unstable

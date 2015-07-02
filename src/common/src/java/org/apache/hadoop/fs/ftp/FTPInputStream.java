@@ -46,9 +46,6 @@ public class FTPInputStream extends FSInputStream {
    * 接收FTPClient对象作为第二参数
    * 当FTPClient对象为null或者FTPClient对象连接没有建立的时候
    * 则throw IllegalArgumentException("FTP client null or not connected")
-   * @param stream InputStream对象
-   * @param client FTPClient对象
-   * @param stats FileSystem.Statistics对象
    */
   public FTPInputStream(InputStream stream, FTPClient client,
       FileSystem.Statistics stats) {
@@ -85,8 +82,6 @@ public class FTPInputStream extends FSInputStream {
    * 使用线程安全(synchronized)的read,当从wrappedStream.read()读取的字节数大于0的时候,pos值记录读入的字节数增一
    * FileSystem.Statistics类用来保存与一个文件系统相关的统计信息,主要包括从该文件系统读取和写入的总的字节数
    * 当FileSystem.Statistics对象非空并且读入字节数不为零时,更新统计信息
-   * @throw IOException("Stream closed") 当InputStream对象被关闭时候抛出异常
-   * @return 返回读取的总字节数
    */
   public synchronized int read() throws IOException {
     if (closed) {
@@ -106,11 +101,6 @@ public class FTPInputStream extends FSInputStream {
    * 使用线程安全(synchronized)的read,当从wrappedStream.read()读取的字节数大于0的时候,pos值记录读入的总字节数值
    * FileSystem.Statistics类用来保存与一个文件系统相关的统计信息,主要包括从该文件系统读取和写入的总的字节数
    * 当FileSystem.Statistics对象非空并且读入字节数不为零时,更新统计信息
-   * @param buf[] 存放result个总字节的byte数组
-   * @param off 
-   * @param len
-   * @throw IOException("Stream closed") 当InputStream对象被关闭时候抛出异常
-   * @return 返回读取的总字节数
    */
   public synchronized int read(byte buf[], int off, int len) throws IOException {
     if (closed) {
@@ -131,8 +121,6 @@ public class FTPInputStream extends FSInputStream {
    * 使用线程安全(synchronized)的close方法,调用超类的方法关闭InputStream流,closed赋值为True
    * 若FTPClient对象没有连接,抛出FTPException("Client not connected")
    * 然后关闭FTPClient连接
-   * @param len
-   * @throw IOException("Stream closed") 当InputStream对象被关闭时候抛出异常
    */
   public synchronized void close() throws IOException {
     if (closed) {
@@ -160,7 +148,6 @@ public class FTPInputStream extends FSInputStream {
   }
 
   public void mark(int readLimit) {
-    // Do nothing
   }
 
   public void reset() throws IOException {

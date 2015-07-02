@@ -21,7 +21,7 @@ import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 
 /**
- * 这个类封装了{@link Throwable} Throwable对象用于抛出指定异常
+ * 这个类封装了@link Throwable Throwable对象用于抛出指定异常
  * FTPException继承自RuntimeException,final修饰了静态变量serialVersionUID = 1L
  */
 @InterfaceAudience.Public
@@ -30,22 +30,18 @@ public class FTPException extends RuntimeException {
 
   private static final long serialVersionUID = 1L;
   /**
-   * @param message 异常消息
    * 通过传入message,调用父类方法抛出异常
    */
   public FTPException(String message) {
     super(message);
   }
  /**
-   * @param Throwable t 异常
    * 通过传入t,调用父类方法抛出异常
    */
   public FTPException(Throwable t) {
     super(t);
   }
  /**
-   * @param Throwable t 异常
-   * @param String message 异常消息
    * 通过传入t,调用父类方法抛出异常
    */
   public FTPException(String message, Throwable t) {

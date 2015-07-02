@@ -1,21 +1,3 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.apache.hadoop.fs;
 
 import java.io.*;
@@ -35,11 +17,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * A collection of file-processing util methods
- *
  * 该类通过静态方法提供了大量的文件处理函数
- *
- * @author neveralso
  */
 @InterfaceAudience.Public
 @InterfaceStability.Evolving
@@ -48,10 +26,8 @@ public class FileUtil {
   private static final Log LOG = LogFactory.getLog(FileUtil.class);
 
   /**
-   * convert an array of FileStatus to an array of Path
    * 将一个FileStatus数组转化为Path数组，通过调用每个FileStatus
    * 的getPath()方法实现
-   *
    */
   public static Path[] stat2Paths(FileStatus[] stats) {
     if (stats == null)
@@ -64,8 +40,7 @@ public class FileUtil {
   }
 
   /**
-   * 将一个FileStatus数组转化为Path数组，如果stats为null，则返回
-   * path
+   * 将一个FileStatus数组转化为Path数组，如果stats为null，则返回path
    */
   public static Path[] stat2Paths(FileStatus[] stats, Path path) {
     if (stats == null)
@@ -95,22 +70,17 @@ public class FileUtil {
         if (contents[i].isFile()) {
           if (!contents[i].delete()) {
             deletionSucceeded = false;
-            continue; // continue deletion of other files/dirs under dir
+            continue; 
           }
         } else {
-          //try deleting the directory
-          // this might be a symlink
           boolean b = false;
           b = contents[i].delete();
           if (b){
-            //this was indeed a symlink or an empty directory
             continue;
           }
-          // if not an empty directory or symlink let
-          // fullydelete handle it.
           if (!fullyDelete(contents[i])) {
             deletionSucceeded = false;
-            continue; // continue deletion of other files/dirs under dir
+            continue; 
           }
         }
       }
@@ -128,10 +98,6 @@ public class FileUtil {
     fs.delete(dir, true);
   }
 
-  //
-  // If the destination is a subdirectory of the source, then
-  // generate exception
-  //
   private static void checkDependencies(FileSystem srcFS, 
                                         Path src, 
                                         FileSystem dstFS, 
@@ -396,7 +362,6 @@ public class FileUtil {
   }
 
   /**
-   * This class is only used on windows to invoke the cygpath command.
    * 这个类只用来在windows下调用cygpath命令
    */
   private static class CygPathCommand extends Shell {
@@ -423,10 +388,7 @@ public class FileUtil {
   }
 
   /**
-   * Convert a os-native filename to a path that works for the shell.
    * 转换一个系统相关的文件命名到可以再shell下工作的路径
-   * @param filename 要转换的文件名
-   * @return 返回uxix文件路径
    */
   public static String makeShellPath(String filename) throws IOException {
     if (Path.WINDOWS) {
@@ -438,8 +400,6 @@ public class FileUtil {
 
   /**
    * 转换一个系统相关的文件命名到可以再shell下工作的路径
-   * @param file 要转换的文件名
-   * @return 返回uxix文件路径
    */
   public static String makeShellPath(File file) throws IOException {
     return makeShellPath(file, false);
@@ -447,10 +407,6 @@ public class FileUtil {
 
   /**
    * 转换一个系统相关的文件命名到可以再shell下工作的路径
-   * @param file 要转换的文件名
-   * @param makeCanonicalPath 
-   *          是否要转换为规范路径，操作系统相关
-   * @return 返回uxix文件路径
    */
   public static String makeShellPath(File file, boolean makeCanonicalPath) 
   throws IOException {
@@ -463,9 +419,6 @@ public class FileUtil {
 
   /**
    * 获取指定目录在磁盘上的大小
-   * 
-   * @param dir 要获取的目录
-   * @return 输入的目录在磁盘大小
    */
   public static long getDU(File dir) {
     long size = 0;
@@ -484,12 +437,7 @@ public class FileUtil {
   }
     
   /**
-   * Given a File input it will unzip the file in a the unzip directory
-   * passed as the second parameter
    * 解压一个ZIP压缩文件，到第二个参数指定的位置
-   * @param inFile 指定的压缩文件
-   * @param unzipDir 要解压到的位置
-   * @throws IOException
    */
   public static void unZip(File inFile, File unzipDir) throws IOException {
     Enumeration<? extends ZipEntry> entries;
@@ -531,9 +479,6 @@ public class FileUtil {
 
   /**
    * 解压一个Tar压缩文件，到第二个参数指定的位置
-   * @param inFile 指定的压缩文件
-   * @param unzipDir 要解压到的位置
-   * @throws IOException
    */
   public static void unTar(File inFile, File untarDir) throws IOException {
     if (!untarDir.mkdirs()) {           
@@ -572,7 +517,6 @@ public class FileUtil {
   /**
    * 该类抽象了硬链接
    * 支持unix，cygwin，windxp
-   *  
    */
   public static class HardLink { 
     enum OSType {
@@ -610,7 +554,6 @@ public class FileUtil {
 
     /**
      * 获取系统类型
-     * @return
      */
     static private OSType getOSType() {
       String osName = System.getProperty("os.name");
@@ -677,7 +620,6 @@ public class FileUtil {
       BufferedReader in = null;
       BufferedReader err = null;
 
-      // execute shell command
       Process process = Runtime.getRuntime().exec(cmd);
       try {
         exitValue = process.waitFor();
@@ -723,9 +665,6 @@ public class FileUtil {
   /**
    * 创建一个软连接
    * 只在local磁盘上工作，HDFS不支持此操作
-   * @param target 软连接目标
-   * @param linkname 要连接到的位置
-   * @return 返回执行命令的返回值
    */
   public static int symLink(String target, String linkname) throws IOException{
     String cmd = "ln -s " + target + " " + linkname;
@@ -734,18 +673,12 @@ public class FileUtil {
     try{
       returnVal = p.waitFor();
     } catch(InterruptedException e){
-      //do nothing as of yet
     }
     return returnVal;
   }
   
   /**
    * 更改文件的权限
-   * @param 要更改权限的文件名
-   * @param perm 权限字符串
-   * @return the exit code from the command
-   * @throws IOException
-   * @throws InterruptedException
    */
   public static int chmod(String filename, String perm
                           ) throws IOException, InterruptedException {
@@ -754,12 +687,6 @@ public class FileUtil {
 
   /**
    * 更改文件的权限，可以设置是否递归更改
-   * @param filename 要更改权限的文件名
-   * @param perm 权限字符串
-   * @param recursive 如果需要递归执行，则设置为true
-   * @return 返回执行命令的返回值
-   * @throws IOException
-   * @throws InterruptedException
    */
   public static int chmod(String filename, String perm, boolean recursive)
                             throws IOException, InterruptedException {
@@ -785,13 +712,6 @@ public class FileUtil {
   
   /**
    * 创建一个文件的临时文件
-   * @param basefile 目标文件
-   * @param prefix 临时文件的前缀
-   * @param isDeleteOnExit 是否在虚拟机退出时删除此临时文件
-   * @return 返回一个新创建的文件
-   * @exception IOException If a tmp file cannot created
-   * @see java.io.File#createTempFile(String, String, File)
-   * @see java.io.File#deleteOnExit()
    */
   public static final File createLocalTempFile(final File basefile,
                                                final String prefix,
@@ -807,16 +727,8 @@ public class FileUtil {
 
   /**
    * 移动文件
-   * @param src 源文件
-   * @param target 目标文件
-   * @exception IOException 操作失败
    */
   public static void replaceFile(File src, File target) throws IOException {
-    /* renameTo() has two limitations on Windows platform.
-     * src.renameTo(target) fails if
-     * 1) If target already exists OR
-     * 2) If target is already open for reading/writing.
-     */
     if (!src.renameTo(target)) {
       int retries = 5;
       while (target.exists() && !target.delete() && retries-- >= 0) {

@@ -21,11 +21,6 @@ package org.apache.hadoop.fs;
 import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 
-/** 
- * This class contains constants for configuration keys used
- * in the local file system, raw local fs and checksum fs.
- *
- */
 @InterfaceAudience.Private
 @InterfaceStability.Unstable
 public class LocalFileSystemConfigKeys extends CommonConfigurationKeys {

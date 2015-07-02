@@ -34,6 +34,7 @@ import org.apache.hadoop.conf.Configuration;
  * 依赖于FileSystem并选择合适的接口进行实现
  * 在createURLStreamHandler方法中返回handler之前，需要FileSystem类的实现接口中
  * 明确清楚传入需要的参数
+ * @author benco
  */
 @InterfaceAudience.Private
 @InterfaceStability.Unstable

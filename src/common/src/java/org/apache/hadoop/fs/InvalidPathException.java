@@ -25,6 +25,7 @@ import org.apache.hadoop.classification.InterfaceStability;
  * InvalidPathException类继承自HadoopIllegalArgumentException类
  * 拥有一个静态的私有常量 serialVersionUID = 1L
  * 文件目录路径字符串若是无效的可能因为其无效的特征值或者其他文件系统的特定原因
+ * @author benco
  */
 @InterfaceAudience.Public
 @InterfaceStability.Stable

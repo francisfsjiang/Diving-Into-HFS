@@ -33,6 +33,7 @@ import org.apache.hadoop.conf.Configuration;
  * 继承自URLConnection的connect方法和getInputStream方法,并Override覆盖其原来方法
  * 构造函数接收两个参数,第一个参数是Configuration conf.
  * 第二个参数是URL对象url,调用其超类URLConnection构造函数super(url)
+ * @author benco
  */
 @InterfaceAudience.Private
 @InterfaceStability.Unstable

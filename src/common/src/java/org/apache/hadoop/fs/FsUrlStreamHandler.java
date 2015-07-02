@@ -30,6 +30,7 @@ import org.apache.hadoop.conf.Configuration;
  * 并且传入Configuration对象conf到其构造函数FsUrlStreamHandler(Configuration conf)
  * FsUrlStreamHandler拥有一个私有的实例对象 Configuration对象conf
  * FsUrlStreamHandler类的另一个构造函数是将其conf属性指向一个新的Configuration对象
+ * @author benco
  */
 @InterfaceAudience.Private
 @InterfaceStability.Unstable

@@ -1,21 +1,3 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.apache.hadoop.fs;
 
 import java.io.IOException;
@@ -27,13 +9,10 @@ import org.apache.hadoop.classification.InterfaceStability;
 
 /**
  * 此类是一个抽象类，主要功能是在写入流之前进行校验
- *
- * @author neveralso
  */
 @InterfaceAudience.LimitedPrivate({"HDFS"})
 @InterfaceStability.Unstable
 abstract public class FSOutputSummer extends OutputStream {
-  // data checksum
   private Checksum sum;
   /**
    * 数据缓冲区
@@ -57,12 +36,6 @@ abstract public class FSOutputSummer extends OutputStream {
 
   /**
    * 向输出流写入Chunk和其校验和，数据长度为len，位于b字节数组中偏移量为offset的位置。
-   *
-   * @param b 输出数据所在的字节数组
-   * @param offset 数据在字节数组中的偏移量
-   * @param len 数据长度
-   * @param checksum 数据所对应的校验和
-   * @throws IOException
    */
   protected abstract void writeChunk(byte[] b, int offset, int len, byte[] checksum)
   throws IOException;
@@ -80,12 +53,7 @@ abstract public class FSOutputSummer extends OutputStream {
 
   /**
    * 写入数据，数据长度为len，位于b字节数组中偏移量为offset的位置，该方法通过多次
-   * 写入，保证一定会写入len长度的数据，除非发生{@link IOException}。
-   *
-   * @param      b     the data.
-   * @param      off   the start offset in the data.
-   * @param      len   the number of bytes to write.
-   * @exception  IOException  if an I/O error occurs.
+   * 写入，保证一定会写入len长度的数据，除非发生@link IOException。
    */
   public synchronized void write(byte b[], int off, int len)
   throws IOException {
@@ -106,22 +74,18 @@ abstract public class FSOutputSummer extends OutputStream {
    */
   private int write1(byte b[], int off, int len) throws IOException {
     if(count==0 && len>=buf.length) {
-      // local buffer is empty and user data has one chunk
-      // checksum and output data
       final int length = buf.length;
       sum.update(b, off, length);
       writeChecksumChunk(b, off, length, false);
       return length;
     }
-    
-    // copy user data to local buffer
+
     int bytesToCopy = buf.length-count;
     bytesToCopy = (len<bytesToCopy) ? len : bytesToCopy;
     sum.update(b, off, bytesToCopy);
     System.arraycopy(b, off, buf, count, bytesToCopy);
     count += bytesToCopy;
     if (count == buf.length) {
-      // local buffer is full
       flushBuffer();
     } 
     return bytesToCopy;
