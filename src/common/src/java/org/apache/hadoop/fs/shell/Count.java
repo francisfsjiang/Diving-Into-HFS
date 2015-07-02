@@ -55,6 +55,7 @@ public class Count extends Command {
     this.qOption = c.getOpt("q") ? true: false;
   }
 
+
   /** 检查一个命令是否是计数命令.
    *
    * @param cmd A string representation of a command starting with "-"

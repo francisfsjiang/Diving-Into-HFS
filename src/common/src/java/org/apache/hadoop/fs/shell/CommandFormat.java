@@ -30,7 +30,14 @@ public class CommandFormat {
   final int minPar, maxPar;
   final Map<String, Boolean> options = new HashMap<String, Boolean>();
 
-  /** constructor */
+  /**
+   * 构造函数
+   *
+   * @param n 命令名
+   * @param min 最小参数数
+   * @param max 最大参数数
+   * @param possibleOpt 选项（形如 -xxx 的开关性参数，不计入参数数）
+   */
   public CommandFormat(String n, int min, int max, String ... possibleOpt) {
     name = n;
     minPar = min;

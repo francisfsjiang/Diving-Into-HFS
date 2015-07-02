@@ -30,6 +30,13 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.CommonConfigurationKeys;
 import org.apache.hadoop.util.Shell;
 
+////////////////////////////////////////
+//
+// 磁盘空间状态
+// 继承自{org.apache.hadoop.util.Shell}，在Shell中调用系统工具
+// {df -k <path>}实现，该命令无法在Windows环境下使用
+// 一种选择是在Windows环境下使用{fsutil volume diskfree <path>}替换
+//
 /** Filesystem disk space usage statistics.
  * Uses the unix 'df' program to get mount points, and java.io.File for
  * space utilization. Tested on Linux, FreeBSD, Cygwin. */
@@ -45,6 +52,11 @@ public class DF extends Shell {
   private String filesystem;
   private String mount;
 
+  ////////////////////////////////
+  //
+  // 操作系统类型
+  // 似乎放这不合适
+  //
   enum OSType {
     OS_TYPE_UNIX("UNIX"),
     OS_TYPE_WIN("Windows"),
@@ -142,13 +154,14 @@ public class DF extends Shell {
       mount;
   }
 
+  // 检测命令
   @Override
   protected String[] getExecString() {
     // ignoring the error since the exit code it enough
-    return new String[] {"bash","-c","exec 'df' '-k' '" + dirPath 
-                         + "' 2>/dev/null"};
+    return new String[] {"bash","-c","exec 'df' '-k' '" + dirPath + "' 2>/dev/null"};
   }
 
+  // 解析输出
   @Override
   protected void parseExecResult(BufferedReader lines) throws IOException {
     lines.readLine();                         // skip headings
@@ -157,8 +170,7 @@ public class DF extends Shell {
     if (line == null) {
       throw new IOException( "Expecting a line not the end of stream" );
     }
-    StringTokenizer tokens =
-      new StringTokenizer(line, " \t\n\r\f%");
+    StringTokenizer tokens = new StringTokenizer(line, " \t\n\r\f%");
     
     this.filesystem = tokens.nextToken();
     if (!tokens.hasMoreTokens()) {            // for long filesystem name
