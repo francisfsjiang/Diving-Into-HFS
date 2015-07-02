@@ -13,18 +13,18 @@ import org.apache.hadoop.security.AccessControlException;
 import org.apache.hadoop.util.Progressable;
 
 /**
- * 一个抽象类，包装了一个@link AbstractFileSystem对象，该类所有的方法都是通过调用
+ * 一个抽象类，包装了一个{@link AbstractFileSystem}对象，该类所有的方法都是通过调用
  * 被包装对象的对应方法实现的，继承此类的类通过重载其方法来添加更多地功能
  */
 @InterfaceAudience.Private
-@InterfaceStability.Evolving 
+@InterfaceStability.Evolving
 public abstract class FilterFs extends AbstractFileSystem {
   private final AbstractFileSystem myFs;
-  
+
   protected AbstractFileSystem getMyFs() {
     return myFs;
   }
-  
+
   protected FilterFs(AbstractFileSystem fs) throws IOException,
       URISyntaxException {
     super(fs.getUri(), fs.getUri().getScheme(),
@@ -41,17 +41,17 @@ public abstract class FilterFs extends AbstractFileSystem {
   protected Path getInitialWorkingDirectory() {
     return myFs.getInitialWorkingDirectory();
   }
-  
+
   @Override
   protected Path getHomeDirectory() {
     return myFs.getHomeDirectory();
   }
-  
+
   @Override
   protected FSDataOutputStream createInternal(Path f,
     EnumSet<CreateFlag> flag, FsPermission absolutePermission, int bufferSize,
     short replication, long blockSize, Progressable progress,
-    int bytesPerChecksum, boolean createParent) 
+    int bytesPerChecksum, boolean createParent)
       throws IOException, UnresolvedLinkException {
     checkPath(f);
     return myFs.createInternal(f, flag, absolutePermission, bufferSize,
@@ -59,7 +59,7 @@ public abstract class FilterFs extends AbstractFileSystem {
   }
 
   @Override
-  protected boolean delete(Path f, boolean recursive) 
+  protected boolean delete(Path f, boolean recursive)
       throws IOException, UnresolvedLinkException {
     checkPath(f);
     return myFs.delete(f, recursive);
@@ -73,26 +73,26 @@ public abstract class FilterFs extends AbstractFileSystem {
   }
 
   @Override
-  protected FileChecksum getFileChecksum(Path f) 
+  protected FileChecksum getFileChecksum(Path f)
       throws IOException, UnresolvedLinkException {
     checkPath(f);
     return myFs.getFileChecksum(f);
   }
 
   @Override
-  protected FileStatus getFileStatus(Path f) 
+  protected FileStatus getFileStatus(Path f)
       throws IOException, UnresolvedLinkException {
     checkPath(f);
     return myFs.getFileStatus(f);
   }
 
   @Override
-  protected FileStatus getFileLinkStatus(final Path f) 
+  protected FileStatus getFileLinkStatus(final Path f)
     throws IOException, UnresolvedLinkException {
     checkPath(f);
     return myFs.getFileLinkStatus(f);
   }
-  
+
   @Override
   protected FsStatus getFsStatus(final Path f) throws AccessControlException,
     FileNotFoundException, UnresolvedLinkException, IOException {
@@ -118,19 +118,19 @@ public abstract class FilterFs extends AbstractFileSystem {
   protected URI getUri() {
     return myFs.getUri();
   }
-  
+
   @Override
   protected void checkPath(Path path) {
     myFs.checkPath(path);
   }
-  
+
   @Override
   protected String getUriPath(final Path p) {
     return myFs.getUriPath(p);
   }
-  
+
   @Override
-  protected FileStatus[] listStatus(Path f) 
+  protected FileStatus[] listStatus(Path f)
       throws IOException, UnresolvedLinkException {
     checkPath(f);
     return myFs.listStatus(f);
@@ -141,7 +141,7 @@ public abstract class FilterFs extends AbstractFileSystem {
     throws IOException, UnresolvedLinkException {
     checkPath(dir);
     myFs.mkdir(dir, permission, createParent);
-    
+
   }
 
   @Override
@@ -152,14 +152,14 @@ public abstract class FilterFs extends AbstractFileSystem {
   }
 
   @Override
-  protected FSDataInputStream open(Path f, int bufferSize) 
+  protected FSDataInputStream open(Path f, int bufferSize)
     throws IOException, UnresolvedLinkException {
     checkPath(f);
     return myFs.open(f, bufferSize);
   }
 
   @Override
-  protected void renameInternal(Path src, Path dst) 
+  protected void renameInternal(Path src, Path dst)
     throws IOException, UnresolvedLinkException {
     checkPath(src);
     checkPath(dst);
@@ -173,13 +173,13 @@ public abstract class FilterFs extends AbstractFileSystem {
       ParentNotDirectoryException, UnresolvedLinkException, IOException {
     myFs.renameInternal(src, dst, overwrite);
   }
-  
+
   @Override
   protected void setOwner(Path f, String username, String groupname)
     throws IOException, UnresolvedLinkException {
     checkPath(f);
     myFs.setOwner(f, username, groupname);
-    
+
   }
 
   @Override
@@ -197,14 +197,14 @@ public abstract class FilterFs extends AbstractFileSystem {
   }
 
   @Override
-  protected void setTimes(Path f, long mtime, long atime) 
+  protected void setTimes(Path f, long mtime, long atime)
       throws IOException, UnresolvedLinkException {
     checkPath(f);
     myFs.setTimes(f, mtime, atime);
   }
 
   @Override
-  protected void setVerifyChecksum(boolean verifyChecksum) 
+  protected void setVerifyChecksum(boolean verifyChecksum)
       throws IOException, UnresolvedLinkException {
     myFs.setVerifyChecksum(verifyChecksum);
   }
@@ -215,7 +215,7 @@ public abstract class FilterFs extends AbstractFileSystem {
   }
 
   @Override
-  protected void createSymlink(Path target, Path link, boolean createParent) 
+  protected void createSymlink(Path target, Path link, boolean createParent)
     throws IOException, UnresolvedLinkException {
     myFs.createSymlink(target, link, createParent);
   }

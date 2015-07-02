@@ -6,7 +6,7 @@ import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 
 /**
- * FSInputStream 是一个抽象类，继承了基本的@link java.io.InputStream, 并且提供了
+ * FSInputStream 是一个抽象类，继承了基本的{@link java.io.InputStream}, 并且提供了
  * 随机文件读写(Random Access File)的能力。
  */
 @InterfaceAudience.LimitedPrivate({"HDFS"})
@@ -30,7 +30,7 @@ public abstract class FSInputStream extends InputStream
    * 将输入源切换到一个新的输入源，并且将读取位置移动到<code>pos</code>。
    * 此方法在FTP、S3、Local等文件系统上均无实现（直接返回false），现有
    * 的唯一实现在
-   * @link org.apache.hadoop.hdfs.DFSInputStream#seekToNewSource(long targetPos)
+   * {@link org.apache.hadoop.hdfs.DFSInputStream#seekToNewSource(long targetPos)}
    * ，其功能是在当前读取的Block失效时，切换到新的Block，并且移动读取位置，操作成
    * 功时返回true。
    */
@@ -56,9 +56,9 @@ public abstract class FSInputStream extends InputStream
   }
 
   /**
-   * 该方法与 @link FSInputStream#read(long, byte[], int, int)类似，
+   * 该方法与 {@link FSInputStream#read(long, byte[], int, int)}类似，
    * 但是read方法允许读取到的字节数小于length，而readFully方法一定读取到length
-   * 个字节，除非出现EOF或者 @link java.io.IOException
+   * 个字节，除非出现EOF或者 {@link java.io.IOException}
    */
 
   public void readFully(long position, byte[] buffer, int offset, int length)
@@ -74,7 +74,7 @@ public abstract class FSInputStream extends InputStream
   }
 
   /**
-   * @link FSInputStream#readFully(long, byte[], int, int)的另一个版本，
+   * {@link FSInputStream#readFully(long, byte[], int, int)}的另一个版本，
    * 即从buffer的开始处放入buffer长度个字节。
    */
   public void readFully(long position, byte[] buffer)

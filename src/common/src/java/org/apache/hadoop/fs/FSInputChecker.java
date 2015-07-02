@@ -13,7 +13,7 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 /**
- * FSInputChecker是一个抽象类，继承了@link FSInputStream，
+ * FSInputChecker是一个抽象类，继承了{@link FSInputStream}，
  * 当<code>verifyChecksum</code>设置为true时，所用从该类读取
  * 的字节都是经过校验和校验的。
  */
@@ -38,12 +38,12 @@ abstract public class FSInputChecker extends FSInputStream {
   /**
    * 每次读取的Chunk的字节数
    */
-  private int maxChunkSize; 
-  
+  private int maxChunkSize;
+
   /**
    * 缓存从文件中已经读取的内容
    */
-  private byte[] buf; 
+  private byte[] buf;
   /**
    * 缓存从文件中已经读取的校验和
    */
@@ -52,11 +52,11 @@ abstract public class FSInputChecker extends FSInputStream {
   /**
    * buf中目前的读取位置
    */
-  private int pos; 
+  private int pos;
   /**
    * 目前在buf中的字节数
    */
-  private int count; 
+  private int count;
   /**
    * 校验和失败之后的重试次数
    */

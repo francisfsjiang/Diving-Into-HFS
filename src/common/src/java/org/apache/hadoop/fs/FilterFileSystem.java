@@ -193,8 +193,6 @@ public class FilterFileSystem extends FileSystem {
     return fs.getStatus(p);
   }
 
-<<<<<<< HEAD
-  /** {@inheritDoc} */
   /**
    * 根据路径和权限创建目录
    * @param f
@@ -202,8 +200,6 @@ public class FilterFileSystem extends FileSystem {
    * @return
    * @throws IOException
    */
-=======
->>>>>>> benco
   @Override
   public boolean mkdirs(Path f, FsPermission permission) throws IOException {
     return fs.mkdirs(f, permission);

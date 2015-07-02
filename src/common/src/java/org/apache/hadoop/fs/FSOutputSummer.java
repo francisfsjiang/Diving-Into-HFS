@@ -53,7 +53,7 @@ abstract public class FSOutputSummer extends OutputStream {
 
   /**
    * 写入数据，数据长度为len，位于b字节数组中偏移量为offset的位置，该方法通过多次
-   * 写入，保证一定会写入len长度的数据，除非发生@link IOException。
+   * 写入，保证一定会写入len长度的数据，除非发生{@link IOException}。
    */
   public synchronized void write(byte b[], int off, int len)
   throws IOException {
@@ -87,7 +87,7 @@ abstract public class FSOutputSummer extends OutputStream {
     count += bytesToCopy;
     if (count == buf.length) {
       flushBuffer();
-    } 
+    }
     return bytesToCopy;
   }
 
@@ -112,7 +112,7 @@ abstract public class FSOutputSummer extends OutputStream {
       }
     }
   }
-  
+
   /**
    * 将buf里的数据Chunk和其对应的校验和写入输出，如果keep为true，则会保持原
    * buf的checksum，而不清空。
