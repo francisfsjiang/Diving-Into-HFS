@@ -23,7 +23,9 @@ import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 import org.apache.hadoop.fs.*;
 
-/** 允许从某个位置开始读的流 */
+/**
+ * 实现该接口的流允许从某个位置开始读的
+ */
 @InterfaceAudience.Public
 @InterfaceStability.Evolving
 public interface PositionedReadable {

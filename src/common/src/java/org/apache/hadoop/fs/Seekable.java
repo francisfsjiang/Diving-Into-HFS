@@ -22,7 +22,9 @@ import java.io.*;
 import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 
-/** Stream that permits seeking. */
+/**
+ * 此接口表示实现该接口的类具有seek方法，具备随机文件读写的能力
+ */
 @InterfaceAudience.Public
 @InterfaceStability.Evolving
 public interface Seekable {

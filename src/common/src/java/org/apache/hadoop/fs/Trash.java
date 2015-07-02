@@ -43,7 +43,9 @@ import org.apache.hadoop.util.StringUtils;
  * content, without date support in the filesystem, and without clock
  * synchronization.)
  *
- * 本类提供了
+ * 本类提供了trash机制。文件再删除时会被移动到用户的trash文件夹下，这个文件夹
+ * 位于每个用户的home文件夹下，名字为<code>.Trash</code>，
+ *
  */
 @InterfaceAudience.Public
 @InterfaceStability.Stable
@@ -96,9 +98,10 @@ public class Trash extends Configured {
     return new Path(basePath + rmFilePath.toUri().getPath());
   }
 
-  /** Move a file or directory to the current trash directory.
-   * @return false if the item is already in the trash or trash is disabled
-   */ 
+  /**
+   * 移动一个文件或者文件夹到当前的垃圾箱中。此方法会在文件已经存在于垃圾桶
+   * 或者垃圾桶被禁用时返回false
+   */
   public boolean moveToTrash(Path path) throws IOException {
     if (interval == 0)
       return false;
@@ -220,14 +223,19 @@ public class Trash extends Configured {
     return current;
   }
 
-  /** Return a {@link Runnable} that periodically empties the trash of all
-   * users, intended to be run by the superuser.  Only one checkpoint is kept
-   * at a time.
+  /**
+   * 返回一个{@link Runnable}对象，即{@link org.apache.hadoop.fs.Trash.Emptier}，
+   * 这个对象周期性地清理所有用户的垃圾箱，需要被管理员运行。
+   *
+   * 在同一时间，只会在垃圾箱中保留一个CheckPoint
    */
   public Runnable getEmptier() throws IOException {
     return new Emptier(getConf());
   }
 
+  /**
+   * 该类会独自开一个线程运行，其目的是周期性地调用垃圾箱来进行清空
+   */
   private class Emptier implements Runnable {
 
     private Configuration conf;
