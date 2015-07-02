@@ -21,7 +21,6 @@ package org.apache.hadoop.fs;
 import java.io.*;
 import java.util.Arrays;
 import java.util.zip.CRC32;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.classification.InterfaceAudience;
@@ -32,10 +31,14 @@ import org.apache.hadoop.util.Progressable;
 import org.apache.hadoop.util.PureJavaCrc32;
 import org.apache.hadoop.util.StringUtils;
 
-/****************************************************************************** 
+/******************************************************************************
+  * ChecksumFileSystem继承自FilterFileSystem
+  * 提供一个基本的文件校验系统的实现，
+  * 通过校验和文件可以检查原生文件系统的完整性，
+  * 冗余备份的情况下，多个节点储存，以防止校验和本身损坏。
   * HDFS 会对写入的所有数据计算校验和(checksum)，并在读取数据时验证校验和。
-  * 针对指定字节的数目计算校验和。字节数默认是512 字节，可以通过io.bytes.per.checksum属性设置。
-  * 通过CRC-32编码后为4字节。   
+  * 针对指定字节的数目计算校验和。字节数默认是512 字节，可以通过bytesPerChecksum属性设置。
+  * 含义是每512个字节会生成一个4字节长（32位）的CRC检验和。
   * Datanode 在保存数据前负责验证checksum。
   * client 会把数据和校验和一起发送到一个由多个datanode 组成的队列中，
   * 最后一个Datanode 负责验证checksum。
@@ -49,14 +52,6 @@ import org.apache.hadoop.util.StringUtils;
   * 如果是通过FileSystem API 读取时，可以通过setVerifyChecksum(false)，忽略验证。 
   **********************************************************************************/
 
-
-/****************************************************************
- * 抽象检验文件系统 从文件系统过滤器类继承
- * 提供一个基本的文件校验系统的实现
- * 在客户端生成并且检验检验和，检验数据的完整性
- * 每个512byte的数据，生成一个4byte的检验和
- * 冗余备份的情况下，多个节点储存，以防止校验和本身损坏
- *****************************************************************/
 @InterfaceAudience.Public
 @InterfaceStability.Stable
 public abstract class ChecksumFileSystem extends FilterFileSystem {
@@ -81,35 +76,44 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
   }
 
   /**
-   * 布尔值 设置是否检验了校验和
+   * 设置是否检验了校验和
    */
   public void setVerifyChecksum(boolean verifyChecksum) {
     this.verifyChecksum = verifyChecksum;
   }
 
-  /** 获取初始的文件系统 */
+  /**
+   * 获取原生文件系统
+   * */
   public FileSystem getRawFileSystem() {
     return fs;
   }
 
-  /** 返回检验和文件关联文件的文件名*/
+  /**
+   * 返回检验和文件关联文件的文件名
+   * */
   public Path getChecksumFile(Path file) {
     return new Path(file.getParent(), "." + file.getName() + ".crc");
   }
 
-  /** 当文件名是校验和文件名时，返回真值*/
+  /**
+   * 当文件名是校验和文件名时，返回真值
+   * */
   public static boolean isChecksumFile(Path file) {
     String name = file.getName();
     return name.startsWith(".") && name.endsWith(".crc");
   }
 
-  /** 返回校验和文件的长度和源文件的大小
+  /**
+   * 返回校验和文件的长度和源文件的大小
    **/
   public long getChecksumFileLength(Path file, long fileSize) {
     return getChecksumLength(fileSize, getBytesPerSum());
   }
 
-  /** 返回每个校验和的byte数*/
+  /**
+   * 返回每个byte长度的校验和的数据字节数
+   * */
   public int getBytesPerSum() {
     return bytesPerChecksum;
   }
@@ -124,8 +128,8 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
   }
 
   /*******************************************************
-   * open()方法的FS输入流
-   * 确认数据和检验和是否匹配
+   * 文件系统的输入流的校验和类
+   * 确认数据和校验和是否匹配
    *******************************************************/
   private static class ChecksumFSInputChecker extends FSInputChecker {
     public static final Log LOG
@@ -173,18 +177,40 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
       }
     }
 
+    /**
+     * 获取文件的校验和位置
+     * @param dataPos
+     * @return
+     */
     private long getChecksumFilePos( long dataPos ) {
       return HEADER_LENGTH + 4*(dataPos/bytesPerSum);
     }
 
+    /**
+     * 获取块的校验和位置
+     * @param dataPos
+     * @return
+     */
     protected long getChunkPosition( long dataPos ) {
       return dataPos/bytesPerSum*bytesPerSum;
     }
+
 
     public int available() throws IOException {
       return datas.available() + super.available();
     }
 
+
+    /**
+     * 检查校验和，读取数据到b字节数组
+     * 返回读取的字节数
+     * @param position 读取位置
+     * @param b
+     * @param off
+     * @param len
+     * @return
+     * @throws IOException
+     */
     public int read(long position, byte[] b, int off, int len)
       throws IOException {
       // 参数校验
@@ -205,6 +231,11 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
       return nread;
     }
 
+    /**
+     * 关闭数据输入流
+     * 关闭校验和输入流
+     * @throws IOException
+     */
     public void close() throws IOException {
       datas.close();
       if( sums != null ) {
@@ -214,6 +245,12 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
     }
 
 
+    /**
+     * 读入指针移动到新的地方
+     * @param targetPos 目标读取位置
+     * @return
+     * @throws IOException
+     */
     @Override
     public boolean seekToNewSource(long targetPos) throws IOException {
       long sumsPos = getChecksumFilePos(targetPos);
@@ -222,6 +259,18 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
       return sums.seekToNewSource(sumsPos) || newDataSource;
     }
 
+
+    /**
+     * 如果需要校验就进行检验和，
+     * 然后读取文件中的块数据。
+     * @param pos chunk在文件中的位置
+     * @param buf  读取数据将要放入的字节数组
+     * @param offset 数据放入字节数组的偏移量
+     * @param len 要读取的字节数
+     * @param checksum 校验和将要放入的字节数组
+     * @return
+     * @throws IOException
+     */
     @Override
     protected int readChunk(long pos, byte[] buf, int offset, int len,
         byte[] checksum) throws IOException {
@@ -265,6 +314,12 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
       return nread;
     }
     /* 返回文件长度*/
+
+    /**
+     * 获取文件的长度
+     * @return
+     * @throws IOException
+     */
     private long getFileLength() throws IOException {
       if( fileLen==-1L ) {
         fileLen = fs.getContentSummary(file).getLength();
@@ -292,17 +347,12 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
     }
 
     /**
-<<<<<<< HEAD
      * 在流中查找给定的位置
      * 下一次read()从此位置开始
-     * 
-     * <p>此方法不允许搜索超过文件末，会抛出IOException
-     *
      * @param      pos   查找的位置
      * @exception  发生IO错误或查找超过文件末尾时抛出IOException  
      *             查找的数据块损坏时抛出ChecksumException 
      */
-
     public synchronized void seek(long pos) throws IOException {
       if(pos>getFileLength()) {
         throw new IOException("Cannot seek after EOF");
@@ -336,16 +386,14 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
    * @return 检验和文件的byte数t
    */
   public static long getChecksumLength(long size, int bytesPerSum) {
-    /**
-    *校验和的长度等于the checksum length is equal to size passed divided by bytesPerSum +
-    *bytes written in the beginning of the checksum file.  
-    */
     return ((size + bytesPerSum - 1) / bytesPerSum) * 4 +
              CHECKSUM_VERSION.length + 4;
   }
 
-  /** 给校验过的文件提供一个输出流
-   * 为数据生成检验和. */
+  /**
+   * 文件系统的输出流的校验和类
+   * 确认数据和校验和是否匹配
+   */
   private static class ChecksumFSOutputSummer extends FSOutputSummer {
     private FSDataOutputStream datas;
     private FSDataOutputStream sums;
@@ -384,12 +432,24 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
       sums.writeInt(bytesPerSum);
     }
 
+    /**
+     * 关闭数据输出流，校验和输出流
+     * @throws IOException
+     */
     public void close() throws IOException {
       flushBuffer();
       sums.close();
       datas.close();
     }
 
+    /**
+     * 写入块数据，包括原生数据和校验和
+     * @param b 输出数据所在的字节数组
+     * @param offset 数据在字节数组中的偏移量
+     * @param len 数据长度
+     * @param checksum 数据所对应的校验和
+     * @throws IOException
+     */
     @Override
     protected void writeChunk(byte[] b, int offset, int len, byte[] checksum)
     throws IOException {
@@ -398,7 +458,9 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
     }
   }
 
-  /** {@inheritDoc} */
+  /**
+   * 根据文件路径和权限创建文件输出流
+   */
   @Override
   public FSDataOutputStream create(Path f, FsPermission permission,
       boolean overwrite, int bufferSize, short replication, long blockSize,
@@ -418,6 +480,7 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
 
   /**
    * Set replication for an existing file.
+   * 为一个已经存在的文件进行复制操作
    * Implement the abstract <tt>setReplication</tt> of <tt>FileSystem</tt>
    * @param src file name
    * @param replication new replication
@@ -463,7 +526,8 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
   }
 
   /**
-   * 在校验和文件系统中执行delete(Path, boolean)
+   * 在校验和文件系统中执行删除操作，
+   * 可以选择是否递归删除
    */
   public boolean delete(Path f, boolean recursive) throws IOException{
     FileStatus fstatus = null;
@@ -492,7 +556,7 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
   };
 
   /**
-   * 如果路劲是个目录，列出给出路径下的文件和路径的状态
+   * 如果路径是个目录，列出给出路径下的文件和路径的状态
    * 
    * @param f
    *          given path
@@ -509,6 +573,13 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
     return fs.mkdirs(f);
   }
 
+  /**
+   * 从本地文件系统进行复制
+   * @param delSrc
+   * @param src
+   * @param dst
+   * @throws IOException
+   */
   @Override
   public void copyFromLocalFile(boolean delSrc, Path src, Path dst)
     throws IOException {
@@ -517,8 +588,7 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
   }
 
   /**
-   * src文件文件系统下,dst在本地硬盘上
-   * 从文件系统中复制到本地的dst名
+   * 复制到本地文件系统
    */
   @Override
   public void copyToLocalFile(boolean delSrc, Path src, Path dst)
@@ -528,7 +598,7 @@ public abstract class ChecksumFileSystem extends FilterFileSystem {
   }
 
   /**
-   * src文件文件系统下,dst在本地硬盘上
+   * src在文件系统下,dst在本地硬盘上
    * 从文件系统中复制到本地的dst名
    * 如果src和dst指向的路径, 参数copyCrc决定是否复制CRC文件
    */

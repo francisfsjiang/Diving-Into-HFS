@@ -23,7 +23,7 @@ import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 
 /**
- * 与访问控制有关的异常.
+ * 与访问控制有关的异常类，继承自IOException.
  * @deprecated 改用{@link org.apache.hadoop.security.AccessControlException}
  */
 @Deprecated
@@ -34,6 +34,7 @@ public class AccessControlException extends IOException {
   private static final long serialVersionUID = 1L;
 
   /**
+   * 构造函数，出现异常返回信息"Permission denied."
    * Default constructor is needed for unwrapping from
    * {@link org.apache.hadoop.ipc.RemoteException}.
    */

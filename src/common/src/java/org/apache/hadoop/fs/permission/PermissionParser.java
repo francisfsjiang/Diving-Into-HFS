@@ -60,6 +60,12 @@ class PermissionParser {
     }
   }
 
+
+  /**
+   * 应用常规模式进行解析
+   * @param modeStr
+   * @param matcher
+   */
   private void applyNormalPattern(String modeStr, Matcher matcher) {
     // Are there multiple permissions stored in one chmod?
     boolean commaSeperated = false;
@@ -148,6 +154,12 @@ class PermissionParser {
     symbolic = true;
   }
 
+
+  /**
+   * 应用8进制模式进行解析
+   * @param modeStr
+   * @param matcher
+   */
   private void applyOctalPattern(String modeStr, Matcher matcher) {
     userType = groupType = othersType = '=';
 
@@ -164,6 +176,12 @@ class PermissionParser {
     othersMode = Short.valueOf(str.substring(2, 3));
   }
 
+  /**
+   * 合并解析模式
+   * @param existing
+   * @param exeOk
+   * @return
+   */
   protected int combineModes(int existing, boolean exeOk) {
     return   combineModeSegments(stickyBitType, stickyMode,
                 (existing>>>9), false) << 9 |

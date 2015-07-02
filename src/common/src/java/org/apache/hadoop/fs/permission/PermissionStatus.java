@@ -26,7 +26,8 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 /**
- * 存储与全县有关的状态信息.
+ * 存储与权限有关的状态信息.
+ * 提供了与FsPermission对应的权限状态信息
  */
 @InterfaceAudience.LimitedPrivate({"HDFS", "MapReduce"})
 @InterfaceStability.Unstable
@@ -64,17 +65,24 @@ public class PermissionStatus implements Writable {
     this.permission = permission;
   }
 
-  /** Return user name */
+  /** Return user name
+   * 获取文件所属者名字
+   * */
   public String getUserName() {return username;}
 
-  /** Return group name */
+  /** Return group name
+   * 获取文件所属组的名字
+   * */
   public String getGroupName() {return groupname;}
 
-  /** Return permission */
+  /** Return permission
+   * 获取用户对文件的操作权限
+   * */
   public FsPermission getPermission() {return permission;}
 
   /**
    * Apply umask.
+   * 应用umask设置权限
    * @see FsPermission#applyUMask(FsPermission)
    */
   public PermissionStatus applyUMask(FsPermission umask) {
@@ -82,14 +90,18 @@ public class PermissionStatus implements Writable {
     return this;
   }
 
-  /** {@inheritDoc} */
+  /** {@inheritDoc}
+   * 读取各权限信息
+   * */
   public void readFields(DataInput in) throws IOException {
     username = Text.readString(in);
     groupname = Text.readString(in);
     permission = FsPermission.read(in);
   }
 
-  /** {@inheritDoc} */
+  /** {@inheritDoc}
+   * 输出各权限信息
+   * */
   public void write(DataOutput out) throws IOException {
     write(out, username, groupname, permission);
   }

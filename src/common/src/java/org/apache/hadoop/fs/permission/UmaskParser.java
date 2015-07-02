@@ -47,7 +47,6 @@ class UmaskParser extends PermissionParser {
    * 原有的权限模式进行复位或置位.
    * 对八进制形式的umask而言, 指定的模式位通过创建时的模式给出.
    * For octal umask, the specified bits are set in the file mode creation mask.
-   *
    * @return umask
    */
   public short getUMask() {
