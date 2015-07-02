@@ -28,7 +28,7 @@ import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableFactories;
 import org.apache.hadoop.io.WritableFactory;
 /**
- * 块位置类：
+ * <code>BlockLocation</code>是块位置类.
  * 域包含主机号、端口号、拓扑路径以及偏移量和长度信息
  * 主要方法为域的get、set方法和实现Writable接口的读写方法
  */
@@ -91,7 +91,6 @@ public class BlockLocation implements Writable {
   }
 
   /**
-   * Get the list of hosts (hostname) hosting this block
    * 获取主机名列表
    */
   public String[] getHosts() throws IOException {
@@ -103,7 +102,6 @@ public class BlockLocation implements Writable {
   }
 
   /**
-   * Get the list of names (hostname:port) hosting this block
    * 获取端口号列表
    */
   public String[] getNames() throws IOException {
@@ -115,8 +113,6 @@ public class BlockLocation implements Writable {
   }
 
   /**
-   * Get the list of network topology paths for each of the hosts.
-   * The last component of the path is the host.
    * 获取每一个主机的网络拓扑路径的列表，路径的最后部分是主机
    */
   public String[] getTopologyPaths() throws IOException {
@@ -128,7 +124,6 @@ public class BlockLocation implements Writable {
   }
 
   /**
-   * Get the start offset of file associated with this block
    * 获取块的偏移量
    */
   public long getOffset() {
@@ -136,7 +131,6 @@ public class BlockLocation implements Writable {
   }
 
   /**
-   * Get the length of the block
    * 获取块的长度信息
    */
   public long getLength() {
@@ -144,7 +138,6 @@ public class BlockLocation implements Writable {
   }
 
   /**
-   * Set the start offset of file associated with this block
    * 设置快的偏移量
    */
   public void setOffset(long offset) {
@@ -152,7 +145,6 @@ public class BlockLocation implements Writable {
   }
 
   /**
-   * Set the length of block
    * 设置块的长度信息
    */
   public void setLength(long length) {
@@ -160,7 +152,6 @@ public class BlockLocation implements Writable {
   }
 
   /**
-   * Set the hosts hosting this block
    * 设置当前块的主机名
    */
   public void setHosts(String[] hosts) throws IOException {
@@ -172,7 +163,6 @@ public class BlockLocation implements Writable {
   }
 
   /**
-   * Set the names (host:port) hosting this block
    * 设置当前块的端口号
    */
   public void setNames(String[] names) throws IOException {
@@ -184,7 +174,6 @@ public class BlockLocation implements Writable {
   }
 
   /**
-   * Set the network topology paths of the hosts
    * 设置主机的网络拓扑路径
    */
   public void setTopologyPaths(String[] topologyPaths) throws IOException {
@@ -196,7 +185,6 @@ public class BlockLocation implements Writable {
   }
 
   /**
-   * Implement write of Writable
    * 实现Writable的write方法，主要是将块位置的
    * 各参数信息写到输出缓存中
    */
@@ -221,7 +209,6 @@ public class BlockLocation implements Writable {
   }
 
   /**
-   * Implement readFields of Writable
    * 实现Writable的readFields方法
    * 读入块位置的各参数信息
    */

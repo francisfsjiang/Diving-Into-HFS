@@ -26,14 +26,15 @@ import org.apache.hadoop.classification.InterfaceStability;
 import org.apache.hadoop.conf.Configuration;
 
 /**
- * FsUrlStreamHandlerFactory是由多个URL流输入输出处理器组成的工厂方法
- * 实现了URLStreamHandlerFactory接口
- * 拥有三个私有的成员变量Configuration对象conf,HashMap<String, Boolean>对象 protocols
- * 还有private java.net.URLStreamHandler对象 handler
- * 在众多的类中只有一个处理器的工作是生成UrlConnections对象，UrlConnections类
- * 依赖于FileSystem并选择合适的接口进行实现
- * 在createURLStreamHandler方法中返回handler之前，需要FileSystem类的实现接口中
- * 明确清楚传入需要的参数
+ * FsUrlStreamHandlerFactory是由多个URL流输入输出处理器组成的工厂方法,
+ * 实现了URLStreamHandlerFactory接口,
+ * 拥有三个私有的成员变量: Configuration对象conf,
+ * HashMap<String, Boolean>对象 protocols,
+ * 还有private java.net.URLStreamHandler对象handler.
+ * 在众多的类中只有一个处理器的工作是生成UrlConnections对象,
+ * UrlConnections类依赖于FileSystem并选择合适的接口进行实现.
+ * 在createURLStreamHandler方法中返回handler之前,
+ * 需要FileSystem类的实现接口中明确清楚传入需要的参数
  * @author benco
  */
 @InterfaceAudience.Private

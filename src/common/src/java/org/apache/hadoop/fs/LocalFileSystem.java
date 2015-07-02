@@ -26,7 +26,6 @@ import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 
 /****************************************************************
- * Implement the FileSystem API for the checksumed local filesystem.
  * 本地文件系统，是对校验和文件系统的具体实现
  * 主要方法包括寻找文件、复制文件、报告检验和错误等。
  *****************************************************************/
@@ -36,20 +35,20 @@ public class LocalFileSystem extends ChecksumFileSystem {
   static final URI NAME = URI.create("file:///");
   static private Random rand = new Random();
   FileSystem rfs;
-  
+
   public LocalFileSystem() {
     this(new RawLocalFileSystem());
   }
-  
+
   public FileSystem getRaw() {
     return rfs;
   }
-    
+
   public LocalFileSystem(FileSystem rawLocalFileSystem) {
     super(rawLocalFileSystem);
     rfs = rawLocalFileSystem;
   }
-    
+
   public File pathToFile(Path path) {
     return ((RawLocalFileSystem)fs).pathToFile(path);
   }
@@ -71,7 +70,7 @@ public class LocalFileSystem extends ChecksumFileSystem {
                                        FSDataInputStream sums, long sumsPos) {
     try {
       File f = ((RawLocalFileSystem)fs).pathToFile(p).getCanonicalFile();
-      
+
       String device = new DF(f, getConf()).getMount();
       File parent = f.getParentFile();
       File dir = null;
@@ -84,7 +83,7 @@ public class LocalFileSystem extends ChecksumFileSystem {
         throw new IOException(
                               "not able to find the highest writable parent dir");
       }
-        
+
       File badDir = new File(dir, "bad_files");
       if (!badDir.mkdirs()) {
         if (!badDir.isDirectory()) {

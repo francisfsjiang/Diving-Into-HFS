@@ -30,9 +30,9 @@ import org.xml.sax.SAXException;
 import org.znerd.xmlenc.XMLOutputter;
 
 /** MD5 of MD5 of CRC32.
-  * MD5MD5CRC32FileChecksum继承自FileChecksum
-  * MD5加密并用CRC32校验和校验结果
-  * 定义三个私有成员变量,bytesPerCRC,crcPerBlock和md5
+  * MD5MD5CRC32FileChecksum继承自FileChecksum,
+  * MD5加密并用CRC32校验和校验结果,
+  * 定义三个私有成员变量,bytesPerCRC,crcPerBlock和md5,
   * 声明有静态成员常量LENGTH = MD5Hash.MD5_LEN + (Integer.SIZE + Long.SIZE)/Byte.SIZE
   */
 @InterfaceAudience.LimitedPrivate({"HDFS"})
@@ -46,7 +46,7 @@ public class MD5MD5CRC32FileChecksum extends FileChecksum {
   private MD5Hash md5;
 
   /** 构造函数对三个成员变量初始化
-    * bytesPerCRC = 0 
+    * bytesPerCRC = 0
     * crcPerBlock = 0
     * md5 = null
     */
@@ -54,7 +54,7 @@ public class MD5MD5CRC32FileChecksum extends FileChecksum {
     this(0, 0, null);
   }
 
-  /** 
+  /**
     * @param bytesPerCRC
     * @param crcPerBlock
     * @param md5
@@ -65,22 +65,22 @@ public class MD5MD5CRC32FileChecksum extends FileChecksum {
     this.crcPerBlock = crcPerBlock;
     this.md5 = md5;
   }
-  
-  /** 
+
+  /**
     * @return String
     * 返回算法名称
-    */ 
+    */
   public String getAlgorithmName() {
     return "MD5-of-" + crcPerBlock + "MD5-of-" + bytesPerCRC + "CRC32";
   }
 
-  /** 
+  /**
     * @return LENGTH
-    * 返回静态常量LENGTH 
-    */ 
+    * 返回静态常量LENGTH
+    */
   public int getLength() {return LENGTH;}
 
-  /** 
+  /**
     * @return byte[]
     * 调用WritableUtils返回一个byte数组
     */
@@ -88,7 +88,7 @@ public class MD5MD5CRC32FileChecksum extends FileChecksum {
     return WritableUtils.toByteArray(this);
   }
 
-  /** 
+  /**
     * @throw IOException
     * @param DataInput对象 in
     * 通过从数据输入流中读入bytesPerCRC,crcPerBlock,md5的值
@@ -99,7 +99,7 @@ public class MD5MD5CRC32FileChecksum extends FileChecksum {
     md5 = MD5Hash.read(in);
   }
 
-  /** 
+  /**
     * @throw IOException
     * @param DataOutput对象 out
     * 将bytesPerCRC,crcPerBlock,md5的值写入到数据输出流中
@@ -107,10 +107,10 @@ public class MD5MD5CRC32FileChecksum extends FileChecksum {
   public void write(DataOutput out) throws IOException {
     out.writeInt(bytesPerCRC);
     out.writeLong(crcPerBlock);
-    md5.write(out);    
+    md5.write(out);
   }
 
-  /** 
+  /**
     * @throw IOException
     * @param XMLOutputter对象 xml
     * @param MD5MD5CRC32FileChecksum对象 that
@@ -126,9 +126,9 @@ public class MD5MD5CRC32FileChecksum extends FileChecksum {
     }
     xml.endTag();
   }
-  
-  /** 
-    * @throw SAXException 
+
+  /**
+    * @throw SAXException
     * @param Attributes对象 attrs
     * @return MD5MD5CRC32FileChecksum
     * 静态方法valueOf,通过外部实体attrs获得bytesPerCRC,crcPerBlock和md5的值
@@ -152,10 +152,10 @@ public class MD5MD5CRC32FileChecksum extends FileChecksum {
     }
   }
 
-  /** 
+  /**
     * @return String
     * 返回算法名称+ ":" + md5
-    */ 
+    */
   public String toString() {
     return getAlgorithmName() + ":" + md5;
   }

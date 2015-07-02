@@ -26,7 +26,7 @@ import org.apache.hadoop.classification.InterfaceStability;
  * 方式，比如将CREATA和APPEND组合起来，那么则会创建不存在的文件并开始向
  * 文件末尾添加内容，或者向
  * 现有文件末尾添加。
- *
+ *===
  * 创建好之后可以作为参数传递给{@link FileSystem#create}
  * 方法，来实现文件的创建。
  *

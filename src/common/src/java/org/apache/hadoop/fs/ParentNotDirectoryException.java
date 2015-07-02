@@ -23,9 +23,9 @@ import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 
 /**
- * 当定位一个文件目录的上一层发现不是一个目录时候抛出这个异常
- * ParentNotDirectoryException类继承自IOException异常类
- * 有一个静态常量serialVersionUID = 1L
+ * 当定位一个文件目录的上一层发现不是一个目录时候抛出这个异常,
+ * ParentNotDirectoryException类继承自IOException异常类,
+ * 有一个静态常量serialVersionUID = 1L,
  * ParentNotDirectoryException()方法和ParentNotDirectoryException(String msg)均调用父类方法
  */
 @InterfaceAudience.Public

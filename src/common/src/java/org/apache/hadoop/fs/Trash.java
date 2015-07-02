@@ -37,18 +37,18 @@ import org.apache.hadoop.util.StringUtils;
 /**
  * 本类提供了trash机制。文件在删除时会被移动到用户的trash文件夹下，这个文件夹
  * 位于每个用户的home文件夹下，名字为<code>.Trash</code>。
- *
+ * ==
  * 文件被删除时，会先在Trash文件夹下建一个子目录Current，被删除的文件将会将会被
  * 移动到Current目录下的与原目录相同的目录，比如说
  * 文件<code>/user/admin/test/input.in</code>在被删除后，
  * 将会被移动到<code>/user/admin/.Trash/Current/user/admin/test/input.in</code>。
- *
+ * ==
  * 配置文件中，<code>fs.trash.interval</code>可以设置的CheckPoint的时间间隔，
  * 如果为0，则会禁用trash机制。系统在每个CheckPoint，会将目前<code>.Trash</code>
  * 目录中的<code>Current</code>文件夹命名为当前的CheckPoint值，例如
  * <code>/user/admin/.Trash/1507022014/user/admin/test/input.in</code>，
  * 然后，在下一个CheckPoint，系统将会将所有的超时的CheckPoint彻底删除。
- *
+ * ==
  * 这种设计的优点在于，不用在垃圾管理时遍历要管理的内容，而且不需要文件系统支持
  * 在文件上设置时间，不用同步时钟。
  *
@@ -113,16 +113,16 @@ public class Trash extends Configured {
     if (interval == 0)
       return false;
 
-    if (!path.isAbsolute())                       
+    if (!path.isAbsolute())
       path = new Path(fs.getWorkingDirectory(), path);
 
-    if (!fs.exists(path))                        
+    if (!fs.exists(path))
       throw new FileNotFoundException(path.toString());
 
     String qpath = path.makeQualified(fs).toString();
 
     if (qpath.startsWith(trash.toString())) {
-      return false;                              
+      return false;
     }
 
     if (trash.getParent().toString().startsWith(qpath)) {
@@ -132,12 +132,12 @@ public class Trash extends Configured {
 
     Path trashPath = makeTrashRelativePath(current, path);
     Path baseTrashPath = makeTrashRelativePath(current, path.getParent());
-    
+
     IOException cause = null;
 
     for (int i = 0; i < 2; i++) {
       try {
-        if (!fs.mkdirs(baseTrashPath, PERMISSION)) {    
+        if (!fs.mkdirs(baseTrashPath, PERMISSION)) {
           LOG.warn("Can't create(mkdir) trash directory: "+baseTrashPath);
           return false;
         }
@@ -148,11 +148,11 @@ public class Trash extends Configured {
       }
       try {
         String orig = trashPath.toString();
-        
+
         while(fs.exists(trashPath)) {
           trashPath = new Path(orig + System.currentTimeMillis());
         }
-        
+
         if (fs.rename(path, trashPath))           // move to current trash
           return true;
       } catch (IOException e) {
@@ -187,7 +187,7 @@ public class Trash extends Configured {
    */
   public void expunge() throws IOException {
     FileStatus[] dirs = null;
-    
+
     try {
       dirs = fs.listStatus(trash);            // scan trash sub-directories
     } catch (FileNotFoundException fnfe) {
@@ -223,7 +223,7 @@ public class Trash extends Configured {
   }
 
   /**
-   * 获得当前Trash的工作目录  
+   * 获得当前Trash的工作目录
    */
   Path getCurrentTrashDir() {
     return current;
@@ -265,7 +265,7 @@ public class Trash extends Configured {
         } catch (InterruptedException e) {
           break;                                  // exit on interrupt
         }
-          
+
         try {
           now = System.currentTimeMillis();
           if (now >= end) {
@@ -287,11 +287,11 @@ public class Trash extends Configured {
                 trash.checkpoint();
               } catch (IOException e) {
                 LOG.warn("Trash caught: "+e+". Skipping "+home.getPath()+".");
-              } 
+              }
             }
           }
         } catch (Exception e) {
-          LOG.warn("RuntimeException during Trash.Emptier.run() " + 
+          LOG.warn("RuntimeException during Trash.Emptier.run() " +
                    StringUtils.stringifyException(e));
         }
       }

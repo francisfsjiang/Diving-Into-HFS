@@ -52,52 +52,82 @@ import org.apache.hadoop.util.Progressable;
 import org.apache.hadoop.util.ReflectionUtils;
 
 /****************************************************************
- * FileSystem（下简称FS）是一般的通用文件系统的抽象基类
+ * FileSystem(下简称FS)是一般的通用文件系统的抽象基类
  * 继承了Configured类，提供了访问配置文件的方法
  * 实现了Closeable接口，实现了关闭流的方法
  * FS可以被实现为分布式的文件系统，如HDFS，亦或是一个本地的文件系统，
  * 所有具有访问HDFS的潜在可能的用户代码都应该被封装在一个FileSystem实例里。
  * HDFS是一个对外表现如同单一磁盘的多机系统，
  * 它的容错能力和对大容量存储的支持使得HDFS尤为实用。
- * FileSystem :
- * 1.域：
- * 文件系统的缓存
- * 键
- * 文件系统的子类与统计信息的映射
- * 统计信息
- * 缓存中文件路径的集合
- * 2.内部类：
- * Cache类：用来缓存文件系统
- *    ClientFinalizer类:JVM关闭是调用进行清理
- *    Key类：保存了与文件系统uri的信息，与文件系统对应
- * Statistics:用来记录统计信息的类
- * 3.方法：
- * 文件系统的关闭：
- * closeAll()
- * close()
- * 文件系统的读取数据：
+ * ==
+ * 1. 域:
+ * \begin{XeEnum}
+ *      \item 文件系统的缓存
+ *      \item 键
+ *      \item 文件系统的子类与统计信息的映射
+ *      \item 统计信息
+ *      \item 缓存中文件路径的集合
+ * \end{XeEnum}
+ * ==
+ * 2.内部类:
+ * \begin{XeEnum}
+ *      \item Cache类:用来缓存文件系统
+ *      \item ClientFinalizer类:JVM关闭是调用进行清理
+ *      \item Key类:保存了与文件系统uri的信息，与文件系统对应
+ *      \item Statistics:用来记录统计信息的类
+ * \end{XeEnum}
+ * ==
+ * 3.方法:
+ * ==
+ * 文件系统的关闭:
+ * \begin{XeEnum}
+ *      \item closeAll()
+ *      \item close()
+ * \end{XeEnum}
+ * ==
+ * 文件系统的读取数据:
+ * \begin{quote}
  * FSDataInputStream open(Path f, int bufferSize)
- * 文件系统的写入数据：
- * FSDataOutputStream create(Path f)
- * FSDataOutputStream append(Path f)
- * 重命名操作：
+ * \end{quote}
+ * ==
+ * 文件系统的写入数据:
+ * \begin{quote}
+ * FSDataOutputStream create(Path f) \\
+ * FSDataOutputStream append(Path f) 
+ * \end{quote}
+ * ==
+ * 重命名操作: \\
  * boolean rename(Path src, Path dst)
- * 文件删除操作：
+ * ==
+ * 文件删除操作: \\
  * boolean delete(Path f)
- * 文件或路径测试：
- * boolean exists(Path f)
- * boolean isDirectory(Path f)
- * boolean isFile(Path f)
- * 文件复制操作：
- * copyFromLocalFile(Path src, Path dst)实现将文件从本地复制到其它路径
- * copyToLocalFile(Path src, Path dst)负责将FS下的文件复制到本地
- * 文件移动操作：
- * moveFromLocalFile(Path[] srcs, Path dst)负责将本地文件移动到FS的其它位置
- * moveToLocalFile(Path src, Path dst)将FS下的文件移动到本地
- * 文件查询：
- * FileStatus[] listStatus(Path f)
- * FileStatus[] globStatus(Path pathPattern)
- * 通配格式：
+ * ==
+ * 文件或路径测试: \\
+ * \begin{XeEnum}
+ *      \item boolean exists(Path f)
+ *      \item boolean isDirectory(Path f)
+ *      \item boolean isFile(Path f)
+ * \end{XeEnum}
+ * ==
+ * 文件复制操作:
+ * \begin{XeEnum}
+ *     \item copyFromLocalFile(Path src, Path dst)实现将文件从本地复制到其它路径
+ *     \item copyToLocalFile(Path src, Path dst)负责将FS下的文件复制到本地
+ * \end{XeEnum}
+ * ==
+ * 文件移动操作: \\
+ * \begin{XeEnum}
+ *      \item moveFromLocalFile(Path[] srcs, Path dst)负责将本地文件移动到FS的其它位置
+ *      \item moveToLocalFile(Path src, Path dst)将FS下的文件移动到本地
+ * \end{XeEnum}
+ * == 
+ * 文件查询: \\
+ * \begin{XeEnum}
+ *      \item FileStatus[] listStatus(Path f)
+ *      \item FileStatus[] globStatus(Path pathPattern)
+ * \end{XeEnum}
+ * == 
+ * 通配格式: \\
  * interface PathFilter
  */
 @InterfaceAudience.Public
@@ -801,7 +831,7 @@ public abstract class FileSystem extends Configured implements Closeable {
   /**
    * 重命名一个文件。
    *
-   * 会在如下情形失败：
+   * 会在如下情形失败:
    *
    * - src是文件而dst是目录。
    *

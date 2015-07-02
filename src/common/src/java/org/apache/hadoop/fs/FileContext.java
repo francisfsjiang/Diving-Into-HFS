@@ -53,23 +53,21 @@ import org.apache.hadoop.security.AccessControlException;
 /**
  * FileContext为应用程序开发者提供访问Hadoop FS的接口。FileContext提供了诸如创建、
  * 打开、枚举目录元素(同ls)等方法。
- *
- * <p>
- * <b> *** Path Names *** </b>
- * <p>
- *
+ * ==
  * Hadoop FS支持URI命名空间(a name space)和URI文件名(names)。
  * 它为文件系统提供一个可以用完全限定的URI引用的森林。
  * 两个人通用的Hadoop FS的实现是：
- * <ul>
- * <li> 本地文件系统  file:///path
- * <li> HDFS        hdfs://nnAddress:nnPort/path
- * </ul>
+ * \begin{XeDuoLineTabular}{类型}{URI范例}
+ *     \XeDLTItem{本地文件系统}{file:///path}
+ *     \XeDLTItem{HDFS}{hdfs://nnAddress:nnPort/path}
+ * \end{XeDuoLineTabular}
+ *
+ * ==
  * URI十分灵活，但却要求用户知晓服务器的名字或者地址才可以。
  * 简便起见，开发者通常会希望在特定环境下访问默认文件系统而忽略服务器的名字或者地址。
  * 此举还有一个额外的好处，即是，它允许用户修改自己的默认文件系统（比如，管理员将应用从
  * 集群1迁移至集群2）。
- * <p>
+ * ==
  *
  * 为了实现这一目的，Hadoop支持默认文件系统记号（notion）。
  * 即使默认文件系统的设置通常由默配置给出，用户仍然可以设置自己的文件系统。

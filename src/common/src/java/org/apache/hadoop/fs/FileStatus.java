@@ -27,7 +27,7 @@ import org.apache.hadoop.fs.permission.FsPermission;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 
-/** Interface that represents the client side information for a file.
+/** 
  * 该类抽象提供了文件信息的抽象，屏蔽了具体文件系统的具体实现。
  * 文件的状态信息具体包含有文件路径、文件长度、是否是目录、复制块大小、
  * 块大小、修改时间、访问时间、权限、拥有者、所属的组、符号链接等
@@ -48,7 +48,7 @@ public class FileStatus implements Writable, Comparable {
   private String owner;
   private String group;
   private Path symlink;
-  
+
   public FileStatus() { this(0, false, 0, 0, 0, 0, null, null, null, null); }
 
   /**
@@ -67,7 +67,7 @@ public class FileStatus implements Writable, Comparable {
   public FileStatus(long length, boolean isdir,
                     int block_replication,
                     long blocksize, long modification_time, long access_time,
-                    FsPermission permission, String owner, String group, 
+                    FsPermission permission, String owner, String group,
                     Path path) {
     this(length, isdir, block_replication, blocksize, modification_time,
          access_time, permission, owner, group, null, path);
@@ -90,7 +90,7 @@ public class FileStatus implements Writable, Comparable {
   public FileStatus(long length, boolean isdir,
                     int block_replication,
                     long blocksize, long modification_time, long access_time,
-                    FsPermission permission, String owner, String group, 
+                    FsPermission permission, String owner, String group,
                     Path symlink,
                     Path path) {
     this.length = length;
@@ -99,7 +99,7 @@ public class FileStatus implements Writable, Comparable {
     this.blocksize = blocksize;
     this.modification_time = modification_time;
     this.access_time = access_time;
-    this.permission = (permission == null) ? 
+    this.permission = (permission == null) ?
                       FsPermission.getDefault() : permission;
     this.owner = (owner == null) ? "" : owner;
     this.group = (group == null) ? "" : group;
@@ -130,7 +130,7 @@ public class FileStatus implements Writable, Comparable {
   public boolean isDirectory() {
     return isdir;
   }
-  
+
   /**
    * 判断是否为文件目录，此方法将被isDirectory代替。
    */
@@ -138,7 +138,7 @@ public class FileStatus implements Writable, Comparable {
   public boolean isDir() {
     return isdir;
   }
-  
+
   /**
    * 判断是否为文件链接
    */
@@ -180,14 +180,14 @@ public class FileStatus implements Writable, Comparable {
   public FsPermission getPermission() {
     return permission;
   }
-  
+
   /**
    * 返回文件的所有者，如果文件系统不支持所有者，则返回null
    */
   public String getOwner() {
     return owner;
   }
-  
+
   /**
    * 返回文件所在的工作组，如果文件系统不支持工作组，则是未定义行为
    */
@@ -211,28 +211,28 @@ public class FileStatus implements Writable, Comparable {
     path = p;
   }
 
-  /* These are provided so that these values could be loaded lazily 
+  /* These are provided so that these values could be loaded lazily
    * by a filesystem (e.g. local file system).
    */
-  
+
   /**
    * 设置文件权限
    */
   protected void setPermission(FsPermission permission) {
-    this.permission = (permission == null) ? 
+    this.permission = (permission == null) ?
                       FsPermission.getDefault() : permission;
   }
-  
+
   /**
    * 设置文件所有者，默认为""
-   */  
+   */
   protected void setOwner(String owner) {
     this.owner = (owner == null) ? "" : owner;
   }
-  
+
   /**
    * 设置文件所在工作组，默认为""
-   */  
+   */
   protected void setGroup(String group) {
     this.group = (group == null) ? "" :  group;
   }
@@ -255,7 +255,7 @@ public class FileStatus implements Writable, Comparable {
   public void setSymlink(final Path p) {
     symlink = p;
   }
-  
+
   //////////////////////////////////////////////////
   // Writable
   /////////////////////////////////////////////////
@@ -312,7 +312,7 @@ public class FileStatus implements Writable, Comparable {
     FileStatus other = (FileStatus)o;
     return this.getPath().compareTo(other.getPath());
   }
-  
+
   /**
    * 通过判断路径是否相等来判断此文件和给定的文件是否相同
    */
@@ -329,7 +329,7 @@ public class FileStatus implements Writable, Comparable {
     FileStatus other = (FileStatus)o;
     return this.getPath().equals(other.getPath());
   }
-  
+
   /**
    * 返回此文件的hash码，即文件的路径的hash码
    *

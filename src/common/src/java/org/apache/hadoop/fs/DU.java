@@ -28,8 +28,8 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * 文件夹的磁盘使用状态
- * 继承自{org.apache.hadoop.util.Shell}，在Shell中调用系统工具
+ * 文件夹的磁盘使用状态.
+ * 继承自{@link org.apache.hadoop.util.Shell}，在Shell中调用系统工具
  * 使用<code>du -sk <path></code>实现，该命令无法在Windows环境下使用
  * 在Windows环境下使用<code>dir <path></code>能得到相关信息，但无关的输出过多
  * 内部使用一个线程定期执行命令刷新状态
@@ -44,18 +44,18 @@ public class DU extends Shell {
   private Thread refreshUsed;
   private IOException duException = null;
   private long refreshInterval;
-  
+
   /**
    * 设置磁盘监控的路径以及时间间隔，开始保持对磁盘使用量的监控，
    */
   public DU(File path, long interval) throws IOException {
     super(0);
-    
+
     //we set the Shell interval to 0 so it will always run our command
     //and use this one to set the thread sleep interval
     this.refreshInterval = interval;
     this.dirPath = path.getCanonicalPath();
-    
+
     //populate the used variable
     run();
   }
@@ -69,14 +69,14 @@ public class DU extends Shell {
    * 刷新线程
    */
   class DURefreshThread implements Runnable {
-    
+
     public void run() {
-      
+
       while(shouldRun) {
 
         try {
           Thread.sleep(refreshInterval);
-          
+
           try {
             //update the used variable
             DU.this.run();
@@ -85,7 +85,7 @@ public class DU extends Shell {
               //save the latest exception so we can return it in getUsed()
               duException = e;
             }
-            
+
             LOG.warn("Could not get disk usage information", e);
           }
         } catch (InterruptedException e) {
@@ -93,7 +93,7 @@ public class DU extends Shell {
       }
     }
   }
-  
+
   /**
    * 减少系统预留的磁盘空间
    */
@@ -107,7 +107,7 @@ public class DU extends Shell {
   public void incDfsUsed(long value) {
     used.addAndGet(value);
   }
-  
+
   /**
    * 返回磁盘使用量
    */
@@ -125,7 +125,7 @@ public class DU extends Shell {
         }
       }
     }
-    
+
     return used.longValue();
   }
 
@@ -135,7 +135,7 @@ public class DU extends Shell {
   public String getDirPath() {
     return dirPath;
   }
-  
+
   /**
    * 开启一个进程，来监控磁盘使用
    */
@@ -147,18 +147,18 @@ public class DU extends Shell {
       refreshUsed.start();
     }
   }
-  
+
   /**
    * 关闭刷新线程
    */
   public void shutdown() {
     this.shouldRun = false;
-    
+
     if (this.refreshUsed != null) {
       this.refreshUsed.interrupt();
     }
   }
-  
+
   public String toString() {
     return "du -sk " + dirPath +"\n" + used + "\t" + dirPath;
   }

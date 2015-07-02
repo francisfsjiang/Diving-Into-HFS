@@ -31,10 +31,10 @@ import org.apache.hadoop.fs.CommonConfigurationKeys;
 import org.apache.hadoop.util.Shell;
 
 /**
- * 磁盘空间状态
- * 继承自{org.apache.hadoop.util.Shell}，在Shell中调用系统工具
+ * 磁盘空间状态.
+ * 继承自{@link org.apache.hadoop.util.Shell}，在Shell中调用系统工具
  * <code>df -k <path></code>实现，该命令无法在Windows环境下使用
- * 一种选择是在Windows环境下使用<code>fsutil volume diskfree <path></code>替换
+ * 一种选择是在Windows环境下使用<code>fsutil volume diskfree</code>替换
  */
 @InterfaceAudience.LimitedPrivate({"HDFS", "MapReduce"})
 @InterfaceStability.Evolving
@@ -95,7 +95,7 @@ public class DF extends Shell {
   protected OSType getOSType() {
     return OS_TYPE;
   }
-  
+
   /// ACCESSORS
 
   /**
@@ -150,7 +150,7 @@ public class DF extends Shell {
     run();
     return mount;
   }
-  
+
   public String toString() {
     return
       "df -k " + mount +"\n" +
@@ -178,13 +178,13 @@ public class DF extends Shell {
   @Override
   protected void parseExecResult(BufferedReader lines) throws IOException {
     lines.readLine();                         // skip headings
-  
+
     String line = lines.readLine();
     if (line == null) {
       throw new IOException( "Expecting a line not the end of stream" );
     }
     StringTokenizer tokens = new StringTokenizer(line, " \t\n\r\f%");
-    
+
     this.filesystem = tokens.nextToken();
     if (!tokens.hasMoreTokens()) {            // for long filesystem name
       line = lines.readLine();

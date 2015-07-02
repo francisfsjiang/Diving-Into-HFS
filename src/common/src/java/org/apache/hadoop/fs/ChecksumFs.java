@@ -47,7 +47,7 @@ import org.apache.hadoop.util.StringUtils;
  * 定期验证这个 datanode 上的所有数据块。
  * 在用Hadoop fs get命令读取文件时，可以用-ignoreCrc忽略验证。
  * 如果是通过FileSystem API 读取时，可以通过setVerifyChecksum(false)，忽略验证。
- *
+ * ==
  * 抽象检验文件系统 从文件系统过滤器类继承
  * 提供一个基本的文件校验系统的实现
  * 在客户端生成并且检验检验和，检验数据的完整性
@@ -64,14 +64,14 @@ public abstract class ChecksumFs extends FilterFs {
   public static double getApproxChkSumLength(long size) {
     return ChecksumFSOutputSummer.CHKSUM_AS_FRACTION * size;
   }
-  
+
   public ChecksumFs(AbstractFileSystem theFs)
     throws IOException, URISyntaxException {
     super(theFs);
-    defaultBytesPerChecksum = 
+    defaultBytesPerChecksum =
       getMyFs().getServerDefaults().getBytesPerChecksum();
   }
-  
+
   /**
    * 布尔值 设置是否检验了校验和
    */
@@ -128,21 +128,21 @@ public abstract class ChecksumFs extends FilterFs {
    * 确认数据和检验和是否匹配
    */
   private static class ChecksumFSInputChecker extends FSInputChecker {
-    public static final Log LOG 
+    public static final Log LOG
       = LogFactory.getLog(FSInputChecker.class);
     private static final int HEADER_LENGTH = 8;
-    
+
     private ChecksumFs fs;
     private FSDataInputStream datas;
     private FSDataInputStream sums;
     private int bytesPerSum = 1;
     private long fileLen = -1L;
-    
+
     public ChecksumFSInputChecker(ChecksumFs fs, Path file)
       throws IOException, UnresolvedLinkException {
       this(fs, file, fs.getServerDefaults().getFileBufferSize());
     }
-    
+
     public ChecksumFSInputChecker(ChecksumFs fs, Path file, int bufferSize)
       throws IOException, UnresolvedLinkException {
       super(file, fs.getFileStatus(file).getReplication());
@@ -164,25 +164,25 @@ public abstract class ChecksumFs extends FilterFs {
       } catch (FileNotFoundException e) {         // quietly ignore
         set(fs.verifyChecksum, null, 1, 0);
       } catch (IOException e) {                   // loudly ignore
-        LOG.warn("Problem opening checksum file: "+ file + 
-                 ".  Ignoring exception: " + 
+        LOG.warn("Problem opening checksum file: "+ file +
+                 ".  Ignoring exception: " +
                  StringUtils.stringifyException(e));
         set(fs.verifyChecksum, null, 1, 0);
       }
     }
-    
+
     private long getChecksumFilePos(long dataPos) {
       return HEADER_LENGTH + 4*(dataPos/bytesPerSum);
     }
-    
+
     protected long getChunkPosition(long dataPos) {
       return dataPos/bytesPerSum*bytesPerSum;
     }
-    
+
     public int available() throws IOException {
       return datas.available() + super.available();
     }
-    
+
     public int read(long position, byte[] b, int off, int len)
       throws IOException, UnresolvedLinkException {
       // parameter check
@@ -202,7 +202,7 @@ public abstract class ChecksumFs extends FilterFs {
       checker.close();
       return nread;
     }
-    
+
     public void close() throws IOException {
       datas.close();
       if (sums != null) {
@@ -210,7 +210,7 @@ public abstract class ChecksumFs extends FilterFs {
       }
       set(fs.verifyChecksum, null, 1, 0);
     }
-    
+
     @Override
     public boolean seekToNewSource(long targetPos) throws IOException {
       final long sumsPos = getChecksumFilePos(targetPos);
@@ -231,7 +231,7 @@ public abstract class ChecksumFs extends FilterFs {
         final int checksumsToRead = Math.min(
           len/bytesPerSum, // number of checksums based on len to read
           checksum.length / CHECKSUM_SIZE); // size of checksum buffer
-        long checksumPos = getChecksumFilePos(pos); 
+        long checksumPos = getChecksumFilePos(pos);
         if(checksumPos != sums.getPos()) {
           sums.seek(checksumPos);
         }
@@ -258,7 +258,7 @@ public abstract class ChecksumFs extends FilterFs {
       }
       return nread;
     }
-    
+
     /* Return the file length */
     private long getFileLength() throws IOException, UnresolvedLinkException {
       if (fileLen==-1L) {
@@ -277,7 +277,7 @@ public abstract class ChecksumFs extends FilterFs {
      * @exception  发生返回错误时抛出IOException
      *             当跳过的数据块损坏时，抛出ChecksumException
      */
-    public synchronized long skip(long n) throws IOException { 
+    public synchronized long skip(long n) throws IOException {
       final long curPos = getPos();
       final long fileLength = getFileLength();
       if (n+curPos > fileLength) {
@@ -297,7 +297,7 @@ public abstract class ChecksumFs extends FilterFs {
      *             查找的数据块损坏时抛出ChecksumException
      */
 
-    public synchronized void seek(long pos) throws IOException { 
+    public synchronized void seek(long pos) throws IOException {
       if (pos>getFileLength()) {
         throw new IOException("Cannot seek after EOF");
       }
@@ -312,7 +312,7 @@ public abstract class ChecksumFs extends FilterFs {
    * @param bufferSize buffer需要的空间大小
    */
   @Override
-  public FSDataInputStream open(Path f, int bufferSize) 
+  public FSDataInputStream open(Path f, int bufferSize)
     throws IOException, UnresolvedLinkException {
     return new FSDataInputStream(
         new ChecksumFSInputChecker(this, f, bufferSize));
@@ -326,24 +326,24 @@ public abstract class ChecksumFs extends FilterFs {
    */
   public static long getChecksumLength(long size, int bytesPerSum) {
     //the checksum length is equal to size passed divided by bytesPerSum +
-    //bytes written in the beginning of the checksum file.  
+    //bytes written in the beginning of the checksum file.
     return ((size + bytesPerSum - 1) / bytesPerSum) * 4 +
-             CHECKSUM_VERSION.length + 4;  
+             CHECKSUM_VERSION.length + 4;
   }
 
   /** 给校验过的文件提供一个输出流
    * 为数据生成检验和.
    */
   private static class ChecksumFSOutputSummer extends FSOutputSummer {
-    private FSDataOutputStream datas;    
+    private FSDataOutputStream datas;
     private FSDataOutputStream sums;
     private static final float CHKSUM_AS_FRACTION = 0.01f;
-    
-    
-    public ChecksumFSOutputSummer(final ChecksumFs fs, final Path file, 
+
+
+    public ChecksumFSOutputSummer(final ChecksumFs fs, final Path file,
       final EnumSet<CreateFlag> createFlag,
       final FsPermission absolutePermission, final int bufferSize,
-      final short replication, final long blockSize, 
+      final short replication, final long blockSize,
       final Progressable progress, final int bytesPerChecksum,
       final boolean createParent) throws IOException {
       super(new PureJavaCrc32(), fs.getBytesPerSum(), 4);
@@ -351,7 +351,7 @@ public abstract class ChecksumFs extends FilterFs {
       this.datas = fs.getRawFs().createInternal(file, createFlag,
           absolutePermission, bufferSize, replication, blockSize, progress,
            bytesPerChecksum,  createParent);
-      
+
       // Now create the chekcsumfile; adjust the buffsize
       int bytesPerSum = fs.getBytesPerSum();
       int sumBufferSize = fs.getSumBufferSize(bytesPerSum, bufferSize);
@@ -361,13 +361,13 @@ public abstract class ChecksumFs extends FilterFs {
       sums.write(CHECKSUM_VERSION, 0, CHECKSUM_VERSION.length);
       sums.writeInt(bytesPerSum);
     }
-    
+
     public void close() throws IOException {
       flushBuffer();
       sums.close();
       datas.close();
     }
-    
+
     @Override
     protected void writeChunk(byte[] b, int offset, int len, byte[] checksum)
       throws IOException {
@@ -392,7 +392,7 @@ public abstract class ChecksumFs extends FilterFs {
   /** Check if exists.
    * @param f source file
    */
-  private boolean exists(Path f) 
+  private boolean exists(Path f)
     throws IOException, UnresolvedLinkException {
     try {
       return getMyFs().getFileStatus(f) != null;
@@ -400,12 +400,12 @@ public abstract class ChecksumFs extends FilterFs {
       return false;
     }
   }
-  
+
   /** True iff the named path is a directory.
-   * Note: Avoid using this method. Instead reuse the FileStatus 
+   * Note: Avoid using this method. Instead reuse the FileStatus
    * returned by getFileStatus() or listStatus() methods.
    */
-  private boolean isDirectory(Path f) 
+  private boolean isDirectory(Path f)
     throws IOException, UnresolvedLinkException {
     try {
       return getMyFs().getFileStatus(f).isDirectory();
@@ -440,7 +440,7 @@ public abstract class ChecksumFs extends FilterFs {
    * 重命名 files/dirs
    */
   @Override
-  public void renameInternal(Path src, Path dst) 
+  public void renameInternal(Path src, Path dst)
     throws IOException, UnresolvedLinkException {
     if (isDirectory(src)) {
       getMyFs().rename(src, dst);
@@ -461,7 +461,7 @@ public abstract class ChecksumFs extends FilterFs {
   /**
    * 在校验和文件系统中执行delete(Path, boolean)
    */
-  public boolean delete(Path f, boolean recursive) 
+  public boolean delete(Path f, boolean recursive)
     throws IOException, UnresolvedLinkException {
     FileStatus fstatus = null;
     try {

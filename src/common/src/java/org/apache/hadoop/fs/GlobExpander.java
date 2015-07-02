@@ -37,13 +37,13 @@ class GlobExpander {
       this.offset = offset;
     }
   }
-  
+
   /**
    * 静态方法expand()匹配指定模式的文件名或目录名称filePattern
    * 并将其结果存入List<String>对象fullyExpanded中返回
    * @param filePattern
    * @return List<String>对象
-   * @throws IOException 
+   * @throws IOException
    */
   public static List<String> expand(String filePattern) throws IOException {
     List<String> fullyExpanded = new ArrayList<String>();
@@ -60,22 +60,22 @@ class GlobExpander {
     }
     return fullyExpanded;
   }
-  
+
   /**
    * 静态方法expandLeftmost()最左匹配带有偏移量模式的文件名或目录名称filePatternWithOffset
    * 从内部类StringWithOffset对象filePatternWithOffset中获得filePattern
    * 并调用leftmostOuterCurlyContainingSlash(filePattern,ilePatternWithOffset.offset)方法
    * 获得leftmost值,若为-1则返回null
    * 通过给定的leftmost获得filePattern的子串赋值为prefix
-   * 以leftmost整数值作为起点遍历filePattern串中的字符
+   * 以leftmost整数值作为起点遍历filePattern串中的字符,
    * 并以'//','{','}',','分情况处理
    * @param filePattern
    * @return List<StringWithOffset>对象 exp
-   * @throws IOException 
+   * @throws IOException
    */
   private static List<StringWithOffset> expandLeftmost(StringWithOffset
       filePatternWithOffset) throws IOException {
-    
+
     String filePattern = filePatternWithOffset.string;
     int leftmost = leftmostOuterCurlyContainingSlash(filePattern,
         filePatternWithOffset.offset);
@@ -134,7 +134,7 @@ class GlobExpander {
     }
     return exp;
   }
-  
+
   /**
    * 静态方法leftmostOuterCurlyContainingSlash以offset整数值作为起点遍历filePattern串中的字符
    * 并以'//','{','}','/'分情况处理,找到能在'{}'字符之间找到'/'的最大下标值并返回
@@ -142,7 +142,7 @@ class GlobExpander {
    * @param filePattern
    * @param offset
    * @return int数据类型
-   * @throws IOException 
+   * @throws IOException
    */
   private static int leftmostOuterCurlyContainingSlash(String filePattern,
       int offset) throws IOException {

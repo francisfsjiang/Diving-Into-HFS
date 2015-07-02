@@ -52,12 +52,12 @@ import org.apache.hadoop.util.Progressable;
  * 而是通过{@link FileContext}实例来访问文件系统中的文件.
  * 传递给AFS的路径(pathnames)可以是符合具体文件系统规定的、完全限定的URI,
  * 也可以是以给定文件系统的根目录为'/'目录的, 以‘/’分隔的路径（同Unix体系）.
- *
+ * ==
  * 由于AbstractFileSystem本身是提供给文件系统实现者的接口,
  * 且Hadoop FS中对文件的访问全部由{@link FileContext}控制, 所以,
  * 这个类里没有public方法, 而是提供了三类protected方法:
- * 
  *
+ * ==
  * AFS实例由工厂方法{@link AbstractFileSystem#get(URI, Configuration)}创建.
  * AFS中封装了一批通用操作的抽象方法, 这些方法由具体文件系统的实现者实现.
  */
@@ -107,7 +107,6 @@ public abstract class AbstractFileSystem {
 
   /**
    * 反射机制实现的初始化, URI和Configuration会被传递给实际的构造方法
-   * Create an object for the given class and initialize it from conf.
    * @param theClass class of which an object is created
    * @param conf Configuration
    * @return a new object
@@ -133,9 +132,6 @@ public abstract class AbstractFileSystem {
   /**
    * 通URI和Configuration创建AFS实例,
    * 该方法被直接用于工厂方法{@link AbstractFileSystem#get(URI, Configuration)}
-   * Create a file system instance for the specified uri using the conf. The
-   * conf is used to find the class name that implements the file system. The
-   * conf is also passed to the file system for its configuration.
    *
    * @param uri URI of the file system
    * @param conf Configuration for the file system
@@ -190,7 +186,7 @@ public abstract class AbstractFileSystem {
   /**
    * 创建AbstractFileSystem实例的主要工厂方法, 通过URI的体系（scheme）和权限获取文件系统.
    * URI中描述的体系确定配置中一个名为
-   * <tt>fs.AbstractFileSystem.<i>scheme</i>.impl</tt>
+   * <code>fs.AbstractFileSystem.scheme.impl</code>
    * 的属性, 这个属性的值就是该scheme对应的AbstractFileSystem类的具体实现.
    * 完整的URI和配置信息会被传递给AbstractFileSystem的工厂方法, 即
    * {@link AbstractFileSystem#createFileSystem(URI, Configuration)}

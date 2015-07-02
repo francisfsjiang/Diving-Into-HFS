@@ -22,9 +22,9 @@ import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 
 /**
- * InvalidPathException类继承自HadoopIllegalArgumentException类
- * 拥有一个静态的私有常量 serialVersionUID = 1L
- * 文件目录路径字符串若是无效的可能因为其无效的特征值或者其他文件系统的特定原因
+ * InvalidPathException类继承自HadoopIllegalArgumentException类,
+ * 拥有一个静态的私有常量 serialVersionUID = 1L,
+ * 文件目录路径字符串若是无效的可能因为其无效的特征值或者其他文件系统的特定原因.
  * @author benco
  */
 @InterfaceAudience.Public
@@ -33,7 +33,7 @@ public class InvalidPathException extends HadoopIllegalArgumentException {
   private static final long serialVersionUID = 1L;
 
   /**
-   * InvalidPathException第一个构造函数接收一个参数
+   * InvalidPathException第一个构造函数接收一个参数,
    * String path是具有特定细节的信息
    * @param path invalid path.
    */
@@ -42,9 +42,9 @@ public class InvalidPathException extends HadoopIllegalArgumentException {
   }
 
   /**
-   * InvalidPathException第二个构造函数接收两个参数
-   * String path是具有特定细节的信息
-   * String reason是具有解释path是非法的原因的信息
+   * InvalidPathException第二个构造函数接收两个参数,
+   * String path是具有特定细节的信息,
+   * String reason是具有解释path是非法的原因的信息.
    * @param path invalid path.
    * @param reason Reason <code>path</code> is invalid
    */

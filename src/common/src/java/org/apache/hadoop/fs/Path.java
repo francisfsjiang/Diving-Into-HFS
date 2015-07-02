@@ -13,11 +13,13 @@ import org.apache.hadoop.conf.Configuration;
 @InterfaceStability.Stable
 
 /**
- * Hadoop中路径分为两类：
+ * Hadoop中路径分为两类：\\
  * 1.绝对路径：
- * （1）完全限定的URI ：scheme://authority/path
- * （2）以斜杠开头的路径：/path 表示相对于默认的文件系统，即相当于default-scheme://default-authority/path
- * 2.相对路径：path 相对于工作目录
+ * \begin{XeItem}
+ *     \item 完全限定的URI, scheme://authority/path
+ *     \item 以斜杠开头的路径, /path 表示相对于默认的文件系统, 即相当于default-scheme://default-authority/path
+ * \end{XeItem}
+ * 2.相对路径：path相对于工作目录
  */
 public class Path implements Comparable {
 
