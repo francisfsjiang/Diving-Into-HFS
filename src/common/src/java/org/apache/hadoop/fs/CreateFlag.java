@@ -21,23 +21,15 @@ import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 
 /****************************************************************
- *CreateFlag specifies the file create semantic. Users can combine flags like:<br>
- *<code>
- * EnumSet.of(CreateFlag.CREATE, CreateFlag.APPEND)
- * <code>
- * and pass it to {@link org.apache.hadoop.fs.FileSystem #create(Path f, FsPermission permission,
- * EnumSet<CreateFlag> flag, int bufferSize, short replication, long blockSize,
- * Progressable progress)}.
- * 
- * <p>
- * Combine {@link #OVERWRITE} with either {@link #CREATE} 
- * or {@link #APPEND} does the same as only use 
- * {@link #OVERWRITE}. <br>
- * Combine {@link #CREATE} with {@link #APPEND} has the semantic:
- * <ol>
- * <li> create the file if it does not exist;
- * <li> append the file if it already exists.
- * </ol>
+ *
+ * <code>CreateFlag</code>表示了创建文件的语法，用户可以组合多种创建
+ * 方式，比如将CREATA和APPEND组合起来，那么则会创建不存在的文件并开始向
+ * 文件末尾添加内容，或者向
+ * 现有文件末尾添加。
+ *
+ * 创建好之后可以作为参数传递给{@link FileSystem#create}
+ * 方法，来实现文件的创建。
+ *
  *****************************************************************/
 @InterfaceAudience.Public
 @InterfaceStability.Stable
@@ -49,12 +41,12 @@ public enum CreateFlag {
   CREATE((short) 0x01),
 
   /**
-   * create the file if it does not exist, if it exists, overwrite it.
+   * 如果文件不存在，则创建文件，如果存在，则复写
    */
   OVERWRITE((short) 0x02),
 
   /**
-   * append to a file, and throw an IOException if it does not exist
+   * 向文件末尾添加内容，如果文件内容不存在，则抛出<code>IOException</code>
    */
   APPEND((short) 0x04);
 

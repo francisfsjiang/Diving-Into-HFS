@@ -22,8 +22,7 @@ import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
 
 /** 
- * 此类包含常用代码中的常用配置键值
- *
+ * 此类包含HadoopCommon中配置文件的所有键的键值，以静态public成员的方式提供。
  */
 @InterfaceAudience.Private
 @InterfaceStability.Unstable
