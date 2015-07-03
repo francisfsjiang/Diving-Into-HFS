@@ -1,4 +1,23 @@
 \chapter{详细代码分析}
 \label{ch:src}
 
- \input{gen/IncludeAll}
+\section{关于本章}
+\label{ch:src:about}
+
+本章中的所有内容, 如类图, 类注释, 方法注释, 方法的限定词, 返回值, 可见性等,
+均是由{\thesisTeam}自行编写的工具, 在我们分析并注释过的代码基础之上自动抽取生成,
+并完成格式化的.
+
+其中, 描述可见性的Modifier使用图标表示, 其意义如下:
+\begin{XeDuoLineTabular}[cl]{图示}{含义}
+    \XeDLTItem{\XePublic}{public}
+    \XeDLTItem{\XePrivate}{private}
+    \XeDLTItem{\XeProtected}{protected}
+\end{XeDuoLineTabular}
+
+更高层次的内容已经在\XeChapRef{ch:intro}到\XeChapRef{ch:hfs}之间表述,
+而更详细的实现级别的细节, 囿于篇幅限制, 尽在源码中呈现,
+本章呈现的是地位居中的部分, 即支持{\HFS}运转的核心类的重点方法,
+非重点部分已经被在文档和类图中同时裁剪.
+
+% \input{gen/IncludeAll}

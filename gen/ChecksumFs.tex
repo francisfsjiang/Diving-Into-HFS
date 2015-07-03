@@ -1,5 +1,5 @@
 \begin{XeClass}{ChecksumFs}
-\includegraphics[width=10cm]{cdig/ChecksumFs.png}
+\includegraphics[width=\textwidth]{cdig/ChecksumFs.png}
      
  HDFS 会对写入的所有数据计算校验和(checksum)，并在读取数据时验证校验和。
  针对指定字节的数目计算校验和。字节数默认是512 字节，可以通过io.bytes.per.checksum属性设置。
@@ -89,7 +89,7 @@
     \end{XeMethod}
 
     \begin{XeInnerClass}{ChecksumFSInputChecker}
-\includegraphics[width=10cm]{cdig/ChecksumFSInputChecker.png}
+\includegraphics[width=\textwidth]{cdig/ChecksumFSInputChecker.png}
          
  open()方法的FS输入流
  确认数据和检验和是否匹配
@@ -112,7 +112,7 @@
 
     \end{XeInnerClass}
     \begin{XeInnerClass}{ChecksumFSOutputSummer}
-\includegraphics[width=10cm]{cdig/ChecksumFSOutputSummer.png}
+\includegraphics[width=\textwidth]{cdig/ChecksumFSOutputSummer.png}
          
  给校验过的文件提供一个输出流
  为数据生成检验和.

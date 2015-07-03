@@ -1,5 +1,5 @@
 \begin{XeClass}{FileSystem}
-\includegraphics[width=10cm]{cdig/FileSystem.png}
+\includegraphics[width=\textwidth]{cdig/FileSystem.png}
      
  FileSystem(下简称FS)是一般的通用文件系统的抽象基类
  继承了Configured类，提供了访问配置文件的方法
@@ -491,7 +491,7 @@
 
 
     \begin{XeInnerClass}{Cache}
-\includegraphics[width=10cm]{cdig/Cache.png}
+\includegraphics[width=\textwidth]{cdig/Cache.png}
          
  缓存文件系统对象的静态内部类
  1.主要记录了Key和文件系统的映射，以及Key的集合
@@ -500,7 +500,7 @@
  2.其主要方法包括获取、删除、关闭Key所对应的文件系统实例
 
         \begin{XeInnerClass}{ClientFinalizer}
-\includegraphics[width=10cm]{cdig/ClientFinalizer.png}
+\includegraphics[width=\textwidth]{cdig/ClientFinalizer.png}
              
  ClientFinalizer类继承了Thread类
  当Java虚拟机停止运行时,该线程才会启动
@@ -508,14 +508,14 @@
 
         \end{XeInnerClass}
         \begin{XeInnerClass}{Key}
-\includegraphics[width=10cm]{cdig/Key.png}
+\includegraphics[width=\textwidth]{cdig/Key.png}
              
  FileSystem.Cache.Key
 
         \end{XeInnerClass}
     \end{XeInnerClass}
     \begin{XeInnerClass}{Statistics}
-\includegraphics[width=10cm]{cdig/Statistics.png}
+\includegraphics[width=\textwidth]{cdig/Statistics.png}
          
  统计信息——静态内部类
  主要包含了URI的模式信息，被用于AbstractFileSystem和link FileSystem

@@ -1,5 +1,5 @@
 \begin{XeClass}{FileContext}
-\includegraphics[width=10cm]{cdig/FileContext.png}
+\includegraphics[width=\textwidth]{cdig/FileContext.png}
      
  FileContext为应用程序开发者提供访问Hadoop FS的接口。FileContext提供了诸如创建、
  打开、枚举目录元素(同ls)等方法。
@@ -23,7 +23,7 @@
  会被解析成相对于默认文件系统的路径。
 
     \begin{XeInnerClass}{Util}
-\includegraphics[width=10cm]{cdig/Util.png}
+\includegraphics[width=\textwidth]{cdig/Util.png}
          
  Utility/library methods built over the basic FileContext methods.
  Since this are library functions, the oprtation are not atomic
@@ -33,13 +33,13 @@
     \end{XeInnerClass}
 
     \begin{XeInnerClass}{FileContextFinalizer}
-\includegraphics[width=10cm]{cdig/FileContextFinalizer.png}
+\includegraphics[width=\textwidth]{cdig/FileContextFinalizer.png}
          
  Deletes all the paths in deleteOnExit on JVM shutdown.
 
     \end{XeInnerClass}
     \begin{XeInnerClass}{FSLinkResolver}
-\includegraphics[width=10cm]{cdig/FSLinkResolver.png}
+\includegraphics[width=\textwidth]{cdig/FSLinkResolver.png}
          
  Class used to perform an operation on and resolve symlinks in a
  path. The operation may potentially span multiple file systems.

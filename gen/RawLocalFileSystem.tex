@@ -1,5 +1,5 @@
 \begin{XeClass}{RawLocalFileSystem}
-\includegraphics[width=10cm]{cdig/RawLocalFileSystem.png}
+\includegraphics[width=\textwidth]{cdig/RawLocalFileSystem.png}
      
  该类实现了一个原生本地文件系统。可以作为一个具有最基本功能的文件系统。
 
@@ -29,21 +29,21 @@
     \end{XeMethod}
 
     \begin{XeInnerClass}{TrackingFileInputStream}
-\includegraphics[width=10cm]{cdig/TrackingFileInputStream.png}
+\includegraphics[width=\textwidth]{cdig/TrackingFileInputStream.png}
          
  本地文件系统的读取操作
  会将读到的字节数添加到统计信息中
 
     \end{XeInnerClass}
     \begin{XeInnerClass}{LocalFSFileInputStream}
-\includegraphics[width=10cm]{cdig/LocalFSFileInputStream.png}
+\includegraphics[width=\textwidth]{cdig/LocalFSFileInputStream.png}
          
  依靠包装的FileInputStream的实例进行读取操作
  通过 TrackingFileInputStream来初始化
 
     \end{XeInnerClass}
     \begin{XeInnerClass}{LocalFSFileOutputStream}
-\includegraphics[width=10cm]{cdig/LocalFSFileOutputStream.png}
+\includegraphics[width=\textwidth]{cdig/LocalFSFileOutputStream.png}
          
  For create()'s FSOutputStream.
  同输入流，依靠包装的FileOutputStream的实例进行写入操作
