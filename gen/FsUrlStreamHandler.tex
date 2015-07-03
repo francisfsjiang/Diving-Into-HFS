@@ -1,0 +1,15 @@
+\begin{XeClass}{FsUrlStreamHandler}
+\includegraphics[width=10cm]{cdig/FsUrlStreamHandler.png}
+     
+ FsUrlStreamHandler类继承自URLStreamHandler,URLStreamHandler依赖于FileSystem类
+ 并且传入Configuration对象conf到其构造函数FsUrlStreamHandler(Configuration conf)
+ FsUrlStreamHandler拥有一个私有的实例对象 Configuration对象conf
+ FsUrlStreamHandler类的另一个构造函数是将其conf属性指向一个新的Configuration对象
+
+    \begin{XeMethod}{\XeProtected}{FsUrlConnection}{openConnection}
+         
+ 通过调用FsUrlConnection(conf, url)构造函数生成一个FsUrlConnection对象
+
+    \end{XeMethod}
+
+\end{XeClass}

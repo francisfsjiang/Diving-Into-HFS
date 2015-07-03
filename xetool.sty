@@ -31,7 +31,7 @@
     \end{itemize}
 }
 \newenvironment{XeMethod}[3]{%
-%    \hspace{1em} \\ [0.5em]
+    \hspace{0em} \\ [-0.5em]
     \begin{minipage}[t]{0.05\textwidth}
 		%\begin{table}[h]
 			\begin{tabular}{c}
@@ -40,15 +40,16 @@
 		%\end{table}
     \end{minipage}
     \begin{minipage}[t]{0.95\textwidth}
-        \textbf{#2} :: \textbf{#3} \\
+        \textbf{#2} :: \textbf{#3}
 }{%
     \end{minipage}
+	\vspace{-1.5em}
 }
 
 \newenvironment{XeClass}[1]{%
     \section{#1}
 	\def\MXeClassName{#1}
-}{%I
+}{%
 }
 
 \newenvironment{XeInnerClass}[1]{%
