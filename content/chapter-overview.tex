@@ -1,3 +1,5 @@
+% !TEX root = ../report.tex
+%
 \chapter{\HFS 总体架构}
 \label{ch:hfs}
 
@@ -11,7 +13,7 @@
 因此, 如果将下起硬件上至{\HFS}的视作一个完整的系统, 则{\HFS}构成一个典型的\textbf{层次结构},
 状如下图:
 
-\InsertFigure{hfs/h-arch.png}{参考VHF的架构图}
+\blankfigure{参考VHF的架构图}
 
 从系统外部观察{\HFS}, 它是一个在层层抽象的基础上构建起来系统.
 
@@ -186,35 +188,5 @@ URI十分灵活, 但却要求用户知晓服务器的名字或者地址才可以
 \subsection{{\Trash}机制}
 \label{ssec:hfs:trashing}
 
-\def\Trash{\emph{Trash}}
-\def\trash{\emph{trash}}
-{\Trash}机制是指, 文件在删除时会被移动到用户的{\trash}文件夹下,
-这个文件夹位于每个用户的home文件夹下, 名字为\emph{.Trash}.
-文件被删除时, 会先在{\Trash}文件夹下建一个子目录\emph{Current},
-被删除的文件将会将会被移动到\emph{Current}目录下的与原目录相同的目录,
-比如说文件
-\begin{quote}
-    /user/admin/test/input.in
-\end{quote}
-在被删除后, 将会被移动到
-\begin{quote}
-    /user/admin/.Trash/Current/user/admin/test/input.in
-\end{quote}
-配置文件中, \emph{fs.trash.interval}可以设置的\emph{CheckPoint}的时间间隔,
-如果为0, 则会禁用{\trash}机制. 系统在每个\emph{CheckPoint}, 会将目前\emph{.Trash}
-目录中的\emph{Current}文件夹命名为当前的\emph{CheckPoint}值, 例如
-\begin{quote}
-    /user/admin/.Trash/1507022014/user/admin/test/input.in
-\end{quote}
-然后, 在下一个\emph{CheckPoint}, 系统将会将所有的超时的\emph{CheckPoint}彻底删除.
-这种设计的优点在于, 不用在垃圾管理时遍历要管理的内容,
-而且不需要文件系统支持在文件上设置时间, 不需要同步时钟.
-
-\subsection{Addressing}
-\label{ssec:hfs:addressing}
-
-% TODO 还差一个引用
-
-从{\HDFS}的架构图中可以看到, {\HDFS}中有两种角色, 即{\NameN}和{\DataN}.
-
-其中{\DataN}的职能在于, 通过用户指定的\emph{URI}计算并反馈用于``寻址''目标文件所在地的方式.
+\subsection{命名查找机制}
+\label{ssec:hfs:naming}

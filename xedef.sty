@@ -10,6 +10,7 @@
 \newcommand{\HadoopDFS}{\emph{Hadoop Distributed File System}}
 \newcommand{\VirtualFS}{\emph{Virtual File System}}
 \newcommand{\Unix}{\emph{Unix}}
+\newcommand{\Windows}{\emph{Windows}}
 \newcommand{\MapReduce}{\emph{MapReduce}}
 
 \newcommand{\NameN}{\emph{NameNode}}
@@ -26,3 +27,14 @@
 \newcommand{\JH}{JAVA\_{}HOME}
 \newcommand{\CPATH}{CLASS\_{}PATH}
 \newcommand{\HHOME}{HADOOP\_{}HOME}
+
+\newcommand{\InsertFigure}[3][fig:\arabic{figure}]{%
+    \begin{figure}[h!]
+        \centering
+        \includegraphics[width=\textwidth]{image/#2}
+        \caption{#3}\label{#1}\end{figure}
+}
+
+\newcommand{\InsertListing}[4][]{%
+    \lstinputlisting[style=javaSuck,firstline=#3,lastline=#4,firstnumber=#3,caption=#2,#1]{java/#2}
+}

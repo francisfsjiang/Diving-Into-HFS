@@ -20,7 +20,7 @@
 \usepackage{fontawesome}
 
 % **************************************************
-% Debug LaTeX Information
+% LaTeX调试信息
 % **************************************************
 %\listfiles
 
@@ -53,10 +53,13 @@
 	colorize=full,%
 	colortheme=bluemagenta,%
 ]{xecleanthesis}
+% \usepackage{ctex}
+\usepackage{listings}
+\usepackage{xcolor}
 \usepackage{xetool}
 \usepackage{xedef}
 
-\hypersetup{%                   % setup the hyperref-package options
+\hypersetup{					% setup the hyperref-package options
 	pdftitle={\thesisTitle},	% 	- title (PDF meta)
 	pdfsubject={\thesisSubject},% 	- subject (PDF meta)
 	pdfauthor={\thesisName},	% 	- author (PDF meta)
@@ -67,6 +70,25 @@
 	bookmarksnumbered=true,		%
 	bookmarksopen=true			%
 }
+\lstset{
+	numbers=left,          % 左侧显示行号
+	tabsize=2,             % tab = 4 space
+	frame=lines,           % 水平线分割代码区域
+	breaklines=true,       % 说来下面四个选项是干嘛来着
+	extendedchars=false,
+	showstringspaces=true,
+	texcl=true
+}
+\lstdefinestyle{javaSuck}{
+	language=Java,
+	basicstyle=\ttfamily\small,
+	keywordstyle=\bfseries\color{blue},
+	commentstyle=\itshape\color{green!50!black},
+	lineskip=0pt,
+	aboveskip=1em,
+	belowskip=1em
+}
+\renewcommand{\lstlistingname}{代码清单}
 
 % **************************************************
 % Document CONTENT
@@ -127,9 +149,19 @@
 \printbibliography[nottype=online]
 \printbibliography[heading=subbibliography,title={Webseiten},type=online,prefixnumbers={@}]
 }
+\cleardoublepage
+
+\listoffigures
+\cleardoublepage
+
+\listoftables
+\cleardoublepage
+
+\lstlistoflistings
+\cleardoublepage
 
 \input{content/colophon}
-\newpage
+\cleardoublepage
 
 \input{content/declaration}
 \clearpage

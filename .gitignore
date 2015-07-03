@@ -41,6 +41,7 @@ Session.vim
 *.acr
 *.alg
 *.aux
+*.bib
 *.bbl
 *.bcf
 *.blg
@@ -62,18 +63,20 @@ Session.vim
 *.nav
 *.nlo
 *.out
+*.pdf
 *.pdfsync
 *.ps
 *.run.xml
 *.snm
 *.synctex.gz
 *.toc
+*.tdo
 *.vrb
 *.xdy
-*.tdo
 
 *.pdf
 *.bib
 
 /cdig
 /gen
+.idea
