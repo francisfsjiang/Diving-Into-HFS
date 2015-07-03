@@ -57,8 +57,8 @@ This class provides an interface for implementors of a \HadoopFS
 (analogous to the \VFS\space of \Unix). Applications do not access this class;
 instead they access files across all file systems using \emph{FileContext}.
 \end{quote}
-指出的``\emph{AbstractFileSystem}以抽象类的形式向\HFS 中的具体文件系统的实现者提供接口,
-与\Unix 下\VFS 的机制类似''.
+指出的``\emph{AbstractFileSystem}以抽象类的形式向{\HFS}中的具体文件系统的实现者提供接口,
+与{\Unix}下{\VFS}的机制类似''.
 
 而\VFS 本身是
 \begin{quote}
@@ -87,7 +87,7 @@ HAL蔽硬件驱动之间的差异, 向上提统一驱动存储设备的接口;
 \HadoopFS 是\XeSecRef{ch:hfs-intro:hfs}中描述的一个宏观的抽象文件系统,
 而\HadoopDFS 只是该抽象文件系统管理下的一种具体文件系统的实现.
 
-在\HFS 中, 处于继承树顶端且有着相当高的抽象程度的基类\FS 的文档中记录到:
+在{\HFS}中, 处于继承树顶端且有着相当高的抽象程度的基类{\FS}的文档中记录到:
 
 \begin{quote}
 (\FS\space is) an abstract base class for a fairly generic filesystem. It
@@ -95,4 +95,4 @@ may be implemented as a distributed filesystem, or as a ``local''
 one that reflects the locally-connected disk.
 \end{quote}
 
-其中所指的分布式文件系统的实例之一, 就是\HDFS.
+其中所指的分布式文件系统的实例之一, 就是{\HDFS}.
