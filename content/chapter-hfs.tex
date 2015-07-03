@@ -8,20 +8,20 @@
 \label{ssec:hfs:bigpic}
 
 如\XeSecRef{ssec:hfs:al}中所述, {\HFS}与{\VFS}的结构十分相似,
-因此, 如果将下起硬件上至{\HFS}的视作一个完整的系统, 则{\HFS}构成一个典型的\textbf{层次结构},
+因此, 如果将下起硬件上至{\HFS}的视作一个完整的系统, 那么,
+从系统外部观察{\HFS}, 它是一个在层层抽象的基础上构建起来系统,
+构成一个典型的\textbf{层次结构},
 状如下图:
 
-\InsertFigure{hfs/h-arch.png}{参考VHF的架构图}
+\InsertFigure[fig:hfs:h-arch]{hfs/h-arch}{参考VHF的架构图}
 
-从系统外部观察{\HFS}, 它是一个在层层抽象的基础上构建起来系统.
+当从系统内部观察{\HFS}的时候, 它是一个\textbf{C/S}结构的系统.
 
-当从系统内部观察{\HFS}的时候, 它是一个\textbf{Master/Slave}结构的系统, 状如下图:
+其中, 这个\textbf{C/S}结构中的``S''的具体架构,
+是与具体文件系统的实现高度相关的, 例如, 在{\HDFS}下,
+``S''是\textbf{Master/Slave}结构的系统, 状如下图:
 
-\blankfigure{基于下图魔改的HFS架构}
-
-\blankfigure{原版HDFS架构}
-
-对比上面的架构可以知道,
+\InsertFigure[fig:hfs:hdfs]{hfs/hdfs}{参考VHF的架构图}
 
 \subsection{作为抽象层}
 \label{ssec:hfs:al}
