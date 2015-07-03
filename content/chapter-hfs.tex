@@ -8,14 +8,20 @@
 \label{ssec:hfs:bigpic}
 
 如\XeSecRef{ssec:hfs:al}中所述, {\HFS}与{\VFS}的结构十分相似,
-因此, 如果将下起硬件上至{\HFS}的视作一个完整的系统, 则{\HFS}构成一个典型的层次结构,
+因此, 如果将下起硬件上至{\HFS}的视作一个完整的系统, 则{\HFS}构成一个典型的\textbf{层次结构},
 状如下图:
 
 \blankfigure{参考VHF的架构图}
 
-这是一个在层层抽象的基础上构建起来系统.
+从系统外部观察{\HFS}, 它是一个在层层抽象的基础上构建起来系统.
 
-% TODO 如果将考察的范围缩小到兼容层本身
+当从系统内部观察{\HFS}的时候, 它是一个\textbf{Master/Slave}结构的系统, 状如下图:
+
+\blankfigure{基于下图魔改的HFS架构}
+
+\blankfigure{原版HDFS架构}
+
+对比上面的架构可以知道,
 
 \subsection{作为抽象层}
 \label{ssec:hfs:al}
@@ -178,5 +184,7 @@ URI十分灵活, 但却要求用户知晓服务器的名字或者地址才可以
 \label{sec:hfs:rtm}
 
 \subsection{{\Trash}机制}
+\label{ssec:hfs:trashing}
 
 \subsection{命名查找机制}
+\label{ssec:hfs:naming}
