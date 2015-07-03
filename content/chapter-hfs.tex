@@ -28,18 +28,17 @@
 
 从硬件抽象层的角度理解{\HFS},
 {\HFS}在实现级别上使用了类似于Command模式和Adapter模式的策略,
-即通通过如下继承的层级结构
+即通过如下继承的层级结构
 
-\blankfigure{抽象继承结构}
+\InsertFigure[fig:hfs:al]{hfs/h-class}{{\HFS}的主要继承关系}
 
-来实现将统一的, 高度抽象的文件操作映射到各个具体文件系统之上的目的.
+来实现将统一的, 高度抽象的文件操作映射到各个具体文件系统之上的目的,
+具体细节在\ref{ssec:hfs:fs}节讨论.
 
 在{\HFS}参与管理的诸多具体文件系统之中, 最特殊的一个具体文件系统的实现莫过于{\HDFS}.
 \XeSecRef{sec:hfs:fs}中粗略讨论了{\HDFS}的宏观特性,
 但是, 无论{\HDFS}所拥有的分布式特性与传统的文件系统, 或者, 按照官方文档中的用法, 本地文件系统,
 有着多么大的差异, {\HDFS}中的格式操作依然可以被映射到{\HFS}体系中的基本抽象上.
-
-% TODO 验证文件系统映射的具体实现
 
 \subsection{作为服务提供者}
 \label{ssec:hfs:srv}
@@ -59,7 +58,6 @@
 \begin{XeDuoLineTabular}{包}{作用}
     \XeDLTItem{fs}{文件系统相关的大部分代码}
     \XeDLTItem{io}{I/O相关的代码}
-    % TODO 脑补一下这张表里应该有啥
 \end{XeDuoLineTabular}
 
 如果以更细粒度的逻辑结构来划分``模块''之间的关系, 那么{\HFS}的逻辑功能块的划分应该是这个样子:
@@ -68,6 +66,7 @@
     \XeDLTItem{{\FiS}族系}{文件系统用户及其接口定义}
     \XeDLTItem{{\FiC}族系}{为应用程序开发者提供访问{\HadoopFS}的接口}
     \XeDLTItem{{\Shell}族系}{{\HFS}的\emph{CLI}访问接口}
+    \XeDLTItem{\dots}{\dots}
 \end{XeDuoLineTabular}
 
 \subsection{{\FiS}族系}
@@ -180,7 +179,7 @@ URI十分灵活, 但却要求用户知晓服务器的名字或者地址才可以
 
 \subsection{{\Shell}族系}
 
-\section{运行时机制}
+\section{运行时机制举例}
 \label{sec:hfs:rtm}
 
 \subsection{{\Trash}机制}
@@ -188,6 +187,9 @@ URI十分灵活, 但却要求用户知晓服务器的名字或者地址才可以
 
 \def\Trash{\emph{Trash}}
 \def\trash{\emph{trash}}
+
+\InsertFigure{hfs/seq-trash}{Trash机制序列图}
+
 {\Trash}机制是指, 文件在删除时会被移动到用户的{\trash}文件夹下,
 这个文件夹位于每个用户的home文件夹下, 名字为\emph{.Trash}.
 文件被删除时, 会先在{\Trash}文件夹下建一个子目录\emph{Current},
@@ -210,11 +212,13 @@ URI十分灵活, 但却要求用户知晓服务器的名字或者地址才可以
 这种设计的优点在于, 不用在垃圾管理时遍历要管理的内容,
 而且不需要文件系统支持在文件上设置时间, 不需要同步时钟.
 
-\subsection{Addressing}
+\subsection{索引}
 \label{ssec:hfs:addressing}
 
-% TODO 还差一个引用
-
-从{\HDFS}的架构图中可以看到, {\HDFS}中有两种角色, 即{\NameN}和{\DataN}.
-
+从{\HDFS}的架构图\ref{fig:hfs:hdfs}中可以看到, {\HDFS}中有两种角色, 即{\NameN}和{\DataN}.
 其中{\DataN}的职能在于, 通过用户指定的\emph{URI}计算并反馈用于``寻址''目标文件所在地的方式.
+
+\subsection{具体文件操作}
+
+具体文件操作, 是由的具体文件系统的具体实现决定的.
+报告中详细分析了一例\emph{CopyFromLocal}, 见于\ref{sec:env:cfl}节.

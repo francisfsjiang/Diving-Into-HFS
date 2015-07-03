@@ -37,7 +37,7 @@ The structure and logic rules used to manage the groups of information and their
 即一组用于
 \begin{XeEnum}
     \item 管理信息
-    \item 为信息提供命名索引
+    \item 为信息提供索引服务
 \end{XeEnum}
 的结构和逻辑规则.
 
@@ -46,14 +46,14 @@ The structure and logic rules used to manage the groups of information and their
 \subsection{作为服务提供者的\HFS}
 \label{ssec:hfs-intro:svr}
 
-服务提供者是\HFS 在\Hadoop 中的角色,
+服务提供者是{\HFS}在{\Hadoop}平台以上的职能, 即提供索引服务,
 其主要职责是向上层的\Hadoop 应用提供可靠的文件访问服务, 或者, 更进一步的,
 上层应用同时提供可靠的流式访问服务和文件级别的访问服务.
 
 \subsection{作为抽象层的\HFS}
 \label{ssec:hfs-intro:al}
 
-根据\HadoopFS 中的\emph{AbstractFileSystem}类的文档
+根据{\HadoopFS}中的\emph{AbstractFileSystem}类的文档
 \begin{quote}
 This class provides an interface for implementors of a \HadoopFS
 (analogous to the \VFS\space of \Unix). Applications do not access this class;
@@ -72,9 +72,6 @@ instead they access files across all file systems using \emph{FileContext}.
     \HFS 是一个建立在不同的具体文件系统之上的抽象层.
 \end{quote}
 
-\blankfigure{}
-
-如上图,
 具体的驱动程序屏蔽具体硬件的物理差异, 向上提供操纵存储设备的接口;
 HAL蔽硬件驱动之间的差异, 向上提统一驱动存储设备的接口;
 具体文件系统屏蔽不同体系(如NTFS, ext, xfs, btfs, etc.)下信息在物理磁盘上的组织方式的差异,
@@ -82,12 +79,12 @@ HAL蔽硬件驱动之间的差异, 向上提统一驱动存储设备的接口;
 而抽象文件系统, 负责屏蔽不同的具体文件系统之间的差异(如命名管理, 权限控制等),
 向上提供完全统一的文件操纵接口. 这个最高的抽象层, 就是HFS所处的位置.
 
-\section{\HFS 与\HDFS}
+\section{{\HFS}与{\HDFS}}
 
-\HDFS 的知名度远要比\HFS 高的多.
+{\HDFS}的知名度远要比{\HFS}高的多.
 
-\HadoopFS 是\XeSecRef{ch:hfs-intro:hfs}中描述的一个宏观的抽象文件系统,
-而\HadoopDFS 只是该抽象文件系统管理下的一种具体文件系统的实现.
+{\HadoopFS}是\XeSecRef{ch:hfs-intro:hfs}中描述的一个宏观的抽象文件系统,
+而{\HadoopDFS}只是该抽象文件系统管理下的一种具体文件系统的实现.
 
 在{\HFS}中, 处于继承树顶端且有着相当高的抽象程度的基类{\FS}的文档中记录到:
 
