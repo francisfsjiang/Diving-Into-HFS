@@ -476,7 +476,7 @@ public class RawLocalFileSystem extends FileSystem {
         } else {
           StringTokenizer t = new StringTokenizer(
               execCommand(new File(getPath().toUri()),
-                  Shell.getGET_PERMISSION_COMMAND()));
+                  Shell.GET_PERMISSION_COMMAND));
           String permission = t.nextToken();
           if (permission.length() > 10) {
             permission = permission.substring(0, 10);

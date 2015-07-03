@@ -27,15 +27,17 @@ hadoop脚本实际调用启动Java虚拟机运行org.apache.hadoop.fs.FsShell类
 检查调用栈发现问题在于org.apache.hadoop.fs.RawLocalFileSystem\$RawLocalFileStatus类的loadPermissionInfo方法中想要调用``ls -ld''命令，获取当前目录的权限、文件拥有者、文件所在的组。
 相关代码如下：
 
-\InsertListing[caption=org/apache/hadoop/fs/RawLocalFileSystem.java]{RawLocalFileSystem0.java}{466}{482}
+\InsertListing[caption=org/apache/hadoop/fs/RawLocalFileSystem.java(loadPermissionInfo)]{RawLocalFileSystem0.java}{465}{482}
 
-\InsertListing[caption=org/apache/hadoop/util/Shell.java]{Shell0.java}{69}{72}
+\InsertListing[caption=org/apache/hadoop/util/Shell.java]{Shell0.java}{68}{72}
 
 原生{\Windows}环境并没有这样的命令，并且文件管理系统也和{\Unix}有出入。
 对照一些{\Windows}下的{\Unix}工具移植，对方法进行修改后，执行成功。
 相关代码和运行结果如下：
 
-\InsertListing[caption=org/apache/hadoop/fs/RawLocalFileSystem.java]{RawLocalFileSystem1.java}{468}{489}
+\InsertListing[caption=org/apache/hadoop/fs/RawLocalFileSystem.java(loadPermissionInfo)]{RawLocalFileSystem1.java}{467}{497}
+
+\InsertListing[caption=org/apache/hadoop/util/Shell.java]{Shell1.java}{68}{69}
 
 \InsertFigure{trans/run-ls1}{修改后``-ls''测试结果}
 
@@ -50,17 +52,17 @@ hadoop脚本实际调用启动Java虚拟机运行org.apache.hadoop.fs.FsShell类
 
 \InsertFigure[fig:trans:cp0]{trans/run-cp0}{``-cp''测试结果}
 
-在DEBUG环境下运行命令，最终追踪到RawLocalFileSystem下的一处调用，相关代码如下：
+在DEBUG环境下运行命令，最终追踪到org.apache.hadoop.fs.RawLocalFileSystem下的一处调用，相关代码如下：
 
-\InsertListing[caption=org/apache/hadoop/fs/RawLocalFileSystem.java]{RawLocalFileSystem1.java}{540}{544}
+\InsertListing[caption=org/apache/hadoop/fs/RawLocalFileSystem.java(setPermission)]{RawLocalFileSystem1.java}{536}{544}
 
-\InsertListing[caption=org/apache/hadoop/util/Shell.java]{Shell0.java}{59}{60}
+\InsertListing[caption=org/apache/hadoop/util/Shell.java]{Shell1.java}{59}{60}
 
 RawLocalFileSystem类的setPermission方法中想要调用``chmod 00777''命令设置目标文件权限。
 经过尝试，我们修改源码检测运行操作系统，在{\Windows}操作系统下不执行chmod命令。
 修改后的代码和运行结果如下：
 
-\InsertListing[caption=org/apache/hadoop/fs/RawLocalFileSystem.java]{RawLocalFileSystem2.java}{540}{546}
+\InsertListing[caption=org/apache/hadoop/fs/RawLocalFileSystem.java(setPermission)]{RawLocalFileSystem2.java}{536}{546}
 
 \InsertFigure{trans/run-cp1}{修改后``-cp''测试结果}
 
@@ -73,11 +75,11 @@ RawLocalFileSystem类的setPermission方法中想要调用``chmod 00777''命令�
 对``-getmerge''的测试虽然成功结束，但没有输出文件。
 经过分析，我们发现了一个Bug。
 
-\InsertListing[caption=org/apache/hadoop/fs/FileUtil.java]{FileUtil0.java}{259}{267}
+\InsertListing[caption=org/apache/hadoop/fs/FileUtil.java(copyMerge)]{FileUtil0.java}{259}{267}
 
 266行的if语句条件应取反，修正如下
 
-\InsertListing[caption=org/apache/hadoop/fs/FileUtil.java]{FileUtil1.java}{259}{267}
+\InsertListing[caption=org/apache/hadoop/fs/FileUtil.java(copyMerge)]{FileUtil1.java}{259}{267}
 
 %%%%%%%%%%%%%%%%%%%%%
 %
