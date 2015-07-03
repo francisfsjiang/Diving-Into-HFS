@@ -1,0 +1,49 @@
+- name: DU
+  fields:
+  methods:
+  - name: DU
+    type: DU
+    access: public
+    args:
+    - type: File
+    - type: long
+  - name: decDfsUsed
+    type: void
+    access: public
+    args:
+    - type: long
+  - name: incDfsUsed
+    type: void
+    access: public
+    args:
+    - type: long
+  - name: getUsed
+    type: long
+    access: public
+    args:
+  - name: getDirPath
+    type: String
+    access: public
+    args:
+  - name: start
+    type: void
+    access: public
+    args:
+  - name: shutdown
+    type: void
+    access: public
+    args:
+  - name: getExecString
+    type: String[]
+    access: public
+    args:
+  - name: parseExecResult
+    type: void
+    access: public
+    args:
+    - type: BufferedReader
+  inners:
+  - name: DURefreshThread
+    fields:
+    methods:
+    inners:

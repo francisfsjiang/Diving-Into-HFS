@@ -1,0 +1,35 @@
+- name: ContentSummary
+  fields:
+  - name: STRING_FORMAT
+    type: String
+    access: private
+  - name: QUOTA_STRING_FORMAT
+    type: String
+    access: private
+  - name: HEADER
+    type: String
+    access: private
+  methods:
+  - name: getQuota
+    type: long
+    access: public
+    args:
+  - name: getSpaceConsumed
+    type: long
+    access: public
+    args:
+  - name: getSpaceQuota
+    type: long
+    access: public
+    args:
+  - name: getHeader
+    type: String
+    access: public
+    args:
+    - type: boolean
+  - name: toString
+    type: String
+    access: public
+    args:
+    - type: boolean
+  inners:

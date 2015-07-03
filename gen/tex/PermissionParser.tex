@@ -1,0 +1,31 @@
+\begin{XeClass}{PermissionParser}
+\InsertFigure{gen/PermissionParser.pdf}{PermissionParser核心成员类图}
+   
+ 用于解析chmod或者umask的权限模式的基类.
+ 包含用于实现UmaskParser和ChmodParser的通用代码.
+
+  \begin{XeMethod}{\XePublic\\ }{PermissionParser}{PermissionParser}
+       
+ 在构造时解析modeStr中的权限模式.
+
+  \end{XeMethod}
+
+  \begin{XeMethod}{\XePrivate\\ }{void}{applyNormalPattern}
+       
+ 应用常规模式进行解析
+
+  \end{XeMethod}
+
+  \begin{XeMethod}{\XePrivate\\ }{void}{applyOctalPattern}
+       
+ 应用8进制模式进行解析
+
+  \end{XeMethod}
+
+  \begin{XeMethod}{\XeProtected\\ }{int}{combineModes}
+       
+ 合并解析模式
+
+  \end{XeMethod}
+
+\end{XeClass}

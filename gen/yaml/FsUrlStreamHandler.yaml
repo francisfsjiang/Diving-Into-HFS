@@ -1,0 +1,9 @@
+- name: FsUrlStreamHandler
+  fields:
+  methods:
+  - name: openConnection
+    type: FsUrlConnection
+    access: public
+    args:
+    - type: URL
+  inners:

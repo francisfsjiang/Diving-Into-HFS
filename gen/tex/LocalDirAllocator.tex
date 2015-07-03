@@ -1,0 +1,43 @@
+\begin{XeClass}{LocalDirAllocator}
+\InsertFigure{gen/LocalDirAllocator.pdf}{LocalDirAllocator核心成员类图}
+   
+ 该类是创建文件时磁盘分配round-robin模式的一种实现。
+ 它实现的方式就是持续跟踪磁盘最后是被一个文件写在什么位置的。
+
+  \begin{XeMethod}{\XePublic\\ }{Path}{getLocalPathForWrite}
+       
+ 为了写入获得本地文件系统的一个路径
+
+  \end{XeMethod}
+
+  \begin{XeMethod}{\XePublic\\ }{Path}{getLocalPathToRead}
+       
+ 为了读入获得本地文件系统的一个路径
+
+  \end{XeMethod}
+
+  \begin{XeMethod}{\XePublic\\ }{File}{createTmpFileForWrite}
+       
+ 为了写入创建一个临时文件
+
+  \end{XeMethod}
+
+  \begin{XeMethod}{\XePublic\\ }{boolean}{isContextValid}
+       
+ 判断内容是否有效
+
+  \end{XeMethod}
+
+  \begin{XeMethod}{\XePublic\\ }{boolean}{ifExists}
+       
+ 判断路径是否存在
+
+  \end{XeMethod}
+
+  \begin{XeMethod}{}{int}{getCurrentDirectoryIndex}
+       
+ 获得当前目录的索引号
+
+  \end{XeMethod}
+
+\end{XeClass}

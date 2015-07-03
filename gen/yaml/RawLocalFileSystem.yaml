@@ -1,0 +1,41 @@
+- name: RawLocalFileSystem
+  fields:
+  - name: NAME
+    type: URI
+    access: static
+  - name: workingDir
+    type: Path
+    access: private
+  methods:
+  - name: RawLocalFileSystem
+    type: RawLocalFileSystem
+    access: public
+    args:
+  - name: pathToFile
+    type: File
+    access: public
+    args:
+    - type: Path
+  - name: getUri
+    type: URI
+    access: public
+    args:
+  - name: initialize
+    type: void
+    access: public
+    args:
+    - type: URI
+    - type: Configuration
+  inners:
+  - name: TrackingFileInputStream
+    fields:
+    methods:
+    inners:
+  - name: LocalFSFileInputStream
+    fields:
+    methods:
+    inners:
+  - name: LocalFSFileOutputStream
+    fields:
+    methods:
+    inners:

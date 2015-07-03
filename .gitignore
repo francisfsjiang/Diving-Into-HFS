@@ -56,6 +56,7 @@ Session.vim
 *.ist
 *.lof
 *.log
+*.lol
 *.lot
 *.maf
 *.mtc
@@ -75,3 +76,5 @@ Session.vim
 *.xdy
 
 .idea
+gen/dot
+image/gen

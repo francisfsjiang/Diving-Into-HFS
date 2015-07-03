@@ -1,0 +1,59 @@
+- name: BlockLocation
+  fields:
+  methods:
+  - name: getHosts
+    type: String[]
+    access: public
+    args:
+  - name: getNames
+    type: String[]
+    access: public
+    args:
+  - name: getTopologyPaths
+    type: String[]
+    access: public
+    args:
+  - name: getOffset
+    type: long
+    access: public
+    args:
+  - name: getLength
+    type: long
+    access: public
+    args:
+  - name: setOffset
+    type: void
+    access: public
+    args:
+    - type: long
+  - name: setLength
+    type: void
+    access: public
+    args:
+    - type: long
+  - name: setHosts
+    type: void
+    access: public
+    args:
+    - type: String[]
+  - name: setNames
+    type: void
+    access: public
+    args:
+    - type: String[]
+  - name: setTopologyPaths
+    type: void
+    access: public
+    args:
+    - type: String[]
+  - name: write
+    type: void
+    access: public
+    args:
+    - type: DataOutput
+  - name: readFields
+    type: void
+    access: public
+    args:
+    - type: DataInput
+  inners:

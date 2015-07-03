@@ -1,0 +1,67 @@
+\begin{XeClass}{Options}
+\InsertFigure{gen/Options.pdf}{Options核心成员类图}
+   
+ Options类是由final修饰的,无法被继承的类
+ 包含一些连接到文件系统操作的option
+
+  \begin{XeInnerClass}{CreateOpts}
+     
+ 静态内部类CreateOpts支持create方法中实现可变参数
+
+    \begin{XeMethod}{\XeProtected\\ }{CreateOpts}{getOpt}
+         
+ 从想要的数据类型中获得option
+ 当option为null则抛出IllegalArgumentException("Null opt")异常
+
+    \end{XeMethod}
+
+    \begin{XeMethod}{\XeProtected\\ }{CreateOpts[]}{setOpt}
+         
+ 对指定的option设置或更新一个新的值newValue
+
+    \end{XeMethod}
+
+    \begin{XeInnerClass}{BlockSize}
+       
+ BlockSize内部类继承自CreateOpts类
+ 内部含有blockSize常量
+
+    \end{XeInnerClass}
+    \begin{XeInnerClass}{ReplicationFactor}
+       
+ ReplicationFactor内部类继承自CreateOpts类
+ 内部含有replication常量
+
+    \end{XeInnerClass}
+    \begin{XeInnerClass}{BufferSize}
+       
+ BufferSize内部类继承自CreateOpts类
+ 内部含有bufferSize常量
+
+    \end{XeInnerClass}
+    \begin{XeInnerClass}{BytesPerChecksum}
+       
+ BytesPerChecksum内部类继承自CreateOpts类
+ 内部含有bytesPerChecksum常量
+
+    \end{XeInnerClass}
+    \begin{XeInnerClass}{Perms}
+       
+ Perms内部类继承自CreateOpts类
+ 内部含有permissions常量
+
+    \end{XeInnerClass}
+    \begin{XeInnerClass}{Progress}
+       
+ Progress内部类继承自CreateOpts类
+ 内部含有progress常量
+
+    \end{XeInnerClass}
+    \begin{XeInnerClass}{CreateParent}
+       
+ CreateParent内部类继承自CreateOpts类
+ 内部含有createParent常量
+
+    \end{XeInnerClass}
+  \end{XeInnerClass}
+\end{XeClass}

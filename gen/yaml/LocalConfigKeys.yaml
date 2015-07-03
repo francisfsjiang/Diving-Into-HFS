@@ -1,0 +1,19 @@
+- name: LocalConfigKeys
+  fields:
+  - name: BLOCK_SIZE_DEFAULT
+    type: long
+    access: public
+  - name: REPLICATION_DEFAULT
+    type: short
+    access: public
+  - name: STREAM_BUFFER_SIZE_DEFAULT
+    type: int
+    access: public
+  - name: BYTES_PER_CHECKSUM_DEFAULT
+    type: int
+    access: public
+  - name: CLIENT_WRITE_PACKET_SIZE_DEFAULT
+    type: int
+    access: public
+  methods:
+  inners:

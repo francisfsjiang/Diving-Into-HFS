@@ -1,0 +1,26 @@
+- name: PositionedReadable
+  fields:
+  methods:
+  - name: read
+    type: int
+    access: public
+    args:
+    - type: long
+    - type: byte[]
+    - type: int
+    - type: int
+  - name: readFully
+    type: void
+    access: public
+    args:
+    - type: long
+    - type: byte[]
+    - type: int
+    - type: int
+  - name: readFully
+    type: void
+    access: public
+    args:
+    - type: long
+    - type: byte[]
+  inners:

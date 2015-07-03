@@ -1,0 +1,39 @@
+- name: AbstractFileSystem
+  fields:
+  methods:
+  - name: newInstance
+    type: T
+    access: public
+    args:
+    - type: Class<T>
+    - type: URI
+    - type: Configuration
+  - name: createFileSystem
+    type: AbstractFileSystem
+    access: public
+    args:
+    - type: URI
+    - type: Configuration
+  - name: get
+    type: AbstractFileSystem
+    access: public
+    args:
+    - type: URI
+    - type: Configuration
+  - name: AbstractFileSystem
+    type: AbstractFileSystem
+    access: public
+    args:
+    - type: URI
+    - type: String
+    - type: boolean
+    - type: int
+  - name: getUri
+    type: URI
+    access: public
+    args:
+    - type: URI
+    - type: String
+    - type: boolean
+    - type: int
+  inners:

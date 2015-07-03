@@ -1,0 +1,41 @@
+- name: FsConfig
+  fields:
+  methods:
+  - name: getDefaultFsURI
+    type: String
+    access: public
+    args:
+    - type: Configuration
+  - name: getHomeDir
+    type: String
+    access: public
+    args:
+    - type: Configuration
+  - name: getDefaultReplicationFactor
+    type: short
+    access: public
+    args:
+    - type: Configuration
+  - name: getDefaultBlockSize
+    type: long
+    access: public
+    args:
+    - type: Configuration
+  - name: getDefaultIOBuffersize
+    type: int
+    access: public
+    args:
+    - type: Configuration
+  - name: getImplClass
+    type: Class<?>
+    access: public
+    args:
+    - type: URI
+    - type: Configuration
+  - name: setDefaultFS
+    type: void
+    access: public
+    args:
+    - type: Configuration
+    - type: String
+  inners:

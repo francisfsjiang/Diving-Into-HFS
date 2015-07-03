@@ -1,0 +1,13 @@
+\begin{XeClass}{FSDataOutputStream}
+\InsertFigure{gen/FSDataOutputStream.pdf}{FSDataOutputStream核心成员类图}
+   
+ 一个工具类，继承了\emph{DataOutputStream}，包装一个\emph{PositionCache.}，
+ 具体的方法调用都通过被包装的对象实现，通过这种方法实现了写入统计功能。
+
+  \begin{XeInnerClass}{PositionCache}
+     
+ 此类包装了一个\emph{FileSystem.Statistics}对象，在每次write
+ 时进行统计。
+
+  \end{XeInnerClass}
+\end{XeClass}

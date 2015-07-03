@@ -1,0 +1,18 @@
+\begin{XeClass}{FsShellPermissions}
+\InsertFigure{gen/FsShellPermissions.pdf}{FsShellPermissions核心成员类图}
+   
+ FsShellPermissions类是将文件操作与命令行关联起来的类
+ 因为FsShell类越来越大,所以将FsShellPermissions类单独分离出来
+ FsShellPermissions类中有三个静态内部类,分别是ChmodHandler,ChownHandler和ChgrpHandler
+ 还有一个静态方法changePermissions,将三个静态内部类的情况与命令行关联起来使用
+
+  \begin{XeMethod}{}{int}{changePermissions}
+       
+ 静态方法changePermissions,将三个静态内部类的情况与命令行关联起来使用
+ 当cmd匹配上-chmod,调用ChmodHandler(fs, argv[startIndex++])构造函数并将对象赋值给handler
+ 当cmd匹配上-chown,调用ChownHandler(fs, argv[startIndex++])构造函数并将对象赋值给handler
+ 当cmd匹配上-chgrp,调用ChgrpHandler(fs, argv[startIndex++])构造函数并将对象赋值给handler
+
+  \end{XeMethod}
+
+\end{XeClass}

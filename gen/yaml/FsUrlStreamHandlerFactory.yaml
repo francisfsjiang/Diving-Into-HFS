@@ -1,0 +1,18 @@
+- name: FsUrlStreamHandlerFactory
+  fields:
+  methods:
+  - name: FsUrlStreamHandlerFactory
+    type: FsUrlStreamHandlerFactory
+    access: public
+    args:
+  - name: FsUrlStreamHandlerFactory
+    type: FsUrlStreamHandlerFactory
+    access: public
+    args:
+    - type: Configuration
+  - name: createURLStreamHandler
+    type: java.net.URLStreamHandler
+    access: public
+    args:
+    - type: String
+  inners:

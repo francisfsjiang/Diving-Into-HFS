@@ -1,0 +1,179 @@
+- name: ChecksumFileSystem
+  fields:
+  methods:
+  - name: setVerifyChecksum
+    type: void
+    access: public
+    args:
+    - type: boolean
+  - name: getRawFileSystem
+    type: FileSystem
+    access: public
+    args:
+  - name: getChecksumFile
+    type: Path
+    access: public
+    args:
+    - type: Path
+  - name: isChecksumFile
+    type: boolean
+    access: public
+    args:
+    - type: Path
+  - name: getChecksumFileLength
+    type: long
+    access: public
+    args:
+    - type: Path
+    - type: long
+  - name: getBytesPerSum
+    type: int
+    access: public
+    args:
+  - name: open
+    type: FSDataInputStream
+    access: public
+    args:
+    - type: Path
+    - type: int
+  - name: getChecksumLength
+    type: long
+    access: public
+    args:
+    - type: long
+    - type: int
+  - name: create
+    type: FSDataOutputStream
+    access: public
+    args:
+    - type: Path
+    - type: FsPermission
+    - type: boolean
+    - type: int
+    - type: short
+    - type: long
+    - type: Progressable
+  - name: setReplication
+    type: boolean
+    access: public
+    args:
+    - type: Path
+    - type: short
+  - name: rename
+    type: boolean
+    access: public
+    args:
+    - type: Path
+    - type: Path
+  - name: delete
+    type: boolean
+    access: public
+    args:
+    - type: Path
+    - type: boolean
+  - name: listStatus
+    type: FileStatus[]
+    access: public
+    args:
+    - type: Path
+  - name: copyFromLocalFile
+    type: void
+    access: public
+    args:
+    - type: boolean
+    - type: Path
+    - type: Path
+  - name: copyToLocalFile
+    type: void
+    access: public
+    args:
+    - type: boolean
+    - type: Path
+    - type: Path
+  - name: copyToLocalFile
+    type: void
+    access: public
+    args:
+    - type: Path
+    - type: Path
+    - type: boolean
+  - name: reportChecksumFailure
+    type: boolean
+    access: public
+    args:
+    - type: Path
+    - type: FSDataInputStream
+    - type: long
+    - type: FSDataInputStream
+    - type: long
+  inners:
+  - name: ChecksumFSInputChecker
+    fields:
+    methods:
+    - name: getChecksumFilePos
+      type: long
+      access: public
+      args:
+      - type: long
+    - name: getChunkPosition
+      type: long
+      access: public
+      args:
+      - type: long
+    - name: read
+      type: int
+      access: public
+      args:
+      - type: long
+      - type: byte[]
+      - type: int
+      - type: int
+    - name: close
+      type: void
+      access: public
+      args:
+    - name: seekToNewSource
+      type: boolean
+      access: public
+      args:
+      - type: long
+    - name: readChunk
+      type: int
+      access: public
+      args:
+      - type: long
+      - type: byte[]
+      - type: int
+      - type: int
+      - type: byte[]
+    - name: getFileLength
+      type: long
+      access: public
+      args:
+    - name: skip
+      type: long
+      access: public
+      args:
+      - type: long
+    - name: seek
+      type: void
+      access: public
+      args:
+      - type: long
+    inners:
+  - name: ChecksumFSOutputSummer
+    fields:
+    methods:
+    - name: close
+      type: void
+      access: public
+      args:
+    - name: writeChunk
+      type: void
+      access: public
+      args:
+      - type: byte[]
+      - type: int
+      - type: int
+      - type: byte[]
+    inners:

@@ -1,0 +1,9 @@
+- name: Count
+  fields:
+  methods:
+  - name: matches
+    type: boolean
+    access: public
+    args:
+    - type: String
+  inners:

@@ -1,0 +1,51 @@
+- name: Options
+  fields:
+  - name: Rename
+    type: enum
+    access: public
+  methods:
+  inners:
+  - name: CreateOpts
+    fields:
+    methods:
+    - name: getOpt
+      type: CreateOpts
+      access: public
+      args:
+      - type: Class<? extends CreateOpts>
+      - type: CreateOpts
+    - name: setOpt
+      type: CreateOpts[]
+      access: public
+      args:
+      - type: T
+      - type: CreateOpts
+    inners:
+    - name: BlockSize
+      fields:
+      methods:
+      inners:
+    - name: ReplicationFactor
+      fields:
+      methods:
+      inners:
+    - name: BufferSize
+      fields:
+      methods:
+      inners:
+    - name: BytesPerChecksum
+      fields:
+      methods:
+      inners:
+    - name: Perms
+      fields:
+      methods:
+      inners:
+    - name: Progress
+      fields:
+      methods:
+      inners:
+    - name: CreateParent
+      fields:
+      methods:
+      inners:

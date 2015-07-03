@@ -1,0 +1,20 @@
+- name: FTPException
+  fields:
+  methods:
+  - name: FTPException
+    type: FTPException
+    access: public
+    args:
+    - type: String
+  - name: FTPException
+    type: FTPException
+    access: public
+    args:
+    - type: Throwable
+  - name: FTPException
+    type: FTPException
+    access: public
+    args:
+    - type: String
+    - type: Throwable
+  inners:

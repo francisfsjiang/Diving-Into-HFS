@@ -1,0 +1,16 @@
+- name: FsShellPermissions
+  fields:
+  - name: CHMOD_USAGE
+    type: String
+    access: static
+  methods:
+  - name: changePermissions
+    type: int
+    access: public
+    args:
+    - type: FileSystem
+    - type: String
+    - type: String
+    - type: int
+    - type: FsShell
+  inners:

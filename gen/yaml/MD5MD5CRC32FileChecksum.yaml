@@ -1,0 +1,52 @@
+- name: MD5MD5CRC32FileChecksum
+  fields:
+  methods:
+  - name: MD5MD5CRC32FileChecksum
+    type: MD5MD5CRC32FileChecksum
+    access: public
+    args:
+  - name: MD5MD5CRC32FileChecksum
+    type: MD5MD5CRC32FileChecksum
+    access: public
+    args:
+    - type: int
+    - type: long
+    - type: MD5Hash
+  - name: getAlgorithmName
+    type: String
+    access: public
+    args:
+  - name: getLength
+    type: int
+    access: public
+    args:
+  - name: getBytes
+    type: byte[]
+    access: public
+    args:
+  - name: readFields
+    type: void
+    access: public
+    args:
+    - type: DataInput
+  - name: write
+    type: void
+    access: public
+    args:
+    - type: DataOutput
+  - name: write
+    type: void
+    access: public
+    args:
+    - type: XMLOutputter
+    - type: MD5MD5CRC32FileChecksum
+  - name: valueOf
+    type: MD5MD5CRC32FileChecksum
+    access: public
+    args:
+    - type: Attributes
+  - name: toString
+    type: String
+    access: public
+    args:
+  inners:

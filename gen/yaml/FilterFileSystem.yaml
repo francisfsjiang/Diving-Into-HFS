@@ -1,0 +1,143 @@
+- name: FilterFileSystem
+  fields:
+  methods:
+  - name: getFileBlockLocations
+    type: BlockLocation[]
+    access: public
+    args:
+    - type: FileStatus
+    - type: long
+    - type: long
+  - name: open
+    type: FSDataInputStream
+    access: public
+    args:
+    - type: Path
+    - type: int
+  - name: append
+    type: FSDataOutputStream
+    access: public
+    args:
+    - type: Path
+    - type: int
+    - type: Progressable
+  - name: create
+    type: FSDataOutputStream
+    access: public
+    args:
+    - type: Path
+    - type: FsPermission
+    - type: boolean
+    - type: int
+    - type: short
+    - type: long
+    - type: Progressable
+  - name: setReplication
+    type: boolean
+    access: public
+    args:
+    - type: Path
+    - type: short
+  - name: rename
+    type: boolean
+    access: public
+    args:
+    - type: Path
+    - type: Path
+  - name: delete
+    type: boolean
+    access: public
+    args:
+    - type: Path
+    - type: boolean
+  - name: listStatus
+    type: FileStatus[]
+    access: public
+    args:
+    - type: Path
+  - name: getHomeDirectory
+    type: Path
+    access: public
+    args:
+  - name: setWorkingDirectory
+    type: void
+    access: public
+    args:
+    - type: Path
+  - name: getWorkingDirectory
+    type: Path
+    access: public
+    args:
+  - name: getInitialWorkingDirectory
+    type: Path
+    access: public
+    args:
+  - name: getStatus
+    type: FsStatus
+    access: public
+    args:
+    - type: Path
+  - name: mkdirs
+    type: boolean
+    access: public
+    args:
+    - type: Path
+    - type: FsPermission
+  - name: copyFromLocalFile
+    type: void
+    access: public
+    args:
+    - type: boolean
+    - type: boolean
+    - type: Path
+    - type: Path
+  - name: copyToLocalFile
+    type: void
+    access: public
+    args:
+    - type: boolean
+    - type: Path
+    - type: Path
+  - name: getDefaultBlockSize
+    type: long
+    access: public
+    args:
+  - name: getDefaultReplication
+    type: short
+    access: public
+    args:
+  - name: getFileStatus
+    type: FileStatus
+    access: public
+    args:
+    - type: Path
+  - name: setVerifyChecksum
+    type: void
+    access: public
+    args:
+    - type: boolean
+  - name: close
+    type: void
+    access: public
+    args:
+  - name: setOwner
+    type: void
+    access: public
+    args:
+    - type: Path
+    - type: String
+    - type: String
+  - name: setTimes
+    type: void
+    access: public
+    args:
+    - type: Path
+    - type: long
+    - type: long
+  - name: setPermission
+    type: void
+    access: public
+    args:
+    - type: Path
+    - type: FsPermission
+  inners:

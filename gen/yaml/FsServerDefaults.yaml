@@ -1,0 +1,14 @@
+- name: FsServerDefaults
+  fields:
+  methods:
+  - name: write
+    type: void
+    access: public
+    args:
+    - type: DataOutput
+  - name: readFields
+    type: void
+    access: public
+    args:
+    - type: DataInput
+  inners:

@@ -1,0 +1,357 @@
+- name: FileSystem
+  fields:
+  - name: CACHE
+    type: Cache
+    access: static
+  - name: key
+    type: Cache.Key
+    access: private
+  - name: statisticsTable
+    type: Map<Class<? extends FileSystem>,Statistics>
+    access: private
+  - name: statistics
+    type: Statistics
+    access: protected
+  - name: deleteOnExit
+    type: Set<Path>
+    access: private
+  methods:
+  - name: get
+    type: FileSystem
+    access: public
+    args:
+    - type: URI
+    - type: Configuration
+    - type: String
+  - name: getDefaultUri
+    type: URI
+    access: public
+    args:
+    - type: Configuration
+  - name: setDefaultUri
+    type: void
+    access: public
+    args:
+    - type: Configuration
+    - type: URI
+  - name: initialize
+    type: void
+    access: public
+    args:
+    - type: URI
+    - type: Configuration
+  - name: getUri
+    type: URI
+    access: public
+    args:
+  - name: fixName
+    type: String
+    access: public
+    args:
+    - type: String
+  - name: getLocal
+    type: LocalFileSystem
+    access: public
+    args:
+    - type: Configuration
+  - name: newInstance
+    type: FileSystem
+    access: public
+    args:
+    - type: URI
+    - type: Configuration
+    - type: String
+  - name: newInstance
+    type: FileSystem
+    access: public
+    args:
+    - type: URI
+    - type: Configuration
+  - name: newInstanceLocal
+    type: LocalFileSystem
+    access: public
+    args:
+    - type: Configuration
+  - name: closeAll
+    type: void
+    access: public
+    args:
+  - name: makeQualified
+    type: Path
+    access: public
+    args:
+    - type: Path
+  - name: create
+    type: FSDataOutputStream
+    access: public
+    args:
+    - type: FileSystem
+    - type: Path
+    - type: FsPermission
+  - name: mkdirs
+    type: boolean
+    access: public
+    args:
+    - type: FileSystem
+    - type: Path
+    - type: FsPermission
+  - name: checkPath
+    type: void
+    access: public
+    args:
+    - type: Path
+  - name: getFileBlockLocations
+    type: BlockLocation[]
+    access: public
+    args:
+    - type: FileStatus
+    - type: long
+    - type: long
+  - name: getServerDefaults
+    type: FsServerDefaults
+    access: public
+    args:
+  - name: open
+    type: FSDataInputStream
+    access: public
+    args:
+    - type: Path
+    - type: int
+  - name: create
+    type: FSDataOutputStream
+    access: public
+    args:
+    - type: Path
+    - type: Progressable
+  - name: createNewFile
+    type: boolean
+    access: public
+    args:
+    - type: Path
+  - name: append
+    type: FSDataOutputStream
+    access: public
+    args:
+    - type: Path
+  - name: getReplication
+    type: short
+    access: public
+    args:
+    - type: Path
+  - name: setReplication
+    type: boolean
+    access: public
+    args:
+    - type: Path
+    - type: short
+  - name: rename
+    type: void
+    access: public
+    args:
+    - type: Path
+    - type: Path
+    - type: Rename
+  - name: delete
+    type: boolean
+    access: public
+    args:
+    - type: Path
+    - type: boolean
+  - name: deleteOnExit
+    type: boolean
+    access: public
+    args:
+    - type: Path
+  - name: processDeleteOnExit
+    type: void
+    access: public
+    args:
+  - name: exists
+    type: boolean
+    access: public
+    args:
+    - type: Path
+  - name: isDirectory
+    type: boolean
+    access: public
+    args:
+    - type: Path
+  - name: isFile
+    type: boolean
+    access: public
+    args:
+    - type: Path
+  - name: getLength
+    type: long
+    access: public
+    args:
+    - type: Path
+  - name: getContentSummary
+    type: ContentSummary
+    access: public
+    args:
+    - type: Path
+  - name: listStatus
+    type: FileStatus[]
+    access: public
+    args:
+    - type: Path
+  - name: listStatus
+    type: FileStatus[]
+    access: public
+    args:
+    - type: Path
+    - type: PathFilter
+  - name: globStatus
+    type: FileStatus[]
+    access: public
+    args:
+    - type: Path
+    - type: PathFilter
+  - name: getHomeDirectory
+    type: Path
+    access: public
+    args:
+  - name: setWorkingDirectory
+    type: void
+    access: public
+    args:
+    - type: Path
+  - name: getWorkingDirectory
+    type: Path
+    access: public
+    args:
+  - name: getInitialWorkingDirectory
+    type: Path
+    access: public
+    args:
+  - name: mkdirs
+    type: boolean
+    access: public
+    args:
+    - type: Path
+    - type: FsPermission
+  - name: copyFromLocalFile
+    type: void
+    access: public
+    args:
+    - type: Path
+    - type: Path
+  - name: moveFromLocalFile
+    type: void
+    access: public
+    args:
+    - type: Path[]
+    - type: Path
+  - name: copyToLocalFile
+    type: void
+    access: public
+    args:
+    - type: Path
+    - type: Path
+  - name: moveToLocalFile
+    type: void
+    access: public
+    args:
+    - type: Path
+    - type: Path
+  - name: startLocalOutput
+    type: Path
+    access: public
+    args:
+    - type: Path
+    - type: Path
+  - name: completeLocalOutput
+    type: void
+    access: public
+    args:
+    - type: Path
+    - type: Path
+  - name: close
+    type: void
+    access: public
+    args:
+  - name: getUsed
+    type: long
+    access: public
+    args:
+  - name: getBlockSize
+    type: long
+    access: public
+    args:
+    - type: Path
+  - name: getDefaultBlockSize
+    type: long
+    access: public
+    args:
+  - name: getDefaultReplication
+    type: short
+    access: public
+    args:
+  - name: getFileStatus
+    type: FileStatus
+    access: public
+    args:
+    - type: Path
+  - name: getFileChecksum
+    type: FileChecksum
+    access: public
+    args:
+    - type: Path
+  - name: setVerifyChecksum
+    type: void
+    access: public
+    args:
+    - type: boolean
+  - name: getStatus
+    type: FsStatus
+    access: public
+    args:
+    - type: Path
+  - name: setPermission
+    type: void
+    access: public
+    args:
+    - type: Path
+    - type: FsPermission
+  - name: setOwner
+    type: void
+    access: public
+    args:
+    - type: Path
+    - type: String
+    - type: String
+  - name: setTimes
+    type: void
+    access: public
+    args:
+    - type: Path
+    - type: long
+    - type: long
+  - name: getStatistics
+    type: Map<String,Statistics>
+    access: public
+    args:
+  - name: getAllStatistics
+    type: List<Statistics>
+    access: public
+    args:
+  - name: getStatistics
+    type: Statistics
+    access: public
+    args:
+    - type: String
+    - type: Class<? extends FileSystem>
+  inners:
+  - name: Cache
+    fields:
+    methods:
+    inners:
+    - name: ClientFinalizer
+      fields:
+      methods:
+      inners:
+  - name: Statistics
+    fields:
+    methods:
+    inners:

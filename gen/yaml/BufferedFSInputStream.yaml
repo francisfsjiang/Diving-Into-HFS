@@ -1,0 +1,20 @@
+- name: BufferedFSInputStream
+  fields:
+  methods:
+  - name: BufferedFSInputStream
+    type: BufferedFSInputStream
+    access: public
+    args:
+    - type: FSInputStream
+    - type: int
+  - name: seek
+    type: void
+    access: public
+    args:
+    - type: long
+  - name: seekToNewSource
+    type: boolean
+    access: public
+    args:
+    - type: long
+  inners:

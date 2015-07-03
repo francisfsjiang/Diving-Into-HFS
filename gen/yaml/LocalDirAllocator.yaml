@@ -1,0 +1,38 @@
+- name: LocalDirAllocator
+  fields:
+  methods:
+  - name: getLocalPathForWrite
+    type: Path
+    access: public
+    args:
+    - type: String
+    - type: Configuration
+  - name: getLocalPathToRead
+    type: Path
+    access: public
+    args:
+    - type: String
+    - type: Configuration
+  - name: createTmpFileForWrite
+    type: File
+    access: public
+    args:
+    - type: String
+    - type: long
+    - type: Configuration
+  - name: isContextValid
+    type: boolean
+    access: public
+    args:
+    - type: String
+  - name: ifExists
+    type: boolean
+    access: public
+    args:
+    - type: String
+    - type: Configuration
+  - name: getCurrentDirectoryIndex
+    type: int
+    access: public
+    args:
+  inners:

@@ -1,0 +1,38 @@
+- name: PermissionStatus
+  fields:
+  methods:
+  - name: createImmutable
+    type: PermissionStatus
+    access: public
+    args:
+    - type: String
+    - type: String
+    - type: FsPermission
+  - name: getUserName
+    type: String
+    access: public
+    args:
+  - name: getGroupName
+    type: String
+    access: public
+    args:
+  - name: getPermission
+    type: FsPermission
+    access: public
+    args:
+  - name: applyUMask
+    type: PermissionStatus
+    access: public
+    args:
+    - type: FsPermission
+  - name: readFields
+    type: void
+    access: public
+    args:
+    - type: DataInput
+  - name: write
+    type: void
+    access: public
+    args:
+    - type: DataOutput
+  inners:

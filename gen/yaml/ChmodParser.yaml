@@ -1,0 +1,9 @@
+- name: ChmodParser
+  fields:
+  methods:
+  - name: applyNewPermission
+    type: short
+    access: public
+    args:
+    - type: FileStatus
+  inners:

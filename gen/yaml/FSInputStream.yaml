@@ -1,0 +1,40 @@
+- name: FSInputStream
+  fields:
+  methods:
+  - name: seek
+    type: void
+    access: public
+    args:
+    - type: long
+  - name: getPos
+    type: long
+    access: public
+    args:
+  - name: seekToNewSource
+    type: boolean
+    access: public
+    args:
+    - type: long
+  - name: read
+    type: int
+    access: public
+    args:
+    - type: long
+    - type: byte[]
+    - type: int
+    - type: int
+  - name: readFully
+    type: void
+    access: public
+    args:
+    - type: long
+    - type: byte[]
+    - type: int
+    - type: int
+  - name: readFully
+    type: void
+    access: public
+    args:
+    - type: long
+    - type: byte[]
+  inners:

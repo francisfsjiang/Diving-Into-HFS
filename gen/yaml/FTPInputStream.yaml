@@ -1,0 +1,35 @@
+- name: FTPInputStream
+  fields:
+  methods:
+  - name: FTPInputStream
+    type: FTPInputStream
+    access: public
+    args:
+    - type: InputStream
+    - type: FTPClient
+    - type: FileSystem.Statistics
+  - name: getPos
+    type: long
+    access: public
+    args:
+  - name: seek
+    type: void
+    access: public
+    args:
+    - type: long
+  - name: read
+    type: int
+    access: public
+    args:
+  - name: read
+    type: int
+    access: public
+    args:
+    - type: byte
+    - type: int
+    - type: int
+  - name: close
+    type: void
+    access: public
+    args:
+  inners:

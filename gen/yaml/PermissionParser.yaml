@@ -1,0 +1,29 @@
+- name: PermissionParser
+  fields:
+  methods:
+  - name: PermissionParser
+    type: PermissionParser
+    access: public
+    args:
+    - type: String
+    - type: Pattern
+    - type: Pattern
+  - name: applyNormalPattern
+    type: void
+    access: public
+    args:
+    - type: String
+    - type: Matcher
+  - name: applyOctalPattern
+    type: void
+    access: public
+    args:
+    - type: String
+    - type: Matcher
+  - name: combineModes
+    type: int
+    access: public
+    args:
+    - type: int
+    - type: boolean
+  inners:

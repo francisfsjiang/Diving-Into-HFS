@@ -1,0 +1,8 @@
+- name: UmaskParser
+  fields:
+  methods:
+  - name: getUMask
+    type: short
+    access: public
+    args:
+  inners:

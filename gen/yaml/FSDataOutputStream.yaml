@@ -1,0 +1,8 @@
+- name: FSDataOutputStream
+  fields:
+  methods:
+  inners:
+  - name: PositionCache
+    fields:
+    methods:
+    inners:

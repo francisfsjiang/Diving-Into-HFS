@@ -1,0 +1,58 @@
+- name: Trash
+  fields:
+  methods:
+  - name: Trash
+    type: Trash
+    access: public
+    args:
+    - type: FileSystem
+    - type: Configuration
+  - name: makeTrashRelativePath
+    type: Path
+    access: public
+    args:
+    - type: Path
+    - type: Path
+  - name: moveToTrash
+    type: boolean
+    access: public
+    args:
+    - type: Path
+  - name: checkpoint
+    type: void
+    access: public
+    args:
+  - name: expunge
+    type: void
+    access: public
+    args:
+  - name: getCurrentTrashDir
+    type: Path
+    access: public
+    args:
+  - name: getEmptier
+    type: Runnable
+    access: public
+    args:
+  - name: main
+    type: void
+    access: public
+    args:
+    - type: String[]
+  inners:
+  - name: Emptier
+    fields:
+    methods:
+    - name: ceiling
+      type: long
+      access: public
+      args:
+      - type: long
+      - type: long
+    - name: floor
+      type: long
+      access: public
+      args:
+      - type: long
+      - type: long
+    inners:

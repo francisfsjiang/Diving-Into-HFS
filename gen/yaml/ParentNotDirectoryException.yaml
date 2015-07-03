@@ -1,0 +1,4 @@
+- name: ParentNotDirectoryException
+  fields:
+  methods:
+  inners:

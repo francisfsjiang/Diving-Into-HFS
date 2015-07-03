@@ -1,0 +1,33 @@
+- name: FsStatus
+  fields:
+  methods:
+  - name: FsStatus
+    type: FsStatus
+    access: public
+    args:
+    - type: long
+    - type: long
+    - type: long
+  - name: getCapacity
+    type: long
+    access: public
+    args:
+  - name: getUsed
+    type: long
+    access: public
+    args:
+  - name: getRemaining
+    type: long
+    access: public
+    args:
+  - name: write
+    type: void
+    access: public
+    args:
+    - type: DataOutput
+  - name: readFields
+    type: void
+    access: public
+    args:
+    - type: DataInput
+  inners:

@@ -1,0 +1,12 @@
+- name: FsUrlConnection
+  fields:
+  methods:
+  - name: connect
+    type: void
+    access: public
+    args:
+  - name: getInputStream
+    type: InputStream
+    access: public
+    args:
+  inners:

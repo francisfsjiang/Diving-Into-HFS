@@ -1,0 +1,68 @@
+- name: FsPermission
+  fields:
+  methods:
+  - name: createImmutable
+    type: FsPermission
+    access: public
+    args:
+    - type: short
+  - name: getUserAction
+    type: FsAction
+    access: public
+    args:
+  - name: getGroupAction
+    type: FsAction
+    access: public
+    args:
+  - name: getOtherAction
+    type: FsAction
+    access: public
+    args:
+  - name: set
+    type: void
+    access: public
+    args:
+    - type: FsAction
+    - type: FsAction
+    - type: FsAction
+    - type: boolean
+  - name: fromShort
+    type: void
+    access: public
+    args:
+    - type: short
+  - name: toShort
+    type: short
+    access: public
+    args:
+  - name: equals
+    type: boolean
+    access: public
+    args:
+    - type: Object
+  - name: applyUMask
+    type: FsPermission
+    access: public
+    args:
+    - type: FsPermission
+  - name: getUMask
+    type: FsPermission
+    access: public
+    args:
+    - type: Configuration
+  - name: setUMask
+    type: void
+    access: public
+    args:
+    - type: Configuration
+    - type: FsPermission
+  - name: getDefault
+    type: FsPermission
+    access: public
+    args:
+  - name: valueOf
+    type: FsPermission
+    access: public
+    args:
+    - type: String
+  inners:

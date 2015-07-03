@@ -1,0 +1,4 @@
+- name: FSDataInputStream
+  fields:
+  methods:
+  inners:

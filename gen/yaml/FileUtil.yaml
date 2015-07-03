@@ -1,0 +1,217 @@
+- name: FileUtil
+  fields:
+  methods:
+  - name: stat2Paths
+    type: Path[]
+    access: public
+    args:
+    - type: FileStatus[]
+  - name: stat2Paths
+    type: Path[]
+    access: public
+    args:
+    - type: FileStatus[]
+    - type: Path
+  - name: fullyDelete
+    type: boolean
+    access: public
+    args:
+    - type: File
+  - name: fullyDeleteContents
+    type: boolean
+    access: public
+    args:
+    - type: File
+  - name: fullyDelete
+    type: void
+    access: public
+    args:
+    - type: FileSystem
+    - type: Path
+  - name: copy
+    type: boolean
+    access: public
+    args:
+    - type: FileSystem
+    - type: Path
+    - type: FileSystem
+    - type: Path
+    - type: boolean
+    - type: Configuration
+  - name: copy
+    type: boolean
+    access: public
+    args:
+    - type: FileSystem
+    - type: Path[]
+    - type: FileSystem
+    - type: Path
+    - type: boolean
+    - type: boolean
+    - type: Configuration
+  - name: copy
+    type: boolean
+    access: public
+    args:
+    - type: FileSystem
+    - type: Path
+    - type: FileSystem
+    - type: Path
+    - type: boolean
+    - type: boolean
+    - type: Configuration
+  - name: copy
+    type: boolean
+    access: public
+    args:
+    - type: FileSystem
+    - type: FileStatus
+    - type: FileSystem
+    - type: Path
+    - type: boolean
+    - type: boolean
+    - type: Configuration
+  - name: copyMerge
+    type: boolean
+    access: public
+    args:
+    - type: FileSystem
+    - type: Path
+    - type: FileSystem
+    - type: Path
+    - type: boolean
+    - type: Configuration
+    - type: String
+  - name: copy
+    type: boolean
+    access: public
+    args:
+    - type: File
+    - type: FileSystem
+    - type: Path
+    - type: boolean
+    - type: Configuration
+  - name: copy
+    type: boolean
+    access: public
+    args:
+    - type: FileSystem
+    - type: Path
+    - type: File
+    - type: boolean
+    - type: Configuration
+  - name: copy
+    type: boolean
+    access: public
+    args:
+    - type: FileSystem
+    - type: FileStatus
+    - type: File
+    - type: boolean
+    - type: Configuration
+  - name: checkDest
+    type: Path
+    access: public
+    args:
+    - type: String
+    - type: FileSystem
+    - type: Path
+    - type: boolean
+  - name: makeShellPath
+    type: String
+    access: public
+    args:
+    - type: String
+  - name: makeShellPath
+    type: String
+    access: public
+    args:
+    - type: File
+  - name: makeShellPath
+    type: String
+    access: public
+    args:
+    - type: File
+    - type: boolean
+  - name: getDU
+    type: long
+    access: public
+    args:
+    - type: File
+  - name: unZip
+    type: void
+    access: public
+    args:
+    - type: File
+    - type: File
+  - name: unTar
+    type: void
+    access: public
+    args:
+    - type: File
+    - type: File
+  - name: createIOException
+    type: IOException
+    access: public
+    args:
+    - type: File
+    - type: String
+    - type: String
+    - type: int
+    - type: Exception
+  - name: symLink
+    type: int
+    access: public
+    args:
+    - type: String
+    - type: String
+  - name: chmod
+    type: int
+    access: public
+    args:
+    - type: String
+    - type: String
+  - name: chmod
+    type: int
+    access: public
+    args:
+    - type: String
+    - type: String
+    - type: boolean
+  - name: createLocalTempFile
+    type: File
+    access: public
+    args:
+    - type: File
+    - type: String
+    - type: boolean
+  - name: replaceFile
+    type: void
+    access: public
+    args:
+    - type: File
+    - type: File
+  inners:
+  - name: CygPathCommand
+    fields:
+    methods:
+    inners:
+  - name: HardLink
+    fields:
+    methods:
+    - name: getOSType
+      type: OSType
+      access: public
+      args:
+    - name: createHardLink
+      type: void
+      access: public
+      args:
+      - type: File
+      - type: File
+    - name: getLinkCount
+      type: int
+      access: public
+      args:
+      - type: File
+    inners:

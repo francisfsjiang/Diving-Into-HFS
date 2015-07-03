@@ -1,0 +1,15 @@
+- name: InvalidPathException
+  fields:
+  methods:
+  - name: InvalidPathException
+    type: InvalidPathException
+    access: public
+    args:
+    - type: String
+  - name: InvalidPathException
+    type: InvalidPathException
+    access: public
+    args:
+    - type: String
+    - type: String
+  inners:

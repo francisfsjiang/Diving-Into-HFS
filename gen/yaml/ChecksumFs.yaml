@@ -1,0 +1,84 @@
+- name: ChecksumFs
+  fields:
+  methods:
+  - name: setVerifyChecksum
+    type: void
+    access: public
+    args:
+    - type: boolean
+  - name: getRawFs
+    type: AbstractFileSystem
+    access: public
+    args:
+  - name: getChecksumFile
+    type: Path
+    access: public
+    args:
+    - type: Path
+  - name: isChecksumFile
+    type: boolean
+    access: public
+    args:
+    - type: Path
+  - name: getChecksumFileLength
+    type: long
+    access: public
+    args:
+    - type: Path
+    - type: long
+  - name: getBytesPerSum
+    type: int
+    access: public
+    args:
+  - name: open
+    type: FSDataInputStream
+    access: public
+    args:
+    - type: Path
+    - type: int
+  - name: getChecksumLength
+    type: long
+    access: public
+    args:
+    - type: long
+    - type: int
+  - name: renameInternal
+    type: void
+    access: public
+    args:
+    - type: Path
+    - type: Path
+  - name: delete
+    type: boolean
+    access: public
+    args:
+    - type: Path
+    - type: boolean
+  - name: reportChecksumFailure
+    type: boolean
+    access: public
+    args:
+    - type: Path
+    - type: FSDataInputStream
+    - type: long
+    - type: FSDataInputStream
+    - type: long
+  inners:
+  - name: ChecksumFSInputChecker
+    fields:
+    methods:
+    - name: skip
+      type: long
+      access: public
+      args:
+      - type: long
+    - name: seek
+      type: void
+      access: public
+      args:
+      - type: long
+    inners:
+  - name: ChecksumFSOutputSummer
+    fields:
+    methods:
+    inners:

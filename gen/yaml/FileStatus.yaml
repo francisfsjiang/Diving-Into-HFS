@@ -1,0 +1,143 @@
+- name: FileStatus
+  fields:
+  methods:
+  - name: FileStatus
+    type: FileStatus
+    access: public
+    args:
+    - type: long
+    - type: boolean
+    - type: int
+    - type: long
+    - type: long
+    - type: Path
+  - name: FileStatus
+    type: FileStatus
+    access: public
+    args:
+    - type: long
+    - type: boolean
+    - type: int
+    - type: long
+    - type: long
+    - type: long
+    - type: FsPermission
+    - type: String
+    - type: String
+    - type: Path
+  - name: FileStatus
+    type: FileStatus
+    access: public
+    args:
+    - type: long
+    - type: boolean
+    - type: int
+    - type: long
+    - type: long
+    - type: long
+    - type: FsPermission
+    - type: String
+    - type: String
+    - type: Path
+    - type: Path
+  - name: getLen
+    type: long
+    access: public
+    args:
+  - name: isFile
+    type: boolean
+    access: public
+    args:
+  - name: isDirectory
+    type: boolean
+    access: public
+    args:
+  - name: isDir
+    type: boolean
+    access: public
+    args:
+  - name: isSymlink
+    type: boolean
+    access: public
+    args:
+  - name: getBlockSize
+    type: long
+    access: public
+    args:
+  - name: getReplication
+    type: short
+    access: public
+    args:
+  - name: getModificationTime
+    type: long
+    access: public
+    args:
+  - name: getAccessTime
+    type: long
+    access: public
+    args:
+  - name: getPermission
+    type: FsPermission
+    access: public
+    args:
+  - name: getOwner
+    type: String
+    access: public
+    args:
+  - name: getGroup
+    type: String
+    access: public
+    args:
+  - name: getPath
+    type: Path
+    access: public
+    args:
+  - name: setPath
+    type: void
+    access: public
+    args:
+    - type: Path
+  - name: setPermission
+    type: void
+    access: public
+    args:
+    - type: FsPermission
+  - name: setOwner
+    type: void
+    access: public
+    args:
+    - type: String
+  - name: setGroup
+    type: void
+    access: public
+    args:
+    - type: String
+  - name: getSymlink
+    type: Path
+    access: public
+    args:
+  - name: setSymlink
+    type: void
+    access: public
+    args:
+    - type: Path
+  - name: write
+    type: void
+    access: public
+    args:
+    - type: DataOutput
+  - name: readFields
+    type: void
+    access: public
+    args:
+    - type: DataInput
+  - name: equals
+    type: boolean
+    access: public
+    args:
+    - type: Object
+  - name: hashCode
+    type: int
+    access: public
+    args:
+  inners:

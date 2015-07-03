@@ -1,0 +1,16 @@
+- name: AvroFSInput
+  fields:
+  methods:
+  - name: AvroFSInput
+    type: AvroFSInput
+    access: public
+    args:
+    - type: FSDataInputStream
+    - type: long
+  - name: AvroFSInput
+    type: AvroFSInput
+    access: public
+    args:
+    - type: FileContext
+    - type: Path
+  inners:

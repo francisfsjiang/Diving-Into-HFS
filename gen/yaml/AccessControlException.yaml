@@ -1,0 +1,8 @@
+- name: AccessControlException
+  fields:
+  methods:
+  - name: AccessControlException
+    type: AccessControlException
+    access: public
+    args:
+  inners:

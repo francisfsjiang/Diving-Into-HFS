@@ -1,0 +1,25 @@
+- name: FileChecksum
+  fields:
+  methods:
+  - name: getAlgorithmName
+    type: String
+    access: public
+    args:
+  - name: getLength
+    type: int
+    access: public
+    args:
+  - name: getBytes
+    type: byte[]
+    access: public
+    args:
+  - name: equals
+    type: boolean
+    access: public
+    args:
+    - type: Object
+  - name: hashCode
+    type: int
+    access: public
+    args:
+  inners:

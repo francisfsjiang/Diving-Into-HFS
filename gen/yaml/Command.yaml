@@ -1,0 +1,17 @@
+- name: Command
+  fields:
+  methods:
+  - name: getCommandName
+    type: String
+    access: public
+    args:
+  - name: run
+    type: void
+    access: public
+    args:
+    - type: Path
+  - name: runAll
+    type: int
+    access: public
+    args:
+  inners:

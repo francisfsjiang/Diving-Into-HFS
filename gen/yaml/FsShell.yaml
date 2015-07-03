@@ -1,0 +1,240 @@
+- name: FsShell
+  fields:
+  - name: COPYTOLOCAL_PREFIX
+    type: String
+    access: static
+  methods:
+  - name: FsShell
+    type: FsShell
+    access: public
+    args:
+  - name: copyFromStdin
+    type: void
+    access: public
+    args:
+    - type: Path
+    - type: FileSystem
+  - name: printToStdout
+    type: void
+    access: public
+    args:
+    - type: InputStream
+  - name: copyFromLocal
+    type: void
+    access: public
+    args:
+    - type: Path[]
+    - type: String
+  - name: moveFromLocal
+    type: void
+    access: public
+    args:
+    - type: Path[]
+    - type: String
+  - name: moveFromLocal
+    type: void
+    access: public
+    args:
+    - type: Path
+    - type: String
+  - name: copyToLocal
+    type: void
+    access: public
+    args:
+    - type: String[]
+    - type: int
+  - name: getSrcFileSystem
+    type: FileSystem
+    access: public
+    args:
+    - type: Path
+    - type: boolean
+  - name: copyToLocal
+    type: void
+    access: public
+    args:
+    - type: FileSystem
+    - type: FileStatus
+    - type: File
+    - type: boolean
+  - name: copyMergeToLocal
+    type: void
+    access: public
+    args:
+    - type: String
+    - type: Path
+    - type: boolean
+  - name: moveToLocal
+    type: void
+    access: public
+    args:
+    - type: String
+    - type: Path
+  - name: cat
+    type: void
+    access: public
+    args:
+    - type: String
+    - type: boolean
+  - name: waitForReplication
+    type: void
+    access: public
+    args:
+    - type: List<Path>
+    - type: int
+  - name: setReplication
+    type: void
+    access: public
+    args:
+    - type: short
+    - type: String
+    - type: boolean
+    - type: List<Path>
+  - name: setFileReplication
+    type: void
+    access: public
+    args:
+    - type: Path
+    - type: FileSystem
+    - type: short
+    - type: List<Path>
+  - name: ls
+    type: int
+    access: public
+    args:
+    - type: String
+    - type: boolean
+  - name: df
+    type: void
+    access: public
+    args:
+    - type: String
+  - name: du
+    type: void
+    access: public
+    args:
+    - type: String[]
+    - type: int
+  - name: dus
+    type: void
+    access: public
+    args:
+    - type: String[]
+    - type: int
+  - name: printUsageSummary
+    type: void
+    access: public
+    args:
+    - type: List<UsagePair>
+    - type: boolean
+  - name: mkdir
+    type: void
+    access: public
+    args:
+    - type: String
+  - name: touchz
+    type: void
+    access: public
+    args:
+    - type: String
+  - name: test
+    type: int
+    access: public
+    args:
+    - type: String
+    - type: int
+  - name: stat
+    type: void
+    access: public
+    args:
+    - type: char[]
+    - type: String
+  - name: rename
+    type: void
+    access: public
+    args:
+    - type: String
+    - type: String
+  - name: copy
+    type: int
+    access: public
+    args:
+    - type: String
+    - type: Configuration
+  - name: delete
+    type: void
+    access: public
+    args:
+    - type: Path
+    - type: FileSystem
+    - type: boolean
+    - type: boolean
+  - name: expunge
+    type: void
+    access: public
+    args:
+  - name: getCurrentTrashDir
+    type: Path
+    access: public
+    args:
+  - name: tail
+    type: void
+    access: public
+    args:
+    - type: String[]
+    - type: int
+  - name: shellListStatus
+    type: FileStatus[]
+    access: public
+    args:
+    - type: String
+    - type: FileSystem
+    - type: FileStatus
+  - name: runCmdHandler
+    type: int
+    access: public
+    args:
+    - type: CmdHandler
+    - type: FileStatus
+    - type: FileSystem
+    - type: boolean
+  - name: printHelp
+    type: void
+    access: public
+    args:
+    - type: String
+  - name: doall
+    type: int
+    access: public
+    args:
+    - type: String
+    - type: String
+    - type: int
+  - name: printUsage
+    type: void
+    access: public
+    args:
+    - type: String
+  - name: run
+    type: int
+    access: public
+    args:
+    - type: String
+  - name: main
+    type: void
+    access: public
+    args:
+    - type: String
+  inners:
+  - name: CmdHandler
+    fields:
+    methods:
+    inners:
+  - name: DelayedExceptionThrowing
+    fields:
+    methods:
+    inners:
+  - name: UsagePair
+    fields:
+    methods:
+    inners:

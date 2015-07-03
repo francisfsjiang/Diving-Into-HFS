@@ -1,0 +1,23 @@
+- name: CommandFormat
+  fields:
+  methods:
+  - name: CommandFormat
+    type: CommandFormat
+    access: public
+    args:
+    - type: String
+    - type: int
+    - type: int
+    - type: String
+  - name: parse
+    type: List<String>
+    access: public
+    args:
+    - type: String[]
+    - type: int
+  - name: getOpt
+    type: boolean
+    access: public
+    args:
+    - type: String
+  inners:

@@ -1,0 +1,68 @@
+- name: FSOutputSummer
+  fields:
+  - name: buf
+    type: byte
+    access: private
+  - name: checksum
+    type: byte
+    access: private
+  - name: count
+    type: int
+    access: private
+  methods:
+  - name: writeChunk
+    type: void
+    access: public
+    args:
+    - type: byte[]
+    - type: int
+    - type: int
+    - type: byte[]
+  - name: write
+    type: void
+    access: public
+    args:
+    - type: int
+  - name: write
+    type: void
+    access: public
+    args:
+    - type: byte
+    - type: int
+    - type: int
+  - name: write1
+    type: int
+    access: public
+    args:
+    - type: byte
+    - type: int
+    - type: int
+  - name: flushBuffer
+    type: void
+    access: public
+    args:
+  - name: flushBuffer
+    type: void
+    access: public
+    args:
+    - type: boolean
+  - name: writeChecksumChunk
+    type: void
+    access: public
+    args:
+    - type: byte
+    - type: int
+    - type: int
+    - type: boolean
+  - name: convertToByteStream
+    type: byte[]
+    access: public
+    args:
+    - type: Checksum
+    - type: int
+  - name: resetChecksumChunk
+    type: void
+    access: public
+    args:
+    - type: int
+  inners:

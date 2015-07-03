@@ -1,0 +1,157 @@
+- name: FTPFileSystem
+  fields:
+  methods:
+  - name: initialize
+    type: void
+    access: public
+    args:
+    - type: URI
+    - type: Configuration
+  - name: connect
+    type: FTPClient
+    access: public
+    args:
+  - name: disconnect
+    type: void
+    access: public
+    args:
+    - type: FTPClient
+  - name: makeAbsolute
+    type: Path
+    access: public
+    args:
+    - type: Path
+    - type: Path
+  - name: open
+    type: FSDataInputStream
+    access: public
+    args:
+    - type: Path
+    - type: int
+  - name: create
+    type: FSDataOutputStream
+    access: public
+    args:
+    - type: Path
+    - type: FsPermission
+    - type: boolean
+    - type: int
+    - type: short
+    - type: long
+    - type: Progressable
+  - name: append
+    type: FSDataOutputStream
+    access: public
+    args:
+    - type: Path
+    - type: int
+    - type: Progressable
+  - name: exists
+    type: boolean
+    access: public
+    args:
+    - type: FTPClient
+    - type: Path
+  - name: delete
+    type: boolean
+    access: public
+    args:
+    - type: Path
+    - type: boolean
+  - name: delete
+    type: boolean
+    access: public
+    args:
+    - type: FTPClient
+    - type: Path
+  - name: delete
+    type: boolean
+    access: public
+    args:
+    - type: FTPClient
+    - type: Path
+    - type: boolean
+  - name: getFsAction
+    type: FsAction
+    access: public
+    args:
+    - type: int
+    - type: FTPFile
+  - name: getPermissions
+    type: FsPermission
+    access: public
+    args:
+    - type: FTPFile
+  - name: getUri
+    type: URI
+    access: public
+    args:
+  - name: listStatus
+    type: FileStatus[]
+    access: public
+    args:
+    - type: Path
+  - name: listStatus
+    type: FileStatus[]
+    access: public
+    args:
+    - type: FTPClient
+    - type: Path
+  - name: getFileStatus
+    type: FileStatus
+    access: public
+    args:
+    - type: Path
+  - name: getFileStatus
+    type: FileStatus
+    access: public
+    args:
+    - type: FTPClient
+    - type: Path
+  - name: getFileStatus
+    type: FileStatus
+    access: public
+    args:
+    - type: FTPFile
+    - type: Path
+  - name: mkdirs
+    type: boolean
+    access: public
+    args:
+    - type: Path
+    - type: FsPermission
+  - name: mkdirs
+    type: boolean
+    access: public
+    args:
+    - type: FTPClient
+    - type: Path
+    - type: FsPermission
+  - name: isFile
+    type: boolean
+    access: public
+    args:
+    - type: FTPClient
+    - type: Path
+  - name: rename
+    type: boolean
+    access: public
+    args:
+    - type: Path
+    - type: Path
+  - name: rename
+    type: boolean
+    access: public
+    args:
+    - type: FTPClient
+    - type: Path
+    - type: Path
+  - name: getWorkingDirectory
+    type: Path
+    access: public
+    args:
+  - name: getHomeDirectory
+    type: Path
+    access: public
+    args:
+  inners:
