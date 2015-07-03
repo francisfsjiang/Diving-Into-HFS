@@ -55,6 +55,7 @@
 ]{xecleanthesis}
 \usepackage{ctex}
 \usepackage{listings}
+\usepackage{xcolor}
 \usepackage{xetool}
 \usepackage{xedef}
 
@@ -71,7 +72,7 @@
 }
 \lstset{
 	numbers=left,          % 左侧显示行号
-	tabsize=4,             % tab = 4 space
+	tabsize=2,             % tab = 4 space
 	frame=lines,           % 水平线分割代码区域
 	breaklines=true,       % 说来下面四个选项是干嘛来着
 	extendedchars=false,
@@ -80,10 +81,12 @@
 }
 \lstdefinestyle{javaSuck}{
 	language=Java,
-	basicstyle=\ttfamily,
+	basicstyle=\ttfamily\small,
+	keywordstyle=\bfseries\color{blue},
+	commentstyle=\itshape\color{green!50!black},
 	lineskip=0pt,
-	aboveskip=0pt,
-	belowskip=0pt
+	aboveskip=1em,
+	belowskip=1em
 }
 
 % **************************************************

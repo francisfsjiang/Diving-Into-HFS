@@ -2,3 +2,88 @@
 %
 \chapter{\HadoopFS 移植}
 \label{ch:trans}
+
+%%%%%%%%%%%%%%%%%%%%%
+%
+% section: 尝试
+%
+\section{尝试}
+\label{sec:trans:try}
+对{\HFS}的操作通过``hadoop fs $<$arguments$>$...''指令执行。
+hadoop脚本实际调用启动Java虚拟机运行org.apache.hadoop.fs.FsShell类。
+{\HFS}上的文件操作通过这个类封装给用户。我们在{\Windows}环境下直接运行这个类来进行移植尝试。
+根据Usage，我们依次尝试命令，对出现的问题进行修改。
+
+%%%%%%%%%%%%%%%%%%%%%
+%
+% subsection: -ls
+%
+\subsection{-ls}
+\label{subsec:trans:ls}
+如图\ref{fig:trans:ls0}，``-ls''的运行抛出异常。
+
+\InsertFigure[fig:trans:ls0]{trans/run-ls0}{``-ls''测试结果}
+
+检查调用栈发现问题在于org.apache.hadoop.fs.RawLocalFileSystem\$RawLocalFileStatus类的loadPermissionInfo方法中想要调用``ls -ld''命令，获取当前目录的权限、文件拥有者、文件所在的组。
+相关代码如下：
+
+\InsertListing[caption=org/apache/hadoop/fs/RawLocalFileSystem.java]{RawLocalFileSystem0.java}{466}{482}
+
+\InsertListing[caption=org/apache/hadoop/util/Shell.java]{Shell0.java}{69}{72}
+
+原生{\Windows}环境并没有这样的命令，并且文件管理系统也和{\Unix}有出入。
+对照一些{\Windows}下的{\Unix}工具移植，对方法进行修改后，执行成功。
+相关代码和运行结果如下：
+
+\InsertListing[caption=org/apache/hadoop/fs/RawLocalFileSystem.java]{RawLocalFileSystem1.java}{468}{489}
+
+\InsertFigure{trans/run-ls1}{修改后``-ls''测试结果}
+
+%%%%%%%%%%%%%%%%%%%%%
+%
+% subsection: -cp
+%
+\subsection{-cp}
+\label{subsec:trans:cp}
+
+如图\ref{fig:trans:cp0}，``-cp''异常结束，只有一条输出到stderr中的错误信息。
+
+\InsertFigure[fig:trans:cp0]{trans/run-cp0}{``-cp''测试结果}
+
+在DEBUG环境下运行命令，最终追踪到RawLocalFileSystem下的一处调用，相关代码如下：
+
+\InsertListing[caption=org/apache/hadoop/fs/RawLocalFileSystem.java]{RawLocalFileSystem1.java}{540}{544}
+
+\InsertListing[caption=org/apache/hadoop/util/Shell.java]{Shell0.java}{59}{60}
+
+RawLocalFileSystem类的setPermission方法中想要调用``chmod 00777''命令设置目标文件权限。
+经过尝试，我们修改源码检测运行操作系统，在{\Windows}操作系统下不执行chmod命令。
+修改后的代码和运行结果如下：
+
+\InsertListing[caption=org/apache/hadoop/fs/RawLocalFileSystem.java]{RawLocalFileSystem2.java}{540}{546}
+
+\InsertFigure{trans/run-cp1}{修改后``-cp''测试结果}
+
+%%%%%%%%%%%%%%%%%%%%%
+%
+% subsection: -getmerge
+%
+\subsection{-getmerge}
+\label{subsec:trans:getmerge}
+对``-getmerge''的测试虽然成功结束，但没有输出文件。
+经过分析，我们发现了一个Bug。
+
+\InsertListing[caption=org/apache/hadoop/fs/FileUtil.java]{FileUtil0.java}{259}{267}
+
+266行的if语句条件应取反，修正如下
+
+\InsertListing[caption=org/apache/hadoop/fs/FileUtil.java]{FileUtil1.java}{259}{267}
+
+%%%%%%%%%%%%%%%%%%%%%
+%
+% section: 结论
+%
+\section{结论}
+\label{sec:trans:conclusion}
+我们的尝试表明，让{\HFS}支持原生{\Windows}下的文件系统是可行的。
+核心问题在于{\HFS}的实现包含大量对类{\Unix}操作系统中二进制实用工具的使用，而没有考虑{\Windows}系统上的使用。
