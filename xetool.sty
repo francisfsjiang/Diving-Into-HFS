@@ -1,6 +1,8 @@
 \ProvidesPackage{xetool}
 
-\newcommand{\SAAuthor}[3]{%
+\usepackage{emp}
+
+\newcommand{\XeAuthor}[3]{%
 	\begin{minipage}[t]{.27\textwidth}
 		\raggedleft
 		{\Large #1}
@@ -9,5 +11,99 @@
 	\begin{minipage}[t]{.65\textwidth}
 		{\Large #2} {\Large #3} \\[-1mm]
 	\end{minipage}}
-\newenvironment{SAAuthors}{}{\\[1cm]}
 
+\newenvironment{XeAuthors}{}{\\[1cm]}
+
+\newcommand{\XeChapRef}[1]{第\ref{#1}章}
+\newcommand{\XeSecRef}[1]{\ref{#1}节}
+
+\newenvironment{XeEnum}[1][-1em]{%
+    \begin{enumerate}
+        \setlength{\itemsep}{#1}
+}{%
+    \end{enumerate}
+}
+
+\newenvironment{XeItem}[1][-1em]{%
+    \begin{itemize}
+        \setlength{\itemsep}{#1}
+}{%
+    \end{itemize}
+}
+\newenvironment{XeMethod}[3]{%
+    \hspace{0em} \\ [-0.5em]
+    \begin{minipage}[t]{0.05\textwidth}
+		%\begin{table}[h]
+			\begin{tabular}{c}
+	    		#1
+			\end{tabular}
+		%\end{table}
+    \end{minipage}
+    \begin{minipage}[t]{0.95\textwidth}
+        \textbf{#2} :: \textbf{#3}
+}{%
+    \end{minipage}
+	\vspace{-1.5em}
+}
+
+\newenvironment{XeClass}[1]{%
+    \section{#1}
+	\def\MXeClassName{#1}
+}{%
+}
+
+\newenvironment{XeInnerClass}[1]{%
+	\def\IMXeClassName{\MXeClassName}
+    \subsection{#1 @ \IMXeClassName}
+}{%
+	\def\MXeClassName{\IMXeClassName}
+}
+
+\newenvironment{XeClassDiagram}[1]{%
+    %\begin{mpost}[mpsettings=input metauml;]
+    \begin{empfile}
+        \begin{empcmds}
+            input metauml;
+        \end{empcmds}
+        \begin{emp}[#1](100,100)
+}{%
+        \end{emp}
+    \end{empfile}
+    \end{mpost}
+}
+
+\newcommand{\XePublic}{\textcolor{cyan}{\faUnlock}}
+\newcommand{\XePrivate}{\textcolor{orange}{\faLock}}
+\newcommand{\XeProtected}{\textcolor{gray}{\faKey}}
+\newcommand{\XePackage}{\textcolor{black}{\faFolderClose}}
+\newcommand{\XeAbstract}{\faFont}
+\newcommand{\XeStatic}{\faAnchor}
+\newcommand{\XeFinal}{F}
+\newcommand{\XeSync}{S}
+
+\newcommand{\blankfigure}[1][]{%
+    \begin{centering}
+        \fcolorbox{red}{orange}{\textcolor{white}{此处应有图 #1}}
+    \end{centering}}
+
+\newcommand{\XeDLTItem}[2]{#1 & #2 \\}
+\newenvironment{XeDuoLineTabular}[3][rl]{%
+	\begin{center}
+		\begin{tabular}{#1}
+		#2 & #3 \\
+		\hline
+}{%
+		\hline
+		\end{tabular}
+	\end{center}
+}
+
+\newcommand{\XeRfChapter}[1]{第\ref{#1}章}
+\newcommand{\XeStructureItem}[2]{%
+	\XeDLTItem{\textbf{\XeRfChapter{#1}}}{\textbf{#2}}
+}
+\newenvironment{XeStructure}[2]{%
+	\begin{XeDuoLineTabular}[rl]{章节}{主要内容}
+}{%
+    \end{XeDuoLineTabular}
+}

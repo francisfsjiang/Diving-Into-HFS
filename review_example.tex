@@ -20,19 +20,19 @@
 \usepackage{fontawesome}
 
 % **************************************************
-% LaTeX调试信息
+% Debug LaTeX Information
 % **************************************************
 %\listfiles
 
 % **************************************************
 % Information and Commands for Reuse
 % **************************************************
-\newcommand{\thesisTitle}{Hadoop File System代码分析报告}
-\newcommand{\thesisName}{Hadoop FS 0.21的架构分析与Windows移植}
-\newcommand{\thesisSubject}{《软件体系结构》课程设计}
+\newcommand{\thesisTitle}{Reviewer文档修订参考手册}
+\newcommand{\thesisName}{文档化的详细对照}
+\newcommand{\thesisSubject}{6Beasts工程样例}
 \newcommand{\thesisTeam}{6Beasts团队}
 \newcommand{\thesisDate}{\today}
-\newcommand{\thesisVersion}{0.0.2}
+\newcommand{\thesisVersion}{0.0.1}
 
 \newcommand{\thesisUniversity}{\protect{西安电子科技大学}}
 \newcommand{\thesisUniversityDepartment}{软件学院}
@@ -53,12 +53,10 @@
 	colorize=full,%
 	colortheme=bluemagenta,%
 ]{xecleanthesis}
-\usepackage{ctex}
-\usepackage{listings}
 \usepackage{xetool}
 \usepackage{xedef}
 
-\hypersetup{					% setup the hyperref-package options
+\hypersetup{%                   % setup the hyperref-package options
 	pdftitle={\thesisTitle},	% 	- title (PDF meta)
 	pdfsubject={\thesisSubject},% 	- subject (PDF meta)
 	pdfauthor={\thesisName},	% 	- author (PDF meta)
@@ -68,22 +66,6 @@
 	breaklinks=true,			% 	- allow line break inside links
 	bookmarksnumbered=true,		%
 	bookmarksopen=true			%
-}
-\lstset{
-	numbers=left,          % 左侧显示行号
-	tabsize=4,             % tab = 4 space
-	frame=lines,           % 水平线分割代码区域
-	breaklines=true,       % 说来下面四个选项是干嘛来着
-	extendedchars=false,
-	showstringspaces=true,
-	texcl=true
-}
-\lstdefinestyle{javaSuck}{
-	language=Java,
-	basicstyle=\ttfamily,
-	lineskip=0pt,
-	aboveskip=0pt,
-	belowskip=0pt
 }
 
 % **************************************************
@@ -104,14 +86,10 @@
 % --------------------------
 \pagenumbering{roman}			% roman page numbing (invisible for empty page style)
 \pagestyle{empty}				% no header or footers
-\input{content/titlepages}		% INCLUDE: all titlepages
+\input{example/title}
 % \cleardoublepage
 
-\pagestyle{plain}				% display just page numbers
-\input{content/abstract}		% INCLUDE: the abstracts (english and german)
-\cleardoublepage
 %
-%\input{content/acknowledgement} % INCLUDE: acknowledgement
 %\cleardoublepage
 %
 \setcounter{tocdepth}{2}		% define depth of toc
@@ -125,12 +103,7 @@
 \setcounter{page}{1}			% set page counter
 \pagestyle{maincontentstyle} 	% fancy header and footer
 
-\input{content/chapter-introduction}
-\input{content/chapter-hfs-intro}
-\input{content/chapter-hfs}
-\input{content/chapter-env}
-\input{content/chapter-transplant}
-\input{content/chapter-src}
+\input{example/src}
 \cleardoublepage
 
 % --------------------------
@@ -145,21 +118,6 @@
 \printbibliography[nottype=online]
 \printbibliography[heading=subbibliography,title={Webseiten},type=online,prefixnumbers={@}]
 }
-\cleardoublepage
-
-\listoffigures
-\cleardoublepage
-
-\listoftables
-\cleardoublepage
-
-\input{content/colophon}
-\cleardoublepage
-
-\input{content/declaration}
-\clearpage
-\newpage
-\mbox{}
 
 % **************************************************
 % End of Document CONTENT

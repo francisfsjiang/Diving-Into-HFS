@@ -1,0 +1,135 @@
+\begin{XeClass}{FileSystem}
+
+FileSystem :fs中最基本的抽象类，包含了文件系统最基本的操作抽象，
+也包含了分布式文件的操纵抽象
+继承了Configured类，提供了访问配置文件的方法
+实现了Closeable接口，实现了关闭流的方法
+1.域：
+文件系统的缓存
+键
+文件系统的子类与统计信息的映射
+统计信息
+缓存中文件路径的集合
+2.内部类：
+Cache类：用来缓存文件系统
+ClientFinalizer类:JVM关闭是调用进行清理
+Key类：保存了与文件系统uri的信息，与文件系统对应
+Statistics:用来记录统计信息的类
+3.方法：
+文件系统的关闭：
+closeAll()
+close()
+文件系统的读取数据：
+FSDataInputStream open(Path f, int bufferSize)
+文件系统的写入数据：
+FSDataOutputStream create(Path f)
+FSDataOutputStream append(Path f)
+重命名操作：
+boolean rename(Path src, Path dst)
+文件删除操作：
+boolean delete(Path f)
+文件或路径测试：
+boolean exists(Path f)
+boolean isDirectory(Path f)
+boolean isFile(Path f)
+文件复制操作：
+copyFromLocalFile(Path src, Path dst)实现将文件从本地复制到其它路径
+copyToLocalFile(Path src, Path dst)负责将FS下的文件复制到本地
+文件移动操作：
+moveFromLocalFile(Path[] srcs, Path dst)负责将本地文件移动到FS的其它位置
+moveToLocalFile(Path src, Path dst)将FS下的文件移动到本地
+文件查询：
+FileStatus[] listStatus(Path f)
+FileStatus[] globStatus(Path pathPattern)
+通配格式：
+interface PathFilter
+
+    \begin{XeMethod}{\XePublic}{FileSystem}{get}
+
+Get a filesystem instance based on the uri, the passed
+configuration and the user
+通过URI、配置对象和用户来获取缓存中的一个文件系统对象
+具体过程为先判断用户字符串，若为空，则获取用户组信息的当前用户；
+若不为空，则创建远程用户。
+然后根据URI和配置对象返回文件系统对象
+
+    \end{XeMethod}
+
+    \begin{XeMethod}{\XePublic}{FileSystem}{get}
+
+通过用户配置对象获取文件系统对象
+
+    \end{XeMethod}
+
+    \begin{XeMethod}{\XePublic}{URI}{getDefaultUri}
+
+Get the default filesystem URI from a configuration.
+通过配置对象获取默认URI
+
+    \end{XeMethod}
+
+    \begin{XeMethod}{\XePublic}{void}{setDefaultUri}
+
+Set the default filesystem URI in a configuration.
+通过配置对象和URI设置默认URI
+
+    \end{XeMethod}
+
+    \begin{XeMethod}{\XePublic}{void}{initialize}
+
+Called after a new FileSystem instance is constructed.
+通过URI和配置对象初始化，文件系统实例化后调用
+for this FileSystem
+
+    \end{XeMethod}
+
+    \begin{XeMethod}{\XePrivate}{String}{fixName}
+
+Update old-format filesystem names, for back-compatibility.  This should
+eventually be replaced with a checkName() method that throws an exception
+为了向下兼容，更新旧格式的文件系统名字
+
+    \end{XeMethod}
+
+    \begin{XeMethod}{\XePublic \\ \XeStatic}{LocalFileSystem}{getLocal}
+
+Get the local file system
+获取本地文件系统实例
+
+    \end{XeMethod}
+
+
+    \begin{XeInnerClass}{Cache}
+
+Caching FileSystem objects
+缓存文件系统对象的静态内部类
+1.主要记录了Key和文件系统的映射，以及Key的集合
+Key是Cache的内部类
+主要记录了模式信息，授权信息以及用户组信息
+2.其主要方法包括获取、删除、关闭Key所对应的文件系统实例
+
+        \begin{XeInnerClass}{ClientFinalizer}
+
+ClientFinalizer类为继承了Thread类
+当Java虚拟机停止运行时,该线程才会启动
+调用run进关闭清理工作
+
+        \end{XeInnerClass}
+        \begin{XeInnerClass}{Key}
+
+FileSystem.Cache.Key
+
+        \end{XeInnerClass}
+    \end{XeInnerClass}
+    \begin{XeInnerClass}{Statistics}
+
+统计信息——静态内部类
+主要包含了URI的模式信息
+URI格式是scheme://authority/path
+对HDFS文件系统，scheme是hdfs;对本地文件系统，scheme是file
+该类包含了对读写的字节数、读取的操作次数内容进行的记录
+被用于\emph{AbstractFileSystem}和\emph{FileSystem.}中的统计信息。
+Statistics主要记录读写字节数。
+
+    \end{XeInnerClass}
+\end{XeClass}

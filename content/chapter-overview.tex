@@ -1,26 +1,192 @@
 % !TEX root = ../report.tex
 %
-\chapter{\HadoopFS 综述}
-\label{sec:overview}
+\chapter{\HFS 总体架构}
+\label{ch:hfs}
 
-\Hadoop 文件系统(\HadoopFS, \HFS)是为\Hadoop 云计算平台提供文件服务的一个抽象层.
-按照Wikipedia的解释, 文件系统是
+\section{\HFS 架构}
+\label{sec:hfs:arch}
+
+\subsection{The big picture}
+\label{ssec:hfs:bigpic}
+
+如\XeSecRef{ssec:hfs:al}中所述, {\HFS}与{\VFS}的结构十分相似,
+因此, 如果将下起硬件上至{\HFS}的视作一个完整的系统, 则{\HFS}构成一个典型的\textbf{层次结构},
+状如下图:
+
+\blankfigure{参考VHF的架构图}
+
+从系统外部观察{\HFS}, 它是一个在层层抽象的基础上构建起来系统.
+
+当从系统内部观察{\HFS}的时候, 它是一个\textbf{Master/Slave}结构的系统, 状如下图:
+
+\blankfigure{基于下图魔改的HFS架构}
+
+\blankfigure{原版HDFS架构}
+
+对比上面的架构可以知道,
+
+\subsection{作为抽象层}
+\label{ssec:hfs:al}
+
+从硬件抽象层的角度理解{\HFS},
+{\HFS}在实现级别上使用了类似于Command模式和Adapter模式的策略,
+即通通过如下继承的层级结构
+
+\blankfigure{抽象继承结构}
+
+来实现将统一的, 高度抽象的文件操作映射到各个具体文件系统之上的目的.
+
+在{\HFS}参与管理的诸多具体文件系统之中, 最特殊的一个具体文件系统的实现莫过于{\HDFS}.
+\XeSecRef{sec:hfs:fs}中粗略讨论了{\HDFS}的宏观特性,
+但是, 无论{\HDFS}所拥有的分布式特性与传统的文件系统, 或者, 按照官方文档中的用法, 本地文件系统,
+有着多么大的差异, {\HDFS}中的格式操作依然可以被映射到{\HFS}体系中的基本抽象上.
+
+% TODO 验证文件系统映射的具体实现
+
+\subsection{作为服务提供者}
+\label{ssec:hfs:srv}
+
+从服务提供者的角度理解{\HFS}, 则{\HFS}本身通过URI的形式向其上层应用提供基础文件访问操作,
+以及流式访问操作.
+
+由于{\Hadoop}系统中, {\HFS}体系所需要支持的重中之重是{\HDFS}, 因此,
+在{\HFS}的最高层抽象结构之中, 就已经有了对与冗余数据节点的支持,
+具体细节将在\XeSecRef{sec:hfs:fs}和\XeSecRef{sec:hfs:afs}中讨论.
+
+\section{核心模块}
+\label{sec:hfs:modules}
+
+如果以包为单位来考察{\HFS}, 且仅仅考虑与{\HFS}自身相关的代码,
+那么这张粗粒度的表格中几乎没有什么表项:
+\begin{XeDuoLineTabular}{包}{作用}
+    \XeDLTItem{fs}{文件系统相关的大部分代码}
+    \XeDLTItem{io}{I/O相关的代码}
+    % TODO 脑补一下这张表里应该有啥
+\end{XeDuoLineTabular}
+
+如果以更细粒度的逻辑结构来划分``模块''之间的关系, 那么{\HFS}的逻辑功能块的划分应该是这个样子:
+\begin{XeDuoLineTabular}{模块}{功能}
+    \XeDLTItem{{\AbsFS}族系}{各个具体文件系统的接口和实现}
+    \XeDLTItem{{\FiS}族系}{文件系统用户及其接口定义}
+    \XeDLTItem{{\FiC}族系}{为应用程序开发者提供访问{\HadoopFS}的接口}
+    \XeDLTItem{{\Shell}族系}{{\HFS}的\emph{CLI}访问接口}
+\end{XeDuoLineTabular}
+
+\subsection{{\FiS}族系}
+\label{ssec:hfs:fs}
+
+{\FiS}(下简称{\FS})是一般的通用文件系统的抽象基类.
+FS可以被实现为分布式的文件系统, 如{\HDFS}, 亦或是一个本地的文件系统,
+所有具有访问{\HDFS}的潜在可能的用户代码都应该被封装在一个{\FiS}实例里.
+{\HDFS}是一个对外表现如同单一磁盘的多机系统,
+它的容错能力和对大容量存储的支持使得{\HDFS}尤为实用.
+{\FiS}的本地实现是{\emph LocalFileSystem},
+分布式实现是{\emph DistributedFileSystem}(在{\HDFS}一支).
+
+{\FiS}是{\HadoopFS}早期版本中唯一的抽象基类, 但在0.21版本中,
+因为{\AbsFS}的引入, 使得{\FiS}的意义发生了一定变更,
+详见\XeSecRef{sec:hfs:afs}.
+
+\subsection{\AbsFS 族系}
+\label{ssec:hfs:afs}
+
+{\AbsFS}是提供给{\HadoopFS}体系下的具体文件系统实现者的接口.
+{\AbsFS}以抽象类的形式向{\HadoopFS}中的具体文件系统的实现者提供接口.
+{\HadoopFS}的架构与{\Unix}下{\VFS}类似,
+应用不直接访问{\AbsFS}实例, 而是通过{\emph FileContext}实例来访问文件系统中的文件.
+传递给{\AbsFS}的路径(pathnames)可以是符合具体文件系统规定的, 完全限定的URI,
+也可以是以给定文件系统的根目录为'/'目录的, 以‘/’分隔的路径(同{\Unix}体系).
+
+由于{\AbsFS}本身是提供给文件系统实现者的接口,
+且{\HadoopFS}中对文件的访问全部由{\emph FileContext}控制,
+所以, 这个类里没有{\emph public}方法, 而是提供了5类{\emph protected}方法:
+
+\begin{XeEnum}
+    \item 构造方法(针对子类)和工厂方法(针对用户)
+    \item 统计信息, {\emph FsStatus}记录容量和空间使用情况,
+          {\emph Statistics}记录读写字节计数.
+    \item 文件操作, 如读, 写, 增, 删, 重命名, 权限设置等抽象方法, 交由文件系统开发者实现.
+    \item URI验证
+    \item 校验和
+\end{XeEnum}
+
+这些方法描述了{\HadoopFS}的最高层抽象.
+
+AFS实例由工厂方法{\emph AbstractFileSystem.get}创建.
+{\AFS}中封装了一批通用操作的抽象方法, 这些方法由具体文件系统的实现者实现.
+
+{\emph \Hadoop 源代码分析报告}指出:
+
 \begin{quote}
-The structure and logic rules used to manage the groups of information and their names is called a "file system".
+    {\FiS}类是0.21版本之前唯一的基类, 但在0.21版本中, 出现了{\AbsFS},
+    该类似乎来取代{\FiS}类原来的部分功能. 在这两个基类的基础上形成了两个类继承的层次结构.
 \end{quote}
 
-\emph{AbstractFileSystem}类的文档明确指出了\HFS 是一个与\UNIX 下的\VFS 十分类似的系统,
-而\VFS 本身是
+现在, 在更详尽分析的基础上,
+我们可以对{\FiS}和{\AFS}的关系给出一个更精准的描述,
+即, 引入{\AFS}的目的是为了分解更清晰的C/S架构.
+% TODO 更改这C/S
+
+两个类各自的文档中有如下表述:
+
 \begin{quote}
-...an abstraction layer on top of a more concrete file system
+    {\AbsFS}是提供给具体文件系统实现者的接口.
 \end{quote}
 
-类似地, \HFS 是用于向\Hadoop 提供文件服务的, 横断于各个具体文件系统之上的抽象层.
+\begin{quote}
+    {\FiS}是一般的通用文件系统的抽象基类.
+    所有具有访问{\HDFS}的潜在可能的用户代码都应该被封装在一个{\FiS}实例里.
+\end{quote}
 
-HAL屏蔽底层硬件之间的差异,
-向上提驱动磁盘的接口,
-具体文件系统屏蔽不同体系(如NTFS, ext, xfs, btfs, etc.)下信息在物理磁盘上的组织方式的差异,
-向上提供操纵文件的接口,
-而抽象文件系统,
-负责屏蔽不同的具体文件系统之间的差异(如命名管理, 权限控制等),
-向上提供完全统一的文件操纵接口. 这个最高的抽象层, 就是HFS和VFS所处的位置.
+在实现层面上, 对比{\AFS}和{\FS}, 可以发现:
+
+\begin{XeEnum}
+    \item AFS有比FS更强大的URI解析支持
+    \item AFS独有对Scheme的处理
+    \item AFS中提供的具体文件操作比FS更少, 几乎仅仅提供了最通用的抽象接口
+    \item 因此, 引入{\AbsFS}的目的不是部分取代, 而是全面分流.
+\end{XeEnum}
+
+历史上, AFS的出现晚于{\FiS}, 因此, 在{\emph release 0.21}这个版本中,
+采取了两种兼容措施:
+
+其一是, 在继承树中, 为了避免与{\FiS}冲突, {\AbsFS}的直系后裔以``Fs''结尾;
+其二是, 为{\AbsFS}添加了针对{\FiS}的适配器{\emph DelegateToFileSystem},
+用以复用原有代码. 在这个版本中, {\emph DelegateToFileSystem}被大量使用,
+以期耗费尽量低的成本而快速完早期实现.
+
+此外, 通过对目录的扫描, 可以发现, 几乎所有{\AbsFS}族系的类都没有真正的进入具体实现的体系,
+按照前文中的功能对比, 大量应该被剥离出去的代码也没有真正的分离出去.
+
+\subsection{{\FiC}族系}
+\label{ssec:hfs:fc}
+
+{\FiC}为应用程序开发者提供访问{\HadoopFS}的接口.
+{\FiC}提供了诸如创建、打开、枚举目录元素(同ls)等方法.
+{\HadoopFS}支持URI命名空间(a name space)和URI文件名(names).
+它为文件系统提供一个可以用完全限定的URI引用的森林.
+
+两个通用的{\HadoopFS}的实现是:
+\begin{XeDuoLineTabular}{类型}{范式}
+    \XeDLTItem{本地文件系统}{file:///path}
+    \XeDLTItem{HDFS}{hdfs://address:port/path}
+\end{XeDuoLineTabular}
+
+URI十分灵活, 但却要求用户知晓服务器的名字或者地址才可以.
+为简便起见, 开发者通常会希望在特定环境下访问默认文件系统而忽略服务器的名字或者地址.
+此举还有一个额外的好处, 即是, 它允许用户修改自己的默认文件系统(比如, 管理员将应用从集群1迁移至集群2).
+
+为了实现这一目的, {\Hadoop}支持默认文件系统记号(notion).
+即使默认文件系统的设置通常由默配置给出, 用户仍然可以设置自己的文件系统.
+一个默认文件系统意味着体系(scheme)和权限, ``/''分隔的相对路径会被解析成相对于默认文件系统的路径.
+
+\subsection{{\Shell}族系}
+
+\section{运行时机制}
+\label{sec:hfs:rtm}
+
+\subsection{{\Trash}机制}
+\label{ssec:hfs:trashing}
+
+\subsection{命名查找机制}
+\label{ssec:hfs:naming}
